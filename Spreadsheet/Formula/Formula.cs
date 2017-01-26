@@ -54,8 +54,8 @@ namespace Formulas
             for (int i = 0; i < formula.Length; i++)
             {
                 testToken.MoveNext();
-               
-            //  FIGURE OUT HOW TO ACCESS THE ELEMENTS OF AN IENUMERATOR
+
+                //  FIGURE OUT HOW TO ACCESS THE ELEMENTS OF AN IENUMERATOR
 
                 string token = testToken.Current;
 
@@ -84,8 +84,7 @@ namespace Formulas
                 if (formStack.Count > 0 && output >= 0 && (formStack.Peek() == "/" || formStack.Peek() == "*"
                     || formStack.Peek() == "+" || formStack.Peek() == "-"))
                 {
-                    formStack.Pop();//Pop the operator and operand on the stack.
-                    formStack.Pop();
+                    formStack.Push(token);
                     continue;
                 }
                 if ((!isOperator(token)) && (formStack.Count > 0) && (output >= 0)
@@ -117,20 +116,32 @@ namespace Formulas
                 }
                 if (formStack.Count > 0 && token == ")") //If the stack is full, pop until we see a "("
                 {
+                    Stack<String> tempStack = new Stack<string>();
                     while (formStack.Count > 0)
                     {
                         if (formStack.Peek() != "(")
                         {
-                            formStack.Pop();
+                            tempStack.Push(formStack.Pop());
+                        }
+
+                        if (formStack.Peek() == "(")
+                        {
+                            break;
                         }
                     }
+
                     if (formStack.Count == 0)//We never saw a "("
                     {
                         throw new FormulaFormatException("Formula invalid. Too many closing parenteses.");
                     }
-                    if (formStack.Peek() == "(")//We found a "("
+                    if (formStack.Peek() == "(")//We found a "(", put everything back on the stack.
                     {
-                        formStack.Pop();
+                        while (tempStack.Count > 0)
+                        {
+                            formStack.Push(tempStack.Pop());  
+                        }
+
+                        formStack.Push(token);
                         continue;
                     }
                 }
@@ -160,6 +171,12 @@ namespace Formulas
                 }
                 if (Char.IsLetter(token[0]) && formStack.Count > 0 && (isOperator(formStack.Peek()) || formStack.Peek() == "("))//Have an operator or an open paren.
                 {
+                    if (isOperator(formStack.Peek()))
+                    {
+                        formStack.Push(token);
+                        continue;
+                    }
+
                     formStack.Push(token);
                     continue;
                 }
@@ -167,7 +184,27 @@ namespace Formulas
                 {
                     throw new FormulaFormatException("Formula invalid. Two operands adjacent.");
                 }
+
+                if (Char.IsLetter(token[0]) && formStack.Count > 0 && (formStack.Peek() == "/" || formStack.Peek() == "*"
+                  || formStack.Peek() == "+" || formStack.Peek() == "-"))
+                {
+                    formStack.Push(token);
+                    continue;
+                }
             }
+            //if (formStack.Count > 0 && formStack.Peek() == ")")//If we made it to the end of a string and ended with parentheses at the end, empty stack.
+            //{
+
+            //    while (formStack.Count != 0)
+            //    {
+            //        formStack.Pop();
+            //    }
+            //}
+
+            //if (formStack.Count > 0)
+            //{
+            //    throw new FormulaFormatException("Formula invalid");
+            //}
         }
 
         /// <summary>
