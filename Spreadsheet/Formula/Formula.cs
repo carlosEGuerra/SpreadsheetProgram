@@ -51,10 +51,9 @@ namespace Formulas
             Stack<string> formStack = new Stack<string>();
             s = GetTokens(formula);//Convert string to tokens, one at a time. Deal with them on the stacks accordingly.
             testToken = s.GetEnumerator();
-            for (int i = 0; i < formula.Length; i++)
+            while (testToken.MoveNext())//FIX LOOPING CONDITION TO END WITH ENUMERATOR
             {
-                testToken.MoveNext();
-
+                
                 //  FIGURE OUT HOW TO ACCESS THE ELEMENTS OF AN IENUMERATOR
 
                 string token = testToken.Current;
