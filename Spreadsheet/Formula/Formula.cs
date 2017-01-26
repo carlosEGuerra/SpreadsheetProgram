@@ -47,26 +47,31 @@ namespace Formulas
 
             //Deal with the formula, using evaluation of stacks.
             IEnumerable<string> s;
+            IEnumerator<string> testToken;
             Stack<string> formStack = new Stack<string>();
+            s = GetTokens(formula);//Convert string to tokens, one at a time. Deal with them on the stacks accordingly.
+            testToken = s.GetEnumerator();
             for (int i = 0; i < formula.Length; i++)
             {
-                s = GetTokens(formula);//Convert string to tokens, one at a time. Deal with them on the stacks accordingly.
+                testToken.MoveNext();
+               
+            //  FIGURE OUT HOW TO ACCESS THE ELEMENTS OF AN IENUMERATOR
 
-                string token = s.ToString();
-                //string topStack = "";
-                //if(formStack.Count > 0)//Hold the value at the top of the stack.
-                //{
-                //   topStack = formStack.Peek();
-                //}
+                string token = testToken.Current;
 
-                double output;
+                double output = -1;
                 if (Double.TryParse((token), out output) && output < 0)//Check for negative numbers
                 {
                     throw new FormulaFormatException("Invalid token found, negative numbers not allowed.");
                 }
-                
+
+                if (!Double.TryParse((token), out output))//Check for negative numbers
+                {
+                    output = -1;
+                }
+
                 //CHECKS FOR INVALID CHARACTERS (not an operator, a variable, or an open/closed paren)
-                if(!isOperator(token) && !(output > 0) && !Char.IsLetter(token[0]) && token != "(" && token != ")")
+                if ((!isOperator(token)) && !(output > 0) && !Char.IsLetter(token[0]) && token != "(" && token != ")")
                 {
                     throw new FormulaFormatException("Invalid token. Symbol not allowed.");
                 }
@@ -83,8 +88,8 @@ namespace Formulas
                     formStack.Pop();
                     continue;
                 }
-                if (formStack.Count > 0 && output >= 0
-                    && (formStack.Peek() != "(") || !isOperator(formStack.Peek()))//No paren/operand on stack.
+                if ((!isOperator(token)) && (formStack.Count > 0) && (output >= 0)
+                    && ((formStack.Peek() != "(") || !isOperator(formStack.Peek())))//No paren/operand on stack.
                 {
                     throw new FormulaFormatException("Formula format invalid. Two operands in sequence.");
                 }
@@ -148,17 +153,17 @@ namespace Formulas
                     continue;
                 }
                 //IF WE HAVE A VARIABLE.
-                if(formStack.Count == 0 && Char.IsLetter(token[0]))
+                if (formStack.Count == 0 && Char.IsLetter(token[0]))
                 {
                     formStack.Push(token);
                     continue;
                 }
-                if(Char.IsLetter(token[0]) && formStack.Count > 0 && (isOperator(formStack.Peek()) || formStack.Peek() == "("))//Have an operator or an open paren.
+                if (Char.IsLetter(token[0]) && formStack.Count > 0 && (isOperator(formStack.Peek()) || formStack.Peek() == "("))//Have an operator or an open paren.
                 {
                     formStack.Push(token);
                     continue;
                 }
-                if(Char.IsLetter(token[0]) && formStack.Count > 0 && (!isOperator(formStack.Peek()) || formStack.Peek() != "("))//Have no operator or open paren.
+                if (Char.IsLetter(token[0]) && formStack.Count > 0 && (!isOperator(formStack.Peek()) || formStack.Peek() != "("))//Have no operator or open paren.
                 {
                     throw new FormulaFormatException("Formula invalid. Two operands adjacent.");
                 }
