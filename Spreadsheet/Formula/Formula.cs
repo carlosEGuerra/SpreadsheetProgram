@@ -86,17 +86,28 @@ namespace Formulas
                     formStack.Push(token);
                     continue;
                 }
+
+                if(formStack.Count > 0 && formStack.Peek() == "(")
+                {
+                    formStack.Push(token);
+                    continue;
+                }
                 if (formStack.Count > 0 && output >= 0 && (formStack.Peek() == "/" || formStack.Peek() == "*"
                     || formStack.Peek() == "+" || formStack.Peek() == "-"))
                 {
                     formStack.Push(token);
                     continue;
                 }
-                if ((!isOperator(token)) && (formStack.Count > 0) && (output >= 0)
-                    && ((formStack.Peek() != "(") || !isOperator(formStack.Peek())))//No paren/operand on stack.
+                if(output >= 0 && formStack.Count > 0 && !(isOperator(token) || formStack.Peek() == "("))
                 {
                     throw new FormulaFormatException("Formula format invalid. Two operands in sequence.");
                 }
+                
+                //if ((!isOperator(token)) && (formStack.Count > 0) && (output >= 0)
+                //    && ((formStack.Peek() != "(") || !isOperator(formStack.Peek())))//No paren/operand on stack.
+                //{
+                //    throw new FormulaFormatException("Formula format invalid. Two operands in sequence.");
+                //}
                 //IF WE HAVE AN OPEN PARENTESES.
                 if (formStack.Count == 0 && token == "(")//Stack empty.
                 {

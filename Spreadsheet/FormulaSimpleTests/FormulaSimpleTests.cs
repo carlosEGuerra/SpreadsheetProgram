@@ -171,6 +171,27 @@ namespace FormulaTestCases
         }
 
         /// <summary>
+        /// Lots of parenteses and tokens.
+        /// </summary>
+        [TestMethod]
+        public void Evaluate6()
+        {
+            Formula f = new Formula("(1) - (1+1+1) - 1");
+            Assert.AreEqual(f.Evaluate(Lookup4), -3, 1e-6);
+        }
+
+        /// <summary>
+        /// Should report an error because of operator without operands.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(FormulaFormatException))]
+        public void Evaluate7()
+        {
+            Formula f = new Formula("(1) (-) (1+1+1) - 1");
+            Assert.AreEqual(f.Evaluate(Lookup4), -4, 1e-6);
+        }
+
+        /// <summary>
         /// A Lookup method that maps x to 4.0, y to 6.0, and z to 8.0.
         /// All other variables result in an UndefinedVariableException.
         /// </summary>
