@@ -223,7 +223,7 @@ namespace Formulas
             }
 
 
-            //Operates according to the stacks
+            //Operates according to the operator indicated at the top of the stacks
             double value = 0;
             string operatorVal = "";
             while(operatorStack.Count != 0)
