@@ -41,9 +41,32 @@ namespace FormulaTestCases
         /// </summary>
         [TestMethod]
         [ExpectedException(typeof(FormulaFormatException))]
-        public void Construct3()
+        public void Construct3() 
         {
             Formula f = new Formula("2 3");
+        }
+
+        /// <summary>
+        /// Syntax error test testing paranthesis
+        /// </summary>
+        [TestMethod]
+        public void Construct4()
+        {
+            Formula f = new Formula("(2+  4)");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(FormulaFormatException))]
+        public void Construct5()
+        {
+            Formula f = new Formula("4+");
+        }
+
+
+        [TestMethod]
+        public void correctConstructor()
+        {
+            Formula f = new Formula("4 + 4 * ( 8 + 8 )");
         }
 
         /// <summary>
@@ -105,6 +128,13 @@ namespace FormulaTestCases
         {
             Formula f = new Formula("(x + y) * (z / x) * 1.0");
             Assert.AreEqual(f.Evaluate(Lookup4), 20.0, 1e-6);
+        }
+
+        [TestMethod]
+        public void normalEqWithoutVar()
+        {
+            Formula f = new Formula("2 + 3+ 6");
+            Assert.AreEqual(f.Evaluate(v => 0), 11);
         }
 
         /// <summary>
