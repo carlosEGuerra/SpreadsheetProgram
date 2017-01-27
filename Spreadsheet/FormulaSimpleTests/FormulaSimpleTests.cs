@@ -55,15 +55,59 @@ namespace FormulaTestCases
         {
             Formula f = new Formula("(+3");
         }
-        ///// <summary>
-        ///// Another syntax error.
-        ///// </summary>
-        //[TestMethod]
-        //[ExpectedException(typeof(FormulaFormatException))]
-        //public void Construct4()
-        //{
-        //    Formula f = new Formula("((2++ (3");
-        //}
+
+        /// <summary>
+        /// Tests for an operand immediately after a parentheses.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(FormulaFormatException))]
+        public void ConstructTooManyOpenParentheses()
+        {
+            Formula f = new Formula("((())");
+        }
+
+        /// <summary>
+        /// Another syntax error.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(FormulaFormatException))]
+        public void Construct4()
+        {
+            Formula f = new Formula("((2++ (3");
+        }
+
+        /// <summary>
+        /// Another syntax error.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(FormulaFormatException))]
+        public void NegativeNumberCheck()
+        {
+            Formula f = new Formula("-1");
+        }
+
+        /// <summary>
+        /// Another syntax error.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(FormulaFormatException))]
+        public void NoOperandsCheck()
+        {
+            Formula f = new Formula("+");
+        }
+
+        /// <summary>
+        /// Another syntax error.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(FormulaFormatException))]
+        public void DivideByZero()
+        {
+            Formula f = new Formula("5/0");
+            f.Evaluate(Lookup4);
+
+        }
+
 
         /// <summary>
         /// Makes sure that "2+3" evaluates to 5.  Since the Formula

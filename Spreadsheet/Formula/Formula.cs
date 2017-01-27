@@ -15,12 +15,7 @@ namespace Formulas
     /// are not allowed.)
     /// </summary>
     public class Formula
-    {
-        /// <summary>
-        /// A stack to make sure we have a valid formula.
-        /// </summary>
-        private Stack<string> formStack = new Stack<string>();
-
+    { 
         /// <summary>
         /// Saves the enumerable object so we only have to GetTokens once.
         /// </summary>
@@ -47,6 +42,8 @@ namespace Formulas
         /// </summary>
         public Formula(String formula)
         {
+
+            Stack<string> formStack = new Stack<string>();
             finalForm = formula;
             //Check for tokens.
             //No tokens, throw FormulaFormatException.
@@ -142,14 +139,14 @@ namespace Formulas
                     {
                         throw new FormulaFormatException("Formula invalid. Too many closing parenteses.");
                     }
-                    if (formStack.Peek() == "(")//We found a "(", put everything back on the stack.
-                    {
-                        while (tempStack.Count > 0)
+                    if (formStack.Peek() == "(")//We found a "(", pop it, put everything back on the stack.
+                   {
+                        formStack.Pop();
+                        while (tempStack.Count > 0) //
                         {
                             formStack.Push(tempStack.Pop());
                         }
 
-                        formStack.Push(token);
                         continue;
                     }
                 }
@@ -200,19 +197,10 @@ namespace Formulas
                     continue;
                 }
             }
-            //if (formStack.Count > 0 && formStack.Peek() == ")")//If we made it to the end of a string and ended with parentheses at the end, empty stack.
-            //{
-
-            //    while (formStack.Count != 0)
-            //    {
-            //        formStack.Pop();
-            //    }
-            //}
-
-            //if (formStack.Count > 0)
-            //{
-            //    throw new FormulaFormatException("Formula invalid");
-            //}
+            if(formStack.Count > 0 && formStack.Contains("("))
+            {
+                throw new FormulaFormatException("Formula invalid, not enough closing parentheses.");
+            }
         }
 
         /// <summary>
@@ -307,6 +295,10 @@ namespace Formulas
                     try
                     {
                          numVal = lookup(token);
+                         if(numVal < 0)
+                        {
+                            throw new FormulaEvaluationException("Negative numbers not allowed.");
+                        }
                     }
                     catch
                     {
@@ -338,6 +330,10 @@ namespace Formulas
                     try
                     {
                         numVal = lookup(token);
+                        if (numVal < 0)
+                        {
+                            throw new FormulaEvaluationException("Negative numbers not allowed.");
+                        }
                     }
                     catch
                     {
