@@ -17,6 +17,15 @@ namespace Formulas
     public class Formula
     {
         /// <summary>
+        /// A stack to make sure we have a valid formula.
+        /// </summary>
+        private Stack<string> formStack = new Stack<string>();
+
+        /// <summary>
+        /// Saves the enumerable object so we only have to GetTokens once.
+        /// </summary>
+        private string finalForm;
+        /// <summary>
         /// Creates a Formula from a string that consists of a standard infix expression composed
         /// from non-negative floating-point numbers (using C#-like syntax for double/int literals), 
         /// variable symbols (a letter followed by zero or more letters and/or digits), left and right
@@ -38,9 +47,10 @@ namespace Formulas
         /// </summary>
         public Formula(String formula)
         {
+            finalForm = formula;
             //Check for tokens.
             //No tokens, throw FormulaFormatException.
-            if (formula == null || formula == "")
+            if (finalForm == null || finalForm == "")
             {
                 throw new FormulaFormatException("No tokens given, formula format is invalid.");
             }
@@ -48,12 +58,11 @@ namespace Formulas
             //Deal with the formula, using evaluation of stacks.
             IEnumerable<string> s;
             IEnumerator<string> testToken;
-            Stack<string> formStack = new Stack<string>();
-            s = GetTokens(formula);//Convert string to tokens, one at a time. Deal with them on the stacks accordingly.
+            s = GetTokens(finalForm);//Convert string to tokens, one at a time. Deal with them on the stacks accordingly.
             testToken = s.GetEnumerator();
             while (testToken.MoveNext())//FIX LOOPING CONDITION TO END WITH ENUMERATOR
             {
-                
+
                 //  FIGURE OUT HOW TO ACCESS THE ELEMENTS OF AN IENUMERATOR
 
                 string token = testToken.Current;
@@ -137,7 +146,7 @@ namespace Formulas
                     {
                         while (tempStack.Count > 0)
                         {
-                            formStack.Push(tempStack.Pop());  
+                            formStack.Push(tempStack.Pop());
                         }
 
                         formStack.Push(token);
@@ -231,7 +240,248 @@ namespace Formulas
         /// </summary>
         public double Evaluate(Lookup lookup)
         {
-            return 0;
+            Stack<string> opStack = new Stack<string>();
+            Stack<Double> valStack = new Stack<Double>();
+
+            IEnumerable<string> s;
+            IEnumerator<string> testToken;
+            s = GetTokens(finalForm);//Convert string to tokens, one at a time. Deal with them on the stacks accordingly.
+            testToken = s.GetEnumerator();
+
+            //testToken.Reset(); //Move the iterator back to the beginning of the formula.
+            while (testToken.MoveNext())
+            {
+                string token = testToken.Current;
+
+                double output = -1;
+                if (Double.TryParse((token), out output) && output < 0)//Check for negative numbers
+                {
+                    throw new FormulaFormatException("Invalid token found, negative numbers not allowed.");
+                }
+
+                if (!Double.TryParse((token), out output))//Check for negative numbers
+                {
+                    output = -1;
+                }
+
+                //t IS A DOUBLE
+
+                //If * or / is at the top of the operator stack, pop the value stack, pop the operator stack,
+                //and apply the popped operator to t and the popped number. Push the result onto the value stack. 
+                if (output >= 0 && opStack.Count > 0 && (opStack.Peek() == "*" || opStack.Peek() == "/"))
+                {
+                    double total = 0;
+                    if (opStack.Peek() == "*")
+                    {
+                        total = output * valStack.Pop();
+                    }
+                    if (opStack.Peek() == "/")
+                    {
+                        total = valStack.Pop() / output; //Check for divide by zero error. ***ASK TA IF WE HANDLE THIS**
+                    }
+                    opStack.Pop();
+                    valStack.Push(total);
+                    continue;
+                }
+                //Otherwise, push t onto the value stack
+                if (valStack.Count >= 0 && output >= 0)
+                {
+                    valStack.Push(output);
+                    continue;
+                }
+
+                //t IS A VARIABLE
+
+                //Proceed as in the previous case, using the looked-up value of t in place of t
+                if (Char.IsLetter(token[0]) && opStack.Count > 0 && (opStack.Peek() == "*" || opStack.Peek() == "/"))
+                {
+                    double total = 0;
+                    double numVal;
+                    try
+                    {
+                         numVal = lookup(token);
+                    }
+                    catch
+                    {
+                        throw new FormulaEvaluationException("No lookup value given.");
+                    }
+                    if (opStack.Peek() == "*")
+                    {
+                        total = numVal * valStack.Pop();
+                    }
+                    if (opStack.Peek() == "/")
+                    {
+                        total = valStack.Pop() / numVal; //Check for divide by zero error. ***ASK TA IF WE HANDLE THIS**
+                    }
+                    opStack.Pop();
+                    valStack.Push(total);
+                    continue;
+                }
+                //Otherwise, push t onto the value stack
+                if (Char.IsLetter(token[0]))
+                {
+                    double numVal;
+                    try
+                    {
+                        numVal = lookup(token);
+                    }
+                    catch
+                    {
+                        throw new FormulaEvaluationException("No lookup value given.");
+                    }
+                    valStack.Push(numVal);
+                    continue;
+                }
+
+                //t IS A "+" OR "-"
+
+                //If + or - is at the top of the operator stack, pop the value stack twice and the operator stack once.
+                //Apply the popped operator to the popped numbers. Push the result onto the value stack.
+                if ((token == "+" || token == "-") && opStack.Count > 0)
+                {
+                    double val1;
+                    double val2;
+                    double total;
+                    if (opStack.Peek() == "+")
+                    {
+                        val1 = valStack.Pop();
+                        val2 = valStack.Pop();
+                        total = val2 + val1;
+                        valStack.Push(total);
+                    }
+
+                    if (opStack.Peek() == "-")
+                    {
+                        val1 = valStack.Pop();
+                        val2 = valStack.Pop();
+                        total = val2 - val1;
+                        valStack.Push(total);
+                    }
+
+                    if (opStack.Peek() == "-" || opStack.Peek() == "+")
+                    {
+                        opStack.Pop();
+                    }
+
+
+                    //Whether or not you did the first step, push t onto the operator stack
+                    opStack.Push(token);
+                    continue;
+                }
+
+                if((token == "+" || token == "-") && opStack.Count == 0)
+                {
+                    //Whether or not you did the first step, push t onto the operator stack
+                    opStack.Push(token);
+                    continue;
+                }
+
+
+
+                //t IS A "/" OR "*" 
+                if (token == "/" || token == "*") //Push t onto the operator stack
+                {
+                    opStack.Push(token);
+                    continue;
+                }
+
+                //t IS A "("
+                if (token == "(")
+                {
+                    opStack.Push(token);//Push t onto the operator stack
+                    continue;
+                }
+
+                //t IS A ")"
+                if (token == ")")
+                {
+                    //If + or - is at the top of the operator stack, pop the value stack twice and the operator stack once.
+                    //Apply the popped operator to the popped numbers. Push the result onto the value stack.
+                    if (opStack.Count > 0 && (opStack.Peek() == "+" || opStack.Peek() == "-"))
+                    {
+                        double val1 = valStack.Pop();
+                        double val2 = valStack.Pop();
+                        double total;
+                        if (opStack.Peek() == "+")
+                        {
+                            total = val2 + val1;
+                            valStack.Push(total);
+                        }
+
+                        if (opStack.Peek() == "-")
+                        {
+                            total = val2 - val1;
+                            valStack.Push(total);
+                        }
+
+                        opStack.Pop();
+                    }
+
+                    //Whether or not you did the first step, the top of the operator stack will be a (.Pop it.
+                    if (opStack.Count > 0)
+                    {
+                        opStack.Pop();
+                    }
+
+                    //After you have completed the previous step, if *or / is at the top of the operator stack, 
+                    //pop the value stack twice and the operator stack once. Apply the popped operator to the popped numbers. 
+                    //Push the result onto the value stack.
+                    if (opStack.Count > 0 && (opStack.Peek() == "/" || opStack.Peek() == "*"))
+                    {
+                        double val1 = valStack.Pop();
+                        double val2 = valStack.Pop();
+                        double total;
+                        if (opStack.Peek() == "*")
+                        {
+                            total = val2 * val1;
+                            valStack.Push(total);
+                        }
+
+                        if (opStack.Peek() == "/")
+                        {
+                            total = val2 / val1; //**MAKE EXCEPTION
+                            valStack.Push(total);
+                        }
+
+                        opStack.Pop();
+                    }
+                    continue;
+                }
+            }
+
+            //Operator stack is empty
+            //Value stack will contain a single number.  Pop it and report as the value of the expression
+            double value = -1;
+            if (opStack.Count == 0)
+            {
+                return valStack.Pop();
+            }
+
+            //Operator stack is not empty
+            //There will be exactly one operator on the operator stack, and it will be either + or -. 
+            //There will be exactly two values on the value stack. Apply the operator to the two values
+            //and report the result as the value of the expression.
+
+            if(opStack.Count > 0)
+            {
+                double val1 = valStack.Pop();
+                double val2 = valStack.Pop();
+                if (opStack.Peek() == "+")
+                {
+                    value = val2 + val1;
+                    valStack.Push(value);
+                }
+
+                if (opStack.Peek() == "-")
+                {
+                    value = val2 - val1;
+                    valStack.Push(value);
+                }
+
+                opStack.Pop();
+            }
+
+            return valStack.Pop();
         }
 
 
