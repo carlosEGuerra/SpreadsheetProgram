@@ -17,9 +17,10 @@ namespace Formulas
     public class Formula
     { 
         /// <summary>
-        /// Saves the enumerable object so we only have to GetTokens once.
+        /// Saves the string passed into formula for use later.
         /// </summary>
         private string finalForm;
+        
         /// <summary>
         /// Creates a Formula from a string that consists of a standard infix expression composed
         /// from non-negative floating-point numbers (using C#-like syntax for double/int literals), 
@@ -103,11 +104,6 @@ namespace Formulas
                     throw new FormulaFormatException("Formula format invalid. Two operands in sequence.");
                 }
                 
-                //if ((!isOperator(token)) && (formStack.Count > 0) && (output >= 0)
-                //    && ((formStack.Peek() != "(") || !isOperator(formStack.Peek())))//No paren/operand on stack.
-                //{
-                //    throw new FormulaFormatException("Formula format invalid. Two operands in sequence.");
-                //}
                 //IF WE HAVE AN OPEN PARENTESES.
                 if (formStack.Count == 0 && token == "(")//Stack empty.
                 {
