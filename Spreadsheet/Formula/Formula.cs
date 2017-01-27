@@ -277,7 +277,14 @@ namespace Formulas
                     }
                     if (opStack.Peek() == "/")
                     {
-                        total = valStack.Pop() / output; //Check for divide by zero error. ***ASK TA IF WE HANDLE THIS**
+                        try
+                        {
+                            total = valStack.Pop() / output; //Check for divide by zero error. ***ASK TA IF WE HANDLE THIS**
+                        }
+                        catch
+                        {
+                            throw new FormulaEvaluationException("Division by zero.");
+                        }
                     }
                     opStack.Pop();
                     valStack.Push(total);
@@ -311,7 +318,14 @@ namespace Formulas
                     }
                     if (opStack.Peek() == "/")
                     {
-                        total = valStack.Pop() / numVal; //Check for divide by zero error. ***ASK TA IF WE HANDLE THIS**
+                        try
+                        {
+                            total = valStack.Pop() / numVal;
+                        }
+                        catch
+                        {
+                            throw new FormulaEvaluationException("Division by zero.");
+                        }
                     }
                     opStack.Pop();
                     valStack.Push(total);
@@ -439,7 +453,7 @@ namespace Formulas
 
                         if (opStack.Peek() == "/")
                         {
-                            total = val2 / val1; //**MAKE EXCEPTION
+                            total = val2 / val1;
                             valStack.Push(total);
                         }
 

@@ -46,6 +46,15 @@ namespace FormulaTestCases
             Formula f = new Formula("2 3");
         }
 
+        /// <summary>
+        /// Tests for an operand immediately after a parentheses.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(FormulaFormatException))]
+        public void ConstructOperandNextToOpenParen()
+        {
+            Formula f = new Formula("(+3");
+        }
         ///// <summary>
         ///// Another syntax error.
         ///// </summary>
@@ -133,5 +142,6 @@ namespace FormulaTestCases
                 default: throw new UndefinedVariableException(v);
             }
         }
+
     }
 }
