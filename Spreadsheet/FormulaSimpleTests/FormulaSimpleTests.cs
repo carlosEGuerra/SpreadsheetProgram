@@ -41,7 +41,7 @@ namespace FormulaTestCases
         /// </summary>
         [TestMethod]
         [ExpectedException(typeof(FormulaFormatException))]
-        public void Construct3() 
+        public void Construct3()
         {
             Formula f = new Formula("2 3");
         }
@@ -124,7 +124,7 @@ namespace FormulaTestCases
         /// This uses one of each kind of token.
         /// </summary>
         [TestMethod]
-        public void Evaluate5 ()
+        public void Evaluate5()
         {
             Formula f = new Formula("(x + y) * (z / x) * 1.0");
             Assert.AreEqual(f.Evaluate(Lookup4), 20.0, 1e-6);
@@ -133,8 +133,23 @@ namespace FormulaTestCases
         [TestMethod]
         public void normalEqWithoutVar()
         {
-            Formula f = new Formula("2 + 3+ 6");
+            Formula f = new Formula("2 + 3 + 6");
             Assert.AreEqual(f.Evaluate(v => 0), 11);
+        }
+
+
+        [TestMethod]
+        public void testEquationWithOnlyVariable()
+        {
+            Formula f = new Formula("x + y * (y + z)");
+            Assert.AreEqual(f.Evaluate(Lookup4), 88);
+        }
+
+        [TestMethod]
+        public void testEquationWithOnlyVariableConverted()
+        {
+            Formula f = new Formula("4 + 6 * (6 + 8)");
+            Assert.AreEqual(f.Evaluate(Lookup4), 88);
         }
 
         /// <summary>
