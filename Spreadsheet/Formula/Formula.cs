@@ -43,21 +43,23 @@ namespace Formulas
         /// </summary>
         public Formula(String formula)
         {
-
-            Stack<string> formStack = new Stack<string>();
-            finalForm = formula;
             //Check for tokens.
             //No tokens, throw FormulaFormatException.
-            if (finalForm == null || finalForm == "")
+            if (string.IsNullOrWhiteSpace(formula)) //CORRECTED FAILED TEST: TESTED FOR formula == null, failed.
             {
                 throw new FormulaFormatException("No tokens given, formula format is invalid.");
             }
+
+            Stack<string> formStack = new Stack<string>();
+            finalForm = formula;
 
             //Deal with the formula, using evaluation of stacks.
             IEnumerable<string> s;
             IEnumerator<string> testToken;
             s = GetTokens(finalForm);//Convert string to tokens, one at a time. Deal with them on the stacks accordingly.
+        
             testToken = s.GetEnumerator();
+            
             while (testToken.MoveNext())//FIX LOOPING CONDITION TO END WITH ENUMERATOR
             {
 
@@ -77,7 +79,7 @@ namespace Formulas
                 }
 
                 //CHECKS FOR INVALID CHARACTERS (not an operator, a variable, or an open/closed paren)
-                if ((!isOperator(token)) && !(output > 0) && !Char.IsLetter(token[0]) && token != "(" && token != ")")
+                if ((!isOperator(token)) && !(output >= 0) && !Char.IsLetter(token[0]) && token != "(" && token != ")")//FIXED TEST 17 WITH EQUALS SIGN
                 {
                     throw new FormulaFormatException("Invalid token. Symbol not allowed.");
                 }
@@ -88,7 +90,7 @@ namespace Formulas
                     continue;
                 }
 
-                if(formStack.Count > 0 && formStack.Peek() == "(")
+                if(formStack.Count > 0 && formStack.Peek() == "(" && !isOperator(token))//CORRECTED TEST 10, ADDED ISOPERATOR CHECK.
                 {
                     formStack.Push(token);
                     continue;
@@ -136,7 +138,7 @@ namespace Formulas
                             tempStack.Push(formStack.Pop());
                         }
 
-                        if (formStack.Peek() == "(")
+                        if (formStack.Count == 0|| formStack.Peek() == "(")// FIXED TEST 2 AND 3: NEEDED TO BREAK BEFORE PEEKING AT AN EMPTY STACK.
                         {
                             break;
                         }
@@ -203,6 +205,11 @@ namespace Formulas
                     formStack.Push(token);
                     continue;
                 }
+            }
+
+            if(formStack.Count > 0 && isOperator(formStack.Peek()))//CORRECTED FOR TEST 15.
+            {
+                throw new FormulaFormatException("Formula cannot end in operator.");
             }
             if(formStack.Count > 0 && formStack.Contains("("))
             {
@@ -272,15 +279,15 @@ namespace Formulas
                     }
                     if (opStack.Peek() == "/")
                     {
-                        try
+                        if(output == 0)//ASK ABOUT THIS. WAS INFORMED BY TA TO DO A TRY CATCH.
                         {
-                            total = valStack.Pop() / output; //Check for divide by zero error. ***ASK TA IF WE HANDLE THIS**
+                            throw new FormulaEvaluationException("Cannot divide by zero.");
                         }
-                        catch
-                        {
-                            throw new FormulaEvaluationException("Division by zero.");
-                        }
+
+                        total = valStack.Pop() / output; //Check for divide by zero error. ***ASK TA IF WE HANDLE THIS**
+                   
                     }
+
                     opStack.Pop();
                     valStack.Push(total);
                     continue;
@@ -456,6 +463,10 @@ namespace Formulas
 
                         if (opStack.Peek() == "/")
                         {
+                            if(val1 == 0)
+                            {
+                                throw new FormulaEvaluationException("Cannot divide by zero.");//FIXED FOR TEST 18 AND 18A: CHECK FOR DIVIDE BY ZERO.
+                            }
                             total = val2 / val1;
                             valStack.Push(total);
                         }

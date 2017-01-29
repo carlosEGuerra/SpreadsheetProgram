@@ -100,7 +100,7 @@ namespace FormulaTestCases
         /// Another syntax error.
         /// </summary>
         [TestMethod]
-        [ExpectedException(typeof(FormulaFormatException))]
+        [ExpectedException(typeof(FormulaEvaluationException))]
         public void DivideByZero()
         {
             Formula f = new Formula("5/0");
