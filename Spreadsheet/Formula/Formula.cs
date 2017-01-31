@@ -48,7 +48,7 @@ namespace Formulas
         public Formula(String formula)
         {
             //Checks to see if there will be at least 1 token
-            if (string.IsNullOrEmpty(formula) || formula.Length == 0)
+            if (string.IsNullOrWhiteSpace(formula) || formula.Length == 0)
             {
                 throw new FormulaFormatException("Sorry, but to construct a formula we need input");
             }
@@ -210,7 +210,7 @@ namespace Formulas
             foreach (string t in enumForm)
             {
                 //ignores whitespace tokens
-                if (string.IsNullOrWhiteSpace(t))
+                if (string.isnul(t))
                 {
                     continue;
                 }
@@ -237,8 +237,12 @@ namespace Formulas
                         {
                             valueStack.Push(valA * valB);
                         }
-                        else if(op.Equals("/") && valB != 0)
+                        else if(op.Equals("/"))
                         {
+                            if(valB == 0)
+                            {
+                                throw new FormulaEvaluationException("Divided By Zero");
+                            }
                             valueStack.Push(valA / valB);
                         }
                     }
@@ -269,8 +273,12 @@ namespace Formulas
                         {
                             valueStack.Push(valA * valB);
                         }
-                        else if (op.Equals("/") && valB != 0)
+                        else if (op.Equals("/"))
                         {
+                            if(valB == 0)
+                            {
+                                throw new FormulaEvaluationException("Divided by zero");
+                            }
                             valueStack.Push(valA / valB);
                         }
                     }
@@ -355,7 +363,7 @@ namespace Formulas
                         {
                             if(valB == 0)
                             {
-                                throw new DivideByZeroException("sorry but you divided by zero");
+                                throw new FormulaEvaluationException("sorry but you divided by zero");
                             }
                             valueStack.Push(valA / valB);
                         }
