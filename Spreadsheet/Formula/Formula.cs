@@ -210,7 +210,7 @@ namespace Formulas
             foreach (string t in enumForm)
             {
                 //ignores whitespace tokens
-                if (string.isnul(t))
+                if (string.IsNullOrWhiteSpace(t))
                 {
                     continue;
                 }
