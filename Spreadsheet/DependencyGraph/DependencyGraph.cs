@@ -48,11 +48,17 @@ namespace Dependencies
     /// </summary>
     public class DependencyGraph
     {
+        Dictionary<string, string> depGraph;  //a Dependency Graph of (dependee, dependent)
+        Dictionary<string, List<string>> dependent; //a dependent with a list of dependees
+        Dictionary<string, List<string>> dependee; //a dependee with a list of dependents
         /// <summary>
         /// Creates a DependencyGraph containing no dependencies.
         /// </summary>
         public DependencyGraph()
         {
+            depGraph = new Dictionary<string, string>();
+            dependee = new Dictionary<string, List<string>>();
+            dependent = new Dictionary<string, List<string>>();
         }
 
         /// <summary>
@@ -60,7 +66,7 @@ namespace Dependencies
         /// </summary>
         public int Size
         {
-            get { return 0; }
+            get { return depGraph.Count; }
         }
 
         /// <summary>
@@ -68,7 +74,7 @@ namespace Dependencies
         /// </summary>
         public bool HasDependents(string s)
         {
-            return false;
+            return dependee.ContainsKey(s);
         }
 
         /// <summary>
@@ -76,7 +82,7 @@ namespace Dependencies
         /// </summary>
         public bool HasDependees(string s)
         {
-            return false;
+            return dependent.ContainsKey(s);
         }
 
         /// <summary>
@@ -84,7 +90,9 @@ namespace Dependencies
         /// </summary>
         public IEnumerable<string> GetDependents(string s)
         {
-            return null;
+            List<string> dependentList;
+            dependee.TryGetValue(s, out dependentList);
+            return dependentList;
         }
 
         /// <summary>
@@ -92,7 +100,9 @@ namespace Dependencies
         /// </summary>
         public IEnumerable<string> GetDependees(string s)
         {
-            return null;
+            List<string> dependeeList;
+            dependent.TryGetValue(s, out dependeeList);
+            return dependeeList;
         }
 
         /// <summary>
