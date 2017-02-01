@@ -80,6 +80,10 @@ namespace Dependencies
         /// </summary>
         public bool HasDependents(string s)
         {
+            if (!dependee.ContainsKey(s))
+            {
+                return false;
+            }
             return dependee[s].Count != 0;
         }
 
@@ -88,6 +92,10 @@ namespace Dependencies
         /// </summary>
         public bool HasDependees(string s)
         {
+            if (!dependent.ContainsKey(s))
+            {
+                return false;
+            }
             return dependent[s].Count != 0;
         }
 
