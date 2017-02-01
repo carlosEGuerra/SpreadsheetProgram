@@ -48,17 +48,15 @@ namespace Dependencies
     /// </summary>
     public class DependencyGraph
     {
-        Dictionary<string, string> depGraph;  //a Dependency Graph of (dependee, dependent)
-        Dictionary<string, List<string>> dependent; //a dependent with a list of dependees
-        Dictionary<string, List<string>> dependee; //a dependee with a list of dependents
+        Dictionary<string, HashSet<string>> dependent; //a dependent with a list of dependees
+        Dictionary<string, HashSet<string>> dependee; //a dependee with a list of dependents
         /// <summary>
         /// Creates a DependencyGraph containing no dependencies.
         /// </summary>
         public DependencyGraph()
         {
-            depGraph = new Dictionary<string, string>();
-            dependee = new Dictionary<string, List<string>>();
-            dependent = new Dictionary<string, List<string>>();
+            dependee = new Dictionary<string, HashSet<string>>();
+            dependent = new Dictionary<string, HashSet<string>>();
         }
 
         /// <summary>
@@ -66,7 +64,12 @@ namespace Dependencies
         /// </summary>
         public int Size
         {
-            get { return depGraph.Count; }
+            get
+            {
+                int count = 0;
+
+                return count;
+            }   
         }
 
         /// <summary>
@@ -74,7 +77,7 @@ namespace Dependencies
         /// </summary>
         public bool HasDependents(string s)
         {
-            return dependee.ContainsKey(s);
+            return dependee[s].Count != 0;
         }
 
         /// <summary>
@@ -82,7 +85,7 @@ namespace Dependencies
         /// </summary>
         public bool HasDependees(string s)
         {
-            return dependent.ContainsKey(s);
+            return dependent[s].Count != 0;
         }
 
         /// <summary>
@@ -90,7 +93,7 @@ namespace Dependencies
         /// </summary>
         public IEnumerable<string> GetDependents(string s)
         {
-            List<string> dependentList;
+            HashSet<string> dependentList;
             dependee.TryGetValue(s, out dependentList);
             return dependentList;
         }
@@ -100,7 +103,7 @@ namespace Dependencies
         /// </summary>
         public IEnumerable<string> GetDependees(string s)
         {
-            List<string> dependeeList;
+            HashSet<string> dependeeList;
             dependent.TryGetValue(s, out dependeeList);
             return dependeeList;
         }
@@ -112,6 +115,32 @@ namespace Dependencies
         /// </summary>
         public void AddDependency(string s, string t)
         {
+            if (!dependee.ContainsKey(s))
+            {
+                dependee.Add(s, new HashSet<string>() { t });
+                dependent.Add(t, new HashSet<string>() { s });
+            }
+            else
+            {
+                if (!dependee.ContainsKey(t))
+                {
+                    dependee.Add(t, new HashSet<string>());
+                    dependee[t].Add(s);
+                }
+                else
+                {
+                    dependee[t].Add(s);
+                }
+                if (!dependent.ContainsKey(s))
+                {
+                    dependent.Add(s, new HashSet<string>());
+                    dependent[s].Add(t);
+                }
+                else
+                {
+                    dependent[s].Add(t);
+                }
+            }
         }
 
         /// <summary>
@@ -121,6 +150,11 @@ namespace Dependencies
         /// </summary>
         public void RemoveDependency(string s, string t)
         {
+            if (dependent.ContainsKey(s))
+            {
+                dependent[s].Remove(t);
+                dependee[t].Remove(s);
+            }
         }
 
         /// <summary>
@@ -130,6 +164,10 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependents(string s, IEnumerable<string> newDependents)
         {
+            if (dependee.ContainsKey(s))
+            {
+                dependee[s] = new HashSet<string>(newDependents);
+            }
         }
 
         /// <summary>
@@ -139,6 +177,10 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependees(string t, IEnumerable<string> newDependees)
         {
+            if (dependent.ContainsKey(t))
+            {
+                dependent[t] = new HashSet<string>(newDependees);
+            }
         }
     }
 }
