@@ -48,8 +48,8 @@ namespace Dependencies
     /// </summary>
     public class DependencyGraph
     {
-        Dictionary<string, HashSet<string>> dependent; //a dependent with a list of dependees
-        Dictionary<string, HashSet<string>> dependee; //a dependee with a list of dependents
+        private Dictionary<string, HashSet<string>> dependent; //a dependent with a list of dependees
+        private Dictionary<string, HashSet<string>> dependee; //a dependee with a list of dependents
         /// <summary>
         /// Creates a DependencyGraph containing no dependencies.
         /// </summary>
@@ -66,9 +66,12 @@ namespace Dependencies
         {
             get
             {
-                int count = 0;
-
-                return count;
+                int dependentCount = 0;
+                foreach(string s in dependee.Keys)
+                {
+                    dependentCount += dependee[s].Count;
+                }
+                return dependentCount;
             }   
         }
 
