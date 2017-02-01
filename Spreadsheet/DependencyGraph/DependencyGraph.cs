@@ -131,27 +131,19 @@ namespace Dependencies
                 dependee.Add(s, new HashSet<string>() { t });
                 dependent.Add(t, new HashSet<string>() { s });
             }
-            else
+            else if (!dependent.ContainsKey(t))
             {
-                if (!dependee.ContainsKey(t))
-                {
-                    dependee.Add(t, new HashSet<string>());
-                    dependee[t].Add(s);
-                }
-                else
-                {
-                    dependee[t].Add(s);
-                }
-                if (!dependent.ContainsKey(s))
-                {
-                    dependent.Add(s, new HashSet<string>());
-                    dependent[s].Add(t);
-                }
-                else
-                {
-                    dependent[s].Add(t);
-                }
+                dependent.Add(t, new HashSet<string>() { s });
             }
+
+            if (dependee.ContainsKey(s))
+            {
+                dependee[s].Add(t);
+            }
+            else if (dependent.ContainsKey(t))
+            {
+                dependent[t].Add(s);
+            }           
         }
 
         /// <summary>

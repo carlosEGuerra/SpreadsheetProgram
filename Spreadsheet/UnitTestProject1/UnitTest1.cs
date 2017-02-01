@@ -31,7 +31,7 @@ namespace UnitTestProject1
 
 
         [TestMethod]
-        public void TestReplaceWith1Dependent()
+        public void TestReplaceWith1Dependee()
         {
             DependencyGraph dg = new DependencyGraph();
             dg.AddDependency("s", "t");
@@ -102,6 +102,30 @@ namespace UnitTestProject1
             HashSet<string> hashTest = new HashSet<string>() { "1", "2", "3" };
             dg.ReplaceDependees("5", new HashSet<string>() { "1", "2", "3" });
             Assert.IsTrue(hashTest.SetEquals(dg.GetDependees("5")));
+        }
+
+        [TestMethod]
+        public void TestAddDependencyWithPreExistingKey()
+        {
+            DependencyGraph dg = new DependencyGraph();
+            dg.AddDependency("s", "t");
+            dg.AddDependency("d", "f");
+            dg.AddDependency("s", "f");
+            dg.AddDependency("d", "t");
+            HashSet<string> dependentsForS = new HashSet<string>() { "t", "f" };
+            Assert.IsTrue(dependentsForS.SetEquals(dg.GetDependents("s")));
+        }
+
+        [TestMethod]
+        public void TestExtremeCase()
+        {
+            DependencyGraph dg = new DependencyGraph();
+            Random rand = new Random();
+            for(int i = 0; i < 1e6; i++)
+            {
+                dg.AddDependency(rand.Next(50).ToString(), rand.Next(100000).ToString());
+            }
+
         }
     }
 }
