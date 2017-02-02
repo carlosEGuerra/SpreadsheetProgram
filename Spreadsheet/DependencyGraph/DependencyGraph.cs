@@ -50,10 +50,22 @@ namespace Dependencies
     public class DependencyGraph
     {
         /// <summary>
+        ///  The represnetation of the dependeees of a dependency graph as defined above.
+        /// </summary>
+        private Dictionary<string, HashSet<string>> dependees;
+
+        /// <summary>
+        /// The represnetation of the dependents of a dependency graph as defined above.
+        /// </summary>
+        private Dictionary<string, HashSet<string>> dependents;
+
+        /// <summary>
         /// Creates a DependencyGraph containing no dependencies.
         /// </summary>
         public DependencyGraph()
         {
+            dependees = new Dictionary<string, HashSet<string>>();
+            dependents = new Dictionary<string, HashSet<string>>();
         }
 
         /// <summary>
@@ -61,7 +73,7 @@ namespace Dependencies
         /// </summary>
         public int Size
         {
-            get { return 0; }
+            get { return dependents.Count; }
         }
 
         /// <summary>
@@ -69,6 +81,21 @@ namespace Dependencies
         /// </summary>
         public bool HasDependents(string s)
         {
+            if (s == null)
+            {
+                return false;
+            }
+
+            if (!dependees.ContainsKey(s))//If the string is not in our list, return false.
+            {
+                return false;
+            }
+
+            if (dependees[s].Count > 0)//Check the list under the Dependency.
+            {
+                return true;
+            }
+
             return false;
         }
 
@@ -77,6 +104,21 @@ namespace Dependencies
         /// </summary>
         public bool HasDependees(string s)
         {
+            if (s == null)
+            {
+                return false;
+            }
+
+            if (!dependents.ContainsKey(s))//If the string is not in our list, return false.
+            {
+                return false;
+            }
+
+            if (dependents[s].Count > 0)//If the dependent is in the list, check if anything still depends on it.
+            {
+                return true;
+            }
+
             return false;
         }
 
@@ -85,7 +127,8 @@ namespace Dependencies
         /// </summary>
         public IEnumerable<string> GetDependents(string s)
         {
-            return null;
+            IEnumerable<string> depList = dependees[s];
+            return depList;
         }
 
         /// <summary>
@@ -93,7 +136,8 @@ namespace Dependencies
         /// </summary>
         public IEnumerable<string> GetDependees(string s)
         {
-            return null;
+            IEnumerable<string> depList = dependents[s];
+            return depList;
         }
 
         /// <summary>
@@ -103,6 +147,42 @@ namespace Dependencies
         /// </summary>
         public void AddDependency(string s, string t)
         {
+            if (s == null || t == null)
+            {
+                return;
+            }
+
+            //DEAL WITH THE DEPENDEES FIRST.
+            if (!dependees.ContainsKey(s))//If we don't have the key s yet
+            {
+                dependees.Add(s, new HashSet<string>()); //Add s to the set.
+                dependees[s].Add(t); //Give it a dependent.
+            }
+
+            if (dependees.ContainsKey(s)) //If we have the key s already
+            {
+                if (!dependees[s].Contains(t)) //If it doesn't have t already
+                {
+                    dependees[s].Add(t); //Give it a dependent.
+                }
+            }
+
+            //THEN DEAL WITH THE DEPENDENTS
+            if (!dependents.ContainsKey(t)) //if we don't have t already.
+            {
+                dependents.Add(t, new HashSet<string>()); //Add t to the set.
+                dependents[t].Add(s); //Give it a dependee.
+            }
+
+            if (dependees.ContainsKey(t)) //If we have the key t already
+            {
+                if (!dependees[t].Contains(s)) //If it doesn't have s already
+                {
+                    dependees[t].Add(s); //Give it a dependent.
+                }
+            }
+
+            return;
         }
 
         /// <summary>
@@ -112,6 +192,36 @@ namespace Dependencies
         /// </summary>
         public void RemoveDependency(string s, string t)
         {
+            if (s == null || t == null)
+            {
+                return;
+            }
+
+            //If we don't have s or t, do nothing.
+            if (!dependees.ContainsKey(s) && !dependents.ContainsKey(t))
+            {
+                return;
+            }
+
+            //DEAL WITH THE DEPENDEES FIRST.
+            if (dependees.ContainsKey(s))//If we have the key s
+            {
+                if (dependees[s].Contains(t))//If s has t as dependent
+                {
+                    dependees[s].Remove(t);
+                }
+            }
+
+            //THEN DEAL WITH THE DEPENDENTS
+            if (dependents.ContainsKey(t)) //if we have t already.
+            {
+                if (dependents[t].Contains(s))//If t depends on s
+                {
+                    dependents[t].Remove(s);
+                }
+            }
+     
+            return;
         }
 
         /// <summary>
@@ -121,6 +231,13 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependents(string s, IEnumerable<string> newDependents)
         {
+            IEnumerator<string> depEnumerator = newDependents.GetEnumerator();
+
+            if (depEnumerator.MoveNext())
+            {
+
+            }
+
         }
 
         /// <summary>
@@ -131,5 +248,6 @@ namespace Dependencies
         public void ReplaceDependees(string t, IEnumerable<string> newDependees)
         {
         }
+
     }
 }
