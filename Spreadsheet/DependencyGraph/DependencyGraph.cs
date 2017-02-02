@@ -126,6 +126,15 @@ namespace Dependencies
         /// </summary>
         public void AddDependency(string s, string t)
         {
+            if (dependee.ContainsKey(s))
+            {
+                dependee[s].Add(t);
+            }
+            else if (dependent.ContainsKey(t))
+            {
+                dependent[t].Add(s);
+            }
+
             if (!dependee.ContainsKey(s))
             {
                 dependee.Add(s, new HashSet<string>() { t });
@@ -134,16 +143,7 @@ namespace Dependencies
             else if (!dependent.ContainsKey(t))
             {
                 dependent.Add(t, new HashSet<string>() { s });
-            }
-
-            if (dependee.ContainsKey(s))
-            {
-                dependee[s].Add(t);
-            }
-            else if (dependent.ContainsKey(t))
-            {
-                dependent[t].Add(s);
-            }           
+            }         
         }
 
         /// <summary>

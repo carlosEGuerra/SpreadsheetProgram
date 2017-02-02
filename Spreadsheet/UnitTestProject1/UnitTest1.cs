@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Dependencies;
 using System.Collections.Generic;
+using System.Text;
 
 namespace UnitTestProject1
 {
@@ -121,11 +122,12 @@ namespace UnitTestProject1
         {
             DependencyGraph dg = new DependencyGraph();
             Random rand = new Random();
+            StringBuilder s = new StringBuilder();
             for(int i = 0; i < 1e6; i++)
             {
-                dg.AddDependency(rand.Next(50).ToString(), rand.Next(100000).ToString());
+                dg.AddDependency(i.ToString(), s.ToString());
             }
-
+            Assert.AreEqual(1e6, dg.Size);
         }
     }
 }
