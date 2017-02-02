@@ -51,11 +51,15 @@ namespace Dependencies
     {
         /// <summary>
         ///  The represnetation of the dependeees of a dependency graph as defined above.
+        ///  In this dictionary representation, the key is the dependee and the value is a 
+        ///  HashSet contained within each key is its list of dependents.
         /// </summary>
         private Dictionary<string, HashSet<string>> dependees;
 
         /// <summary>
         /// The represnetation of the dependents of a dependency graph as defined above.
+        /// In this dictionary representation, the key is the dependent and the value is a 
+        /// HashSet contained within each key is its list of dependees.
         /// </summary>
         private Dictionary<string, HashSet<string>> dependents;
 
@@ -73,7 +77,16 @@ namespace Dependencies
         /// </summary>
         public int Size
         {
-            get { return dependents.Count; }
+            get
+            {
+                int count = 0;
+                foreach (string t in dependents.Keys)
+                {
+                    count = count + dependents[t].Count;
+                }
+            
+                return count;
+            }
         }
 
         /// <summary>
@@ -127,7 +140,12 @@ namespace Dependencies
         /// </summary>
         public IEnumerable<string> GetDependents(string s)
         {
-            IEnumerable<string> depList = dependees[s];
+            IEnumerable<string> depList = null;
+            if (dependees.ContainsKey(s))
+            {
+                depList = dependees[s];
+            }
+
             return depList;
         }
 
@@ -136,7 +154,12 @@ namespace Dependencies
         /// </summary>
         public IEnumerable<string> GetDependees(string s)
         {
-            IEnumerable<string> depList = dependents[s];
+            IEnumerable<string> depList = null;
+            if (dependents.ContainsKey(s))
+            {
+                depList = dependents[s];
+            }
+
             return depList;
         }
 
@@ -174,11 +197,11 @@ namespace Dependencies
                 dependents[t].Add(s); //Give it a dependee.
             }
 
-            if (dependees.ContainsKey(t)) //If we have the key t already
+            if (dependents.ContainsKey(t)) //If we have the key t already
             {
-                if (!dependees[t].Contains(s)) //If it doesn't have s already
+                if (!dependents[t].Contains(s)) //If it doesn't have s already
                 {
-                    dependees[t].Add(s); //Give it a dependent.
+                    dependents[t].Add(s); //Give it a dependent.
                 }
             }
 
@@ -220,7 +243,7 @@ namespace Dependencies
                     dependents[t].Remove(s);
                 }
             }
-     
+
             return;
         }
 
@@ -231,11 +254,24 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependents(string s, IEnumerable<string> newDependents)
         {
-            IEnumerator<string> depEnumerator = newDependents.GetEnumerator();
-
-            if (depEnumerator.MoveNext())
+            if (s == null)
             {
+                return;
+            }
 
+            IEnumerator<string> depEnumerator = newDependents.GetEnumerator();
+            string t;//New dependents to be added to s.
+
+            dependees[s].Clear();//Remove all dependents from s.
+
+            while (depEnumerator.MoveNext())
+            {
+                t = depEnumerator.Current;
+                if (t == null)
+                {
+                    return;
+                }
+                this.AddDependency(s, t); //Add all dependents to s.
             }
 
         }
@@ -247,6 +283,27 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependees(string t, IEnumerable<string> newDependees)
         {
+            if (t == null)
+            {
+                return;
+            }
+
+            IEnumerator<string> depEnumerator = newDependees.GetEnumerator();
+            string s;//New dependents to be added to s.
+
+            dependents[t].Clear();//Remove all dependents from s.
+
+            while (depEnumerator.MoveNext())
+            {
+                s = depEnumerator.Current;
+                if (s == null)
+                {
+                    return;
+                }
+
+                this.AddDependency(s, t); //Add all dependeess to t.
+            }
+            return;
         }
 
     }
