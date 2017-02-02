@@ -139,7 +139,6 @@ namespace Formulas
 
                 //Any token that immediately follows an opening parenthesis or an operator must be either a number, a variable, 
                 //or an opening parenthesis.
-
                 if (!String.IsNullOrEmpty(tokenPrior))
                 {
                     double testParse;
