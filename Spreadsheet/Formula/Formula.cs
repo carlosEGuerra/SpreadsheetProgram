@@ -117,10 +117,11 @@ namespace Formulas
                 {
                     parenthesisStack.Push("(");
                     openeningParen++;
+
                 }
                 else if (token.Equals(")"))
                 {
-                    if (!parenthesisStack.Peek().Equals("("))
+                    if (parenthesisStack.Count == 0 || !parenthesisStack.Peek().Equals("("))
                     {
                         throw new FormulaFormatException("Your missing a parenthesis");
                     }
@@ -128,6 +129,10 @@ namespace Formulas
                     {
                         parenthesisStack.Pop();
                         closingParen++;
+                        if(closingParen > openeningParen)
+                        {
+                            throw new FormulaFormatException("You have too many closing parenthesis");
+                        }
                     }
                 }
                 //checks if the number of opening parenthesis is smaller then the number of closing parenthesis
