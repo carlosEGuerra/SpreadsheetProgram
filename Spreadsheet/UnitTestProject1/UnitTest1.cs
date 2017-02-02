@@ -1,4 +1,6 @@
-﻿using System;
+﻿//Test Class made by Carlos Guerra, u0847821
+
+using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Dependencies;
 using System.Collections.Generic;
@@ -9,6 +11,9 @@ namespace UnitTestProject1
     [TestClass]
     public class UnitTest1
     {
+        /// <summary>
+        /// Tests the blank Dependency Grpah
+        /// </summary>
         [TestMethod]
         public void TestBlankDependency()
         {
@@ -18,6 +23,9 @@ namespace UnitTestProject1
             Assert.AreEqual(false, dg.HasDependents("s"));
         }
 
+        /// <summary>
+        /// Tests the dependencies graph with 1 dependency
+        /// </summary>
         [TestMethod]
         public void TestWith1Dependent()
         {
@@ -30,7 +38,9 @@ namespace UnitTestProject1
             Assert.AreEqual(true, dg.HasDependents("s"));
         }
 
-
+        /// <summary>
+        /// Tests having one dependee and 2 dependents
+        /// </summary>
         [TestMethod]
         public void TestReplaceWith1Dependee()
         {
@@ -41,7 +51,9 @@ namespace UnitTestProject1
             Assert.AreEqual(2, dg.Size);
         }
 
-
+        /// <summary>
+        /// Adds 1e5 dependencies and removes them all
+        /// </summary>
         [TestMethod]
         public void TestAddWith100000Dependencies()
         {
@@ -58,6 +70,9 @@ namespace UnitTestProject1
             Assert.AreEqual(0, dg.Size);
         }
 
+        /// <summary>
+        /// Tests replacing dependencies
+        /// </summary>
         [TestMethod]
         public void TestReplace()
         {
@@ -78,6 +93,9 @@ namespace UnitTestProject1
             Assert.IsTrue(hashTest.SetEquals(dg.GetDependents("0")));
         }
 
+        /// <summary>
+        /// Tests getting the dependencies
+        /// </summary>
         [TestMethod]
         public void TestGetDependees()
         {
@@ -92,6 +110,9 @@ namespace UnitTestProject1
             Assert.IsTrue(hashTest2.SetEquals(dg.GetDependees("10")));
         }
 
+        /// <summary>
+        /// Test replacing dependees with more than 1 item in new hash set
+        /// </summary>
         [TestMethod]
         public void TestReplaceDependees()
         {
@@ -105,6 +126,9 @@ namespace UnitTestProject1
             Assert.IsTrue(hashTest.SetEquals(dg.GetDependees("5")));
         }
 
+        /// <summary>
+        /// Tests addding dependency with a pre existing key
+        /// </summary>
         [TestMethod]
         public void TestAddDependencyWithPreExistingKey()
         {
@@ -117,6 +141,9 @@ namespace UnitTestProject1
             Assert.IsTrue(dependentsForS.SetEquals(dg.GetDependents("s")));
         }
 
+        /// <summary>
+        /// Adds 1e6 elements and replaces odd dependees with "3"
+        /// </summary>
         [TestMethod]
         public void TestExtremeCase()
         {
@@ -125,9 +152,18 @@ namespace UnitTestProject1
             StringBuilder s = new StringBuilder();
             for(int i = 0; i < 1e6; i++)
             {
-                dg.AddDependency(i.ToString(), s.ToString());
+                dg.AddDependency(i.ToString(), rand.Next().ToString());
+            }
+            for(int i = 1; i < 1e6; i += 2)
+            {
+                dg.ReplaceDependees(i.ToString(), new HashSet<string>() { "3" });
             }
             Assert.AreEqual(1e6, dg.Size);
+            HashSet<string> hashString = new HashSet<string>() { "3" };
+            for (int i = 1; i < 1e6; i += 2)
+            {
+                Assert.IsTrue(hashString.SetEquals(dg.GetDependees(i.ToString())));
+            }
         }
     }
 }

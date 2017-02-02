@@ -1,4 +1,5 @@
 ﻿// Skeleton implementation written by Joe Zachary for CS 3500, January 2017.
+// Student: Carlos Guerra, u0847821
 
 using System;
 using System.Collections.Generic;
@@ -138,7 +139,10 @@ namespace Dependencies
             if (!dependee.ContainsKey(s))
             {
                 dependee.Add(s, new HashSet<string>() { t });
-                dependent.Add(t, new HashSet<string>() { s });
+                if (!dependent.ContainsKey(t))
+                {
+                    dependent.Add(t, new HashSet<string>() { s });
+                }
             }
             else if (!dependent.ContainsKey(t))
             {
@@ -167,10 +171,7 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependents(string s, IEnumerable<string> newDependents)
         {
-            if (dependee.ContainsKey(s))
-            {
                 dependee[s] = new HashSet<string>(newDependents);
-            }
         }
 
         /// <summary>
@@ -180,10 +181,7 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependees(string t, IEnumerable<string> newDependees)
         {
-            if (dependent.ContainsKey(t))
-            {
-                dependent[t] = new HashSet<string>(newDependees);
-            }
+                dependent[t] = new HashSet<string>(newDependees);   
         }
     }
 }
