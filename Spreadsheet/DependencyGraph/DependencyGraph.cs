@@ -227,6 +227,7 @@ namespace Dependencies
         /// </summary>
         public void RemoveDependency(string s, string t)
         {
+            bool countNotdecremented = true;
             if (s == null || t == null)
             {
                 return;
@@ -245,6 +246,7 @@ namespace Dependencies
                 {
                     dependees[s].Remove(t);
                     dependencyCount--;
+                    countNotdecremented = false;
 
                 }
             }
@@ -255,6 +257,10 @@ namespace Dependencies
                 if (dependents[t].Contains(s))//If t depends on s
                 {
                     dependents[t].Remove(s);
+                    if (countNotdecremented)
+                    {
+                        dependencyCount--;
+                    }
                 }
             }
 
@@ -273,16 +279,14 @@ namespace Dependencies
                 return;
             }
 
-            if (!dependees.ContainsKey(s))
-            {
-                return;
-            }
-
             IEnumerator<string> depEnumerator = newDependents.GetEnumerator();
             string t;//New dependents to be added to s.
 
-            dependencyCount = dependencyCount - dependees[s].Count;//Decrement the master list.
-            dependees[s].Clear();//Remove all dependents from s.
+            if (dependees.ContainsKey(s))
+            {
+                dependencyCount = dependencyCount - dependees[s].Count;//Decrement the master list.
+                dependees[s].Clear();//Remove all dependents from s.
+            }
 
             while (depEnumerator.MoveNext())
             {
@@ -308,17 +312,14 @@ namespace Dependencies
                 return;
             }
 
-            if (!dependents.ContainsKey(t))
-            {
-                return;
-            }
-
-
             IEnumerator<string> depEnumerator = newDependees.GetEnumerator();
             string s;//New dependents to be added to s.
 
-            dependencyCount = dependencyCount - dependents[t].Count;
-            dependents[t].Clear();//Remove all dependents from s. 
+            if (dependents.ContainsKey(t))
+            {
+                dependencyCount = dependencyCount - dependents[t].Count;
+                dependents[t].Clear();//Remove all dependents from s. 
+            }
 
             while (depEnumerator.MoveNext())
             {
