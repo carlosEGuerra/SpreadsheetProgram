@@ -8,6 +8,9 @@ using System.Text;
 
 namespace UnitTestProject1
 {
+    /// <summary>
+    /// This is the unit tests for PS3
+    /// </summary>
     [TestClass]
     public class UnitTest1
     {

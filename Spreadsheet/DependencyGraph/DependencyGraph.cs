@@ -52,6 +52,7 @@ namespace Dependencies
     {
         private Dictionary<string, HashSet<string>> dependent; //a dependent with a list of dependees
         private Dictionary<string, HashSet<string>> dependee; //a dependee with a list of dependents
+
         /// <summary>
         /// Creates a DependencyGraph containing no dependencies.
         /// </summary>
@@ -158,11 +159,8 @@ namespace Dependencies
         /// </summary>
         public void RemoveDependency(string s, string t)
         {
-            if (dependent.ContainsKey(s))
-            {
-                dependent[s].Remove(t);
-                dependee[t].Remove(s);
-            }
+            dependent[s].Remove(t);
+            dependee[t].Remove(s);
         }
 
         /// <summary>
@@ -172,7 +170,7 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependents(string s, IEnumerable<string> newDependents)
         {
-                dependee[s] = new HashSet<string>(newDependents);
+            dependee[s] = new HashSet<string>(newDependents);
         }
 
         /// <summary>
@@ -182,7 +180,7 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependees(string t, IEnumerable<string> newDependees)
         {
-                dependent[t] = new HashSet<string>(newDependees);   
+            dependent[t] = new HashSet<string>(newDependees);   
         }
     }
 }
