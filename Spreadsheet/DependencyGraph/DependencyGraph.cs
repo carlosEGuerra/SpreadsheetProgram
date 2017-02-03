@@ -63,6 +63,9 @@ namespace Dependencies
         /// </summary>
         private Dictionary<string, HashSet<string>> dependents;
 
+        /// <summary>
+        /// Keeps track of the number of dependencies we have whenever we alter the list.
+        /// </summary>
         private int dependencyCount = 0;
 
         /// <summary>
@@ -329,6 +332,5 @@ namespace Dependencies
             }
             return;
         }
-
     }
 }
