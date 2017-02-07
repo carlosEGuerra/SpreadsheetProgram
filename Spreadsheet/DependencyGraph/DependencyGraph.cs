@@ -107,9 +107,16 @@ namespace Dependencies
         /// </summary>
         public IEnumerable<string> GetDependents(string s)
         {
-            HashSet<string> dependentList;
-            dependee.TryGetValue(s, out dependentList);
-            return dependentList;
+            HashSet<string> dependentList = new HashSet<string>();      //added a check to make sure that the key s is contained in the dependee list
+            if (!dependee.ContainsKey(s))
+            {
+                return dependentList;
+            }
+            else
+            {
+                dependentList = dependee[s];
+                return dependentList;
+            }
         }
 
         /// <summary>
@@ -117,9 +124,16 @@ namespace Dependencies
         /// </summary>
         public IEnumerable<string> GetDependees(string s)
         {
-            HashSet<string> dependeeList;
-            dependent.TryGetValue(s, out dependeeList);
-            return dependeeList;
+            HashSet<string> dependeeList = new HashSet<string>();       //added a chekc to make sure that the key s is contained in the dependent list
+            if (!dependent.ContainsKey(s))
+            {
+                return dependeeList;
+            }
+            else
+            {
+                dependeeList = dependent[s];
+                return dependeeList;
+            }
         }
 
         /// <summary>
@@ -159,8 +173,15 @@ namespace Dependencies
         /// </summary>
         public void RemoveDependency(string s, string t)
         {
-            dependent[s].Remove(t);
-            dependee[t].Remove(s);
+            if(dependee.ContainsKey(s) && dependee[s].Contains(t))      //added a check to ensure that the dependees contain s and t is contained in the hashset
+            {
+                dependent[t].Remove(s); //Reversed the t and s locations for lines 162 and 163
+                dependee[s].Remove(t);
+            }
+            else
+            {
+                return;
+            }
         }
 
         /// <summary>
@@ -170,7 +191,7 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependents(string s, IEnumerable<string> newDependents)
         {
-            dependee[s] = new HashSet<string>(newDependents);
+            dependent[s] = new HashSet<string>(newDependents);
         }
 
         /// <summary>
@@ -180,7 +201,7 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependees(string t, IEnumerable<string> newDependees)
         {
-            dependent[t] = new HashSet<string>(newDependees);   
+            dependee[t] = new HashSet<string>(newDependees);   
         }
     }
 }
