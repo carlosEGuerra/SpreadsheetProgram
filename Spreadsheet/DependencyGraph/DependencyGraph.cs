@@ -163,6 +163,10 @@ namespace Dependencies
             else if (!dependent.ContainsKey(t))
             {
                 dependent.Add(t, new HashSet<string>() { s });
+                if(!dependee.ContainsKey(s))
+                {
+                    dependee.Add(s, new HashSet<string>() { t });
+                }
             }         
         }
 
@@ -203,6 +207,13 @@ namespace Dependencies
                     this.AddDependency(s, dependents);
                 }
             }
+            else            //added this else for stress test 15-19
+            {
+                foreach(string t in newDependents)
+                {
+                    this.AddDependency(s, t);
+                }
+            }
         }
 
         /// <summary>
@@ -222,6 +233,13 @@ namespace Dependencies
                 foreach (string dependees in newDependees)
                 {
                     this.AddDependency(dependees, t);
+                }
+            }
+            else         //added this else for stress test 15-19
+            {
+                foreach(string s in newDependees)
+                {
+                    this.AddDependency(s, t);
                 }
             }
         }

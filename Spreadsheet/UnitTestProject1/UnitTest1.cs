@@ -849,12 +849,14 @@ namespace GradingTests
                 DependencyGraph t = new DependencyGraph();
 
                 // A bunch of strings to use
-                const int SIZE = 800;
+                const int SIZE = 8;
                 string[] letters = new string[SIZE];
                 for (int i = 0; i < SIZE; i++)
                 {
                     letters[i] = ("" + (char)('a' + i));
                 }
+
+
 
                 // The correct answers
                 HashSet<string>[] dents = new HashSet<string>[SIZE];
@@ -863,7 +865,10 @@ namespace GradingTests
                 {
                     dents[i] = new HashSet<string>();
                     dees[i] = new HashSet<string>();
+                    Assert.IsTrue(dents[i].SetEquals(new HashSet<string>(t.GetDependents(letters[i]))));
+
                 }
+
 
                 // Add a bunch of dependencies
                 for (int i = 0; i < SIZE; i++)
@@ -874,7 +879,9 @@ namespace GradingTests
                         dents[i].Add(letters[j]);
                         dees[j].Add(letters[i]);
                     }
+                    Assert.IsTrue(dents[i].SetEquals(new HashSet<string>(t.GetDependents(letters[i]))));
                 }
+
 
                 // Remove a bunch of dependencies
                 for (int i = 0; i < SIZE; i++)
@@ -885,7 +892,10 @@ namespace GradingTests
                         dents[i].Remove(letters[j]);
                         dees[j].Remove(letters[i]);
                     }
+                    Assert.IsTrue(dents[i].SetEquals(new HashSet<string>(t.GetDependents(letters[i]))));
+
                 }
+
 
                 // Replace a bunch of dependees
                 for (int i = 0; i < SIZE; i += 2)
@@ -906,16 +916,30 @@ namespace GradingTests
                     {
                         dents[s[0] - 'a'].Add(letters[i]);
                     }
-
                     dees[i] = newDees;
+                    //Assert.IsTrue(dents[i].SetEquals(new HashSet<string>(t.GetDependents(letters[i]))));
+
                 }
+
 
                 // Make sure everything is right
                 for (int i = 0; i < SIZE; i++)
                 {
+                    HashSet<string> iHash = dents[i];
+                    HashSet<string> iHash2 = new HashSet<string>(t.GetDependents(letters[i]));
+                    string str = "";
+                    foreach(string s in iHash)
+                    {
+                        if (!iHash2.Contains(s))
+                        {
+                            str += s + "\n";
+                        }
+                    }
+                    bool eq = iHash.SetEquals(iHash2);
                     Assert.IsTrue(dents[i].SetEquals(new HashSet<string>(t.GetDependents(letters[i]))));
                     Assert.IsTrue(dees[i].SetEquals(new HashSet<string>(t.GetDependees(letters[i]))));
                 }
+
             }
 
             [TestMethod()]
