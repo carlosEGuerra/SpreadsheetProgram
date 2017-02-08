@@ -521,7 +521,7 @@ namespace GradingTests
 
             /// <summary>
             ///Non-empty graph contains something
-            ///</summary>
+            /// </summary>
             [TestMethod()]
             public void NonEmptyTest16()
             {

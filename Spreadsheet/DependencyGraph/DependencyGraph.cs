@@ -69,7 +69,7 @@ namespace Dependencies
         {
             get
             {
-                int dependentCount = 0;
+               int dependentCount = 0;
                 foreach(string s in dependee.Keys)
                 {
                     dependentCount += dependee[s].Count;
@@ -147,7 +147,7 @@ namespace Dependencies
             {
                 dependee[s].Add(t);
             }
-            else if (dependent.ContainsKey(t))
+            if (dependent.ContainsKey(t))       //deleted an else that fixed most of my code
             {
                 dependent[t].Add(s);
             }
@@ -175,8 +175,8 @@ namespace Dependencies
         {
             if(dependee.ContainsKey(s) && dependee[s].Contains(t))      //added a check to ensure that the dependees contain s and t is contained in the hashset
             {
-                dependent[t].Remove(s); //Reversed the t and s locations for lines 162 and 163
                 dependee[s].Remove(t);
+                dependent[t].Remove(s);
             }
             else
             {
@@ -191,7 +191,18 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependents(string s, IEnumerable<string> newDependents)
         {
-            dependent[s] = new HashSet<string>(newDependents);
+            if (dependee.ContainsKey(s))
+            {
+                foreach (string str in dependee[s])
+                {
+                    dependent[str].Remove(s);
+                }
+                dependee[s] = new HashSet<string>();
+                foreach (string dependents in newDependents)
+                {
+                    this.AddDependency(s, dependents);
+                }
+            }
         }
 
         /// <summary>
@@ -201,7 +212,18 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependees(string t, IEnumerable<string> newDependees)
         {
-            dependee[t] = new HashSet<string>(newDependees);   
+            if (dependent.ContainsKey(t))
+            {
+                foreach (string str in dependent[t])
+                {
+                    dependee[str].Remove(t);
+                }
+                dependent[t] = new HashSet<string>();
+                foreach (string dependees in newDependees)
+                {
+                    this.AddDependency(dependees, t);
+                }
+            }
         }
     }
 }
