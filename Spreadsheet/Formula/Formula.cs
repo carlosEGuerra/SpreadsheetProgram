@@ -19,7 +19,7 @@ namespace Formulas
     /// are not allowed.)
     /// </summary>
 
-    public class Formula
+    public struct Formula
     {
         private IEnumerable<string> enumForm;
         private string[] symbolList;
@@ -193,6 +193,11 @@ namespace Formulas
             return true;
         }
 
+
+        public Formula(String f, Normalizer N, Validator V)
+        {
+            
+        }
         /// <summary>
         /// Evaluates this Formula, using the Lookup delegate to determine the values of variables.  (The
         /// delegate takes a variable name as a parameter and returns its value (if it has one) or throws
@@ -452,6 +457,8 @@ namespace Formulas
     /// </summary>
 
     public delegate double Lookup(string var);
+    public delegate string Normalizer(string s);
+    public delegate bool Validator(string s);
 
     /// <summary>
     /// Used to report that a Lookup delegate is unable to determine the value
