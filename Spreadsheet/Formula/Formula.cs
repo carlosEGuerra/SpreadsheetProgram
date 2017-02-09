@@ -73,7 +73,6 @@ namespace Formulas
 
             Stack<string> formStack = new Stack<string>();
             finalForm = formula;
-
             //Deal with the formula, using evaluation of stacks.
             IEnumerable<string> s;
             IEnumerator<string> testToken;
@@ -226,6 +225,7 @@ namespace Formulas
                     formStack.Push(token);
                     continue;
                 }
+
             }
 
             if (formStack.Count > 0 && isOperator(formStack.Peek()))//CORRECTED FOR TEST 15.
@@ -236,6 +236,7 @@ namespace Formulas
             {
                 throw new FormulaFormatException("Formula invalid, not enough closing parentheses.");
             }
+
         }
 
         /// <summary>
