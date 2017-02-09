@@ -177,7 +177,7 @@ namespace Dependencies
         /// </summary>
         public void RemoveDependency(string s, string t)
         {
-            if(dependee.ContainsKey(s) && dependee[s].Contains(t))      //added a check to ensure that the dependees contain s and t is contained in the hashset
+            if (dependee.ContainsKey(s) && dependee[s].Contains(t))      //added a check to ensure that the dependees contain s and t is contained in the hashset
             {
                 dependee[s].Remove(t);
                 dependent[t].Remove(s);
