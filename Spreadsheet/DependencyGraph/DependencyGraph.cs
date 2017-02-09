@@ -62,6 +62,12 @@ namespace Dependencies
             dependent = new Dictionary<string, HashSet<string>>();
         }
 
+        public DependencyGraph(DependencyGraph dg)
+        {
+            dependee = dg.dependee;
+            dependent = dg.dependent;
+        }
+
         /// <summary>
         /// The number of dependencies in the DependencyGraph.
         /// </summary>
@@ -83,6 +89,10 @@ namespace Dependencies
         /// </summary>
         public bool HasDependents(string s)
         {
+            if(s == null)
+            {
+                throw new ArgumentNullException("Sorry but that arguement is null");
+            }
             if (!dependee.ContainsKey(s))
             {
                 return false;
@@ -95,6 +105,10 @@ namespace Dependencies
         /// </summary>
         public bool HasDependees(string s)
         {
+            if(s == null)
+            {
+                throw new ArgumentNullException("Sorry but that arguement is null");
+            }
             if (!dependent.ContainsKey(s))
             {
                 return false;
@@ -107,6 +121,10 @@ namespace Dependencies
         /// </summary>
         public IEnumerable<string> GetDependents(string s)
         {
+            if(s == null)
+            {
+                throw new ArgumentNullException("Sorry but that arguement is null");
+            }
             HashSet<string> dependentList = new HashSet<string>();      //added a check to make sure that the key s is contained in the dependee list
             if (!dependee.ContainsKey(s))
             {
@@ -124,6 +142,10 @@ namespace Dependencies
         /// </summary>
         public IEnumerable<string> GetDependees(string s)
         {
+            if(s == null)
+            {
+                throw new ArgumentNullException("Sorry but that arguement is null");
+            }
             HashSet<string> dependeeList = new HashSet<string>();       //added a chekc to make sure that the key s is contained in the dependent list
             if (!dependent.ContainsKey(s))
             {
@@ -143,6 +165,10 @@ namespace Dependencies
         /// </summary>
         public void AddDependency(string s, string t)
         {
+            if(s == null || t == null)
+            {
+                throw new ArgumentNullException("Sorry but that arguement is null");
+            }
             if (dependee.ContainsKey(s))
             {
                 dependee[s].Add(t);
@@ -177,6 +203,10 @@ namespace Dependencies
         /// </summary>
         public void RemoveDependency(string s, string t)
         {
+            if(s == null || t == null)
+            {
+                throw new ArgumentNullException("Sorry but that arguement is null");
+            }
             if (dependee.ContainsKey(s) && dependee[s].Contains(t))      //added a check to ensure that the dependees contain s and t is contained in the hashset
             {
                 dependee[s].Remove(t);
@@ -195,6 +225,10 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependents(string s, IEnumerable<string> newDependents)
         {
+            if(s == null || newDependents.Equals(null))
+            {
+                throw new ArgumentNullException("Sorry but that arguement is null");
+            }
             if (dependee.ContainsKey(s))
             {
                 foreach (string str in dependee[s])
@@ -223,6 +257,10 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependees(string t, IEnumerable<string> newDependees)
         {
+            if(t == null || newDependees.Equals(null))
+            {
+                throw new ArgumentNullException("Sorry but that arguement is null");
+            }
             if (dependent.ContainsKey(t))
             {
                 foreach (string str in dependent[t])
