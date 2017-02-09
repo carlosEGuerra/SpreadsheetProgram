@@ -44,13 +44,16 @@ namespace Formulas
         /// If the formula is syntacticaly invalid, throws a FormulaFormatException with an 
         /// explanatory Message.
         /// </summary>
+        public Formula(string formula): this(formula, N => N, V => true)
+        {
 
-        public Formula(String formula)
+        }
+        public Formula(String f, Normalizer N, Validator V)
         {
             //Checks to see if there will be at least 1 token
-            if (string.IsNullOrWhiteSpace(formula) || formula.Length == 0)
+            if (string.IsNullOrWhiteSpace(f) || f.Length == 0 || N == null)
             {
-                throw new FormulaFormatException("Sorry, but to construct a formula we need input");
+                throw new FormulaFormatException("Sorry, but you are missing some input");
             }
 
             //creates a list of valid symbols
@@ -63,7 +66,7 @@ namespace Formulas
             symbolList[5] = ")";
 
             //converts the formula string into tokens
-            enumForm = GetTokens(formula);
+            enumForm = GetTokens(f);
             //gets the first token
             string firstToken = enumForm.First();
             //gets the second token
@@ -129,7 +132,7 @@ namespace Formulas
                     {
                         parenthesisStack.Pop();
                         closingParen++;
-                        if(closingParen > openeningParen)
+                        if (closingParen > openeningParen)
                         {
                             throw new FormulaFormatException("You have too many closing parenthesis");
                         }
@@ -158,7 +161,7 @@ namespace Formulas
                     //Any token that immediately follows a number, a variable, or a closing parenthesis must be either an 
                     //operator or a closing parenthesis
                     else if (double.TryParse(tokenPrior, out testParse) || isVariable(tokenPrior) || tokenPrior.Equals(")"))
-                    {                    
+                    {
                         if (!(symbolList.Contains(token) || token.Equals(")")) && !(tokenPrior.Equals("(")))
                         {
                             throw new FormulaFormatException("Line 136");
@@ -173,6 +176,7 @@ namespace Formulas
             {
                 throw new FormulaFormatException("Sorry but you are missing some parenthesis");
             }
+
         }
 
         private bool isVariable(string token)
@@ -194,10 +198,6 @@ namespace Formulas
         }
 
 
-        public Formula(String f, Normalizer N, Validator V)
-        {
-            
-        }
         /// <summary>
         /// Evaluates this Formula, using the Lookup delegate to determine the values of variables.  (The
         /// delegate takes a variable name as a parameter and returns its value (if it has one) or throws
