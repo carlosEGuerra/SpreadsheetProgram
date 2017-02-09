@@ -1,5 +1,5 @@
 ﻿// Skeleton written by Joe Zachary for CS 3500, January 2017
-// Appended by Ellen Brigance, January 25, 2017
+// Appended by Ellen Brigance, February 2017
 
 using System;
 using System.Collections.Generic;
@@ -14,13 +14,23 @@ namespace Formulas
     /// the four binary operator symbols +, -, *, and /.  (The unary operators + and -
     /// are not allowed.)
     /// </summary>
-    public class Formula
-    { 
+    public struct Formula
+    {
         /// <summary>
         /// Saves the string passed into formula for use later.
         /// </summary>
         private string finalForm;
-        
+
+        /// <summary>
+        /// The current Normalizer being used on the entire formula.
+        /// </summary>
+        private Normalizer finalNorm;
+
+        /// <summary>
+        /// The current Validator being used to impose variable rules on the entire formula.
+        /// </summary>
+        private Validator finalValid;
+
         /// <summary>
         /// Creates a Formula from a string that consists of a standard infix expression composed
         /// from non-negative floating-point numbers (using C#-like syntax for double/int literals), 
@@ -43,6 +53,17 @@ namespace Formulas
         /// </summary>
         public Formula(String formula)
         {
+
+            if (formula == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            //If a Formula is created with the original one-parameter constructor, the Normalizer
+            //should be the identity function and the validator should be a method that always returns true.
+            finalNorm = f => f;
+            finalValid = f => true;
+
             //Check for tokens.
             //No tokens, throw FormulaFormatException.
             if (string.IsNullOrWhiteSpace(formula)) //CORRECTED FAILED TEST: TESTED FOR formula == null, failed.
@@ -57,9 +78,9 @@ namespace Formulas
             IEnumerable<string> s;
             IEnumerator<string> testToken;
             s = GetTokens(finalForm);//Convert string to tokens, one at a time. Deal with them on the stacks accordingly.
-        
+
             testToken = s.GetEnumerator();
-            
+
             while (testToken.MoveNext())//FIX LOOPING CONDITION TO END WITH ENUMERATOR
             {
 
@@ -90,7 +111,7 @@ namespace Formulas
                     continue;
                 }
 
-                if(formStack.Count > 0 && formStack.Peek() == "(" && !isOperator(token))//CORRECTED TEST 10, ADDED ISOPERATOR CHECK.
+                if (formStack.Count > 0 && formStack.Peek() == "(" && !isOperator(token))//CORRECTED TEST 10, ADDED ISOPERATOR CHECK.
                 {
                     formStack.Push(token);
                     continue;
@@ -101,11 +122,11 @@ namespace Formulas
                     formStack.Push(token);
                     continue;
                 }
-                if(output >= 0 && formStack.Count > 0 && !(isOperator(token) || formStack.Peek() == "("))
+                if (output >= 0 && formStack.Count > 0 && !(isOperator(token) || formStack.Peek() == "("))
                 {
                     throw new FormulaFormatException("Formula format invalid. Two operands in sequence.");
                 }
-                
+
                 //IF WE HAVE AN OPEN PARENTESES.
                 if (formStack.Count == 0 && token == "(")//Stack empty.
                 {
@@ -138,7 +159,7 @@ namespace Formulas
                             tempStack.Push(formStack.Pop());
                         }
 
-                        if (formStack.Count == 0|| formStack.Peek() == "(")// FIXED TEST 2 AND 3: NEEDED TO BREAK BEFORE PEEKING AT AN EMPTY STACK.
+                        if (formStack.Count == 0 || formStack.Peek() == "(")// FIXED TEST 2 AND 3: NEEDED TO BREAK BEFORE PEEKING AT AN EMPTY STACK.
                         {
                             break;
                         }
@@ -149,7 +170,7 @@ namespace Formulas
                         throw new FormulaFormatException("Formula invalid. Too many closing parenteses.");
                     }
                     if (formStack.Peek() == "(")//We found a "(", pop it, put everything back on the stack.
-                   {
+                    {
                         formStack.Pop();
                         while (tempStack.Count > 0) //
                         {
@@ -207,28 +228,77 @@ namespace Formulas
                 }
             }
 
-            if(formStack.Count > 0 && isOperator(formStack.Peek()))//CORRECTED FOR TEST 15.
+            if (formStack.Count > 0 && isOperator(formStack.Peek()))//CORRECTED FOR TEST 15.
             {
                 throw new FormulaFormatException("Formula cannot end in operator.");
             }
-            if(formStack.Count > 0 && formStack.Contains("("))
+            if (formStack.Count > 0 && formStack.Contains("("))
             {
                 throw new FormulaFormatException("Formula invalid, not enough closing parentheses.");
             }
         }
 
         /// <summary>
-        /// Returns true if we are looking at a valid operand. False, otherwise.
+        /// Formula constructor takes three parameters: a formula string (like usual),
+        /// a Normalizer, and a Validator (in that order).  The purpose of a Normalizer is
+        /// to convert variables into a canonical form.  The purpose of a Validator is to 
+        /// impose extra restrictions on the validity of a variable, beyond the ones 
+        /// already built into the Formula definition. 
         /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
-        private bool isOperator(string s)
+        /// <param name="formula"></param>
+        /// <param name="n"></param>
+        /// <param name="v"></param>
+        public Formula(string f, Normalizer N, Validator V)
         {
-            if (s == "/" || s == "*" || s == "+" || s == "-")
+            if(f == null || N == null || V == null)
             {
-                return true;
+                throw new ArgumentNullException();
             }
-            return false;
+
+            finalNorm = N;
+            finalValid = V;
+
+            Formula formCheck = new Formula(f); //Will perform all checks to make sure formula is syntactically correct.
+            finalForm = formCheck.finalForm;
+            string fixedString = ""; 
+
+            //Check to make sure the Normalizer and Validator don't invalidate our formula.
+            if (N != null)
+            {
+
+                IEnumerable<string> s = GetTokens(finalForm);//Convert valid string to tokens.
+                IEnumerator<string> testToken = s.GetEnumerator();
+
+                while (testToken.MoveNext())
+                {
+                    string cur = testToken.Current;
+
+                    if (IsValidVariable(cur))//If the current token we're looking at is a variable,
+                    {
+                        string normCur = finalNorm(cur);//Normalize the current token.
+                        if (!IsValidVariable(normCur))//If token is not a legal variable according to the standard Formula rules
+                        {
+                            throw new FormulaFormatException("Normalizer resulted in illegal variable.");
+                        }
+                        if (!finalValid(normCur))
+                        {
+                            throw new FormulaFormatException("Validator found illegal variable.");
+                        }
+                        if (IsValidVariable(normCur))
+                        {
+                            cur = normCur;
+                        }
+                    }
+
+                    fixedString = fixedString + cur; //Rebuild the global formula.
+                }
+
+                //Finished lookin through all tokens. If no exceptions were thrown N(x) should be used in place of x in the constructed formula.
+                if (!String.IsNullOrEmpty(fixedString))
+                {
+                    finalForm = fixedString;
+                }
+            }
         }
 
         /// <summary>
@@ -242,6 +312,7 @@ namespace Formulas
         /// </summary>
         public double Evaluate(Lookup lookup)
         {
+
             Stack<string> opStack = new Stack<string>();
             Stack<Double> valStack = new Stack<Double>();
 
@@ -279,13 +350,13 @@ namespace Formulas
                     }
                     if (opStack.Peek() == "/")
                     {
-                        if(output == 0)//ASK ABOUT THIS. WAS INFORMED BY TA TO DO A TRY CATCH.
+                        if (output == 0)//ASK ABOUT THIS. WAS INFORMED BY TA TO DO A TRY CATCH.
                         {
                             throw new FormulaEvaluationException("Cannot divide by zero.");
                         }
 
                         total = valStack.Pop() / output; //Check for divide by zero error. ***ASK TA IF WE HANDLE THIS**
-                   
+
                     }
 
                     opStack.Pop();
@@ -308,11 +379,11 @@ namespace Formulas
                     double numVal;
                     try
                     {
-                         numVal = lookup(token);
-                         if(numVal < 0)
-                        {
-                            throw new FormulaEvaluationException("Negative numbers not allowed.");
-                        }
+                        numVal = lookup(token);
+                        //if (numVal < 0)
+                        //{
+                        //    throw new FormulaEvaluationException("Negative numbers not allowed.");
+                        //}
                     }
                     catch
                     {
@@ -393,7 +464,7 @@ namespace Formulas
                     continue;
                 }
 
-                if((token == "+" || token == "-") && opStack.Count == 0)
+                if ((token == "+" || token == "-") && opStack.Count == 0)
                 {
                     //Whether or not you did the first step, push t onto the operator stack
                     opStack.Push(token);
@@ -463,7 +534,7 @@ namespace Formulas
 
                         if (opStack.Peek() == "/")
                         {
-                            if(val1 == 0)
+                            if (val1 == 0)
                             {
                                 throw new FormulaEvaluationException("Cannot divide by zero.");//FIXED FOR TEST 18 AND 18A: CHECK FOR DIVIDE BY ZERO.
                             }
@@ -490,7 +561,7 @@ namespace Formulas
             //There will be exactly two values on the value stack. Apply the operator to the two values
             //and report the result as the value of the expression.
 
-            if(opStack.Count > 0)
+            if (opStack.Count > 0)
             {
                 double val1 = valStack.Pop();
                 double val2 = valStack.Pop();
@@ -512,6 +583,75 @@ namespace Formulas
             return valStack.Pop();
         }
 
+        /// <summary>
+        /// Returns a string version of the Formula (in normalized form).
+        /// </summary>
+        public override string ToString()
+        {
+            if(finalNorm == null)
+            {
+                return finalForm;
+            }
+
+            return finalNorm(finalForm);
+        }
+
+        /// <summary>
+        /// Returns an ISet<string> that contains each distinct 
+        /// variable (in normalized form) that appears in the Formula.
+        /// </summary>
+        public ISet<string> GetVariables()
+        {
+            ISet<string> set = new HashSet<string>();
+            IEnumerable<string> s = GetTokens(finalForm);//Convert valid string to tokens.
+            IEnumerator<string> testToken = s.GetEnumerator();
+
+            while (testToken.MoveNext())
+            {
+                string cur = testToken.Current;
+                if (IsValidVariable(cur))//If we hav a valid variable
+                {
+                    if(finalNorm != null)//See if we can normalize it.
+                    {
+                        cur = finalNorm(cur);
+                    }
+                    set.Add(cur);//Then add it to our list.
+                }
+            }
+
+            return set;
+        }
+
+        /// <summary>
+        /// Returns true if string s is a valid variable according to our formula guidelines.
+        /// </summary>
+        /// <param name="s"></param>
+        private bool IsValidVariable(string s)
+        {
+            // Pattern to identify a valid variable.
+            String varPattern = @"[a-zA-Z][0-9a-zA-Z]*";
+            Regex regVar = new Regex(varPattern);
+
+            if (!regVar.IsMatch(s))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Returns true if we are looking at a valid operand. False, otherwise.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        private bool isOperator(string s)
+        {
+            if (s == "/" || s == "*" || s == "+" || s == "-")
+            {
+                return true;
+            }
+            return false;
+        }
 
         /// <summary>
         /// Given a formula, enumerates the tokens that compose it.  Tokens are left paren,
@@ -557,7 +697,20 @@ namespace Formulas
     /// to a value. Exactly how a Lookup method decides which strings map to doubles and which
     /// don't is up to the implementation of the method.
     /// </summary>
+    /// <param name="var"></param>
     public delegate double Lookup(string var);
+
+    /// <summary>
+    /// The purpose of a Normalizer is to convert variables into a canonical form.
+    /// </summary>
+    /// <param name="s"></param>
+    public delegate string Normalizer(string s);
+
+    /// <summary>
+    /// The purpose of a Validator is to impose extra restrictions on the validity of a variable
+    /// </summary>
+    /// <param name="s"></param>
+    public delegate bool Validator(string s);
 
     /// <summary>
     /// Used to report that a Lookup delegate is unable to determine the value
