@@ -172,6 +172,7 @@ namespace Dependencies
         /// Test a non-existent item.
         /// </summary>
         [TestMethod()]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void HasDependees0()
         {
             DependencyGraph dg = new DependencyGraph();
@@ -223,6 +224,7 @@ namespace Dependencies
         /// Test a non-existent item.
         /// </summary>
         [TestMethod()]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void HasDependents0()
         {
             DependencyGraph dg = new DependencyGraph();
@@ -353,6 +355,7 @@ namespace Dependencies
         /// Try to pass in null strings.
         /// </summary>
         [TestMethod()]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void AddDependency1()
         {
             DependencyGraph dg = new DependencyGraph();
@@ -382,6 +385,7 @@ namespace Dependencies
         /// Try to pass in null strings.
         /// </summary>
         [TestMethod()]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void RemoveDependency1()
         {
             DependencyGraph dg = new DependencyGraph();
@@ -407,6 +411,7 @@ namespace Dependencies
         /// Try to test a null list and a null string.
         /// </summary>
         [TestMethod()]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void ReplaceDependents1()
         {
             DependencyGraph dg = new DependencyGraph();
@@ -454,6 +459,7 @@ namespace Dependencies
         /// Populate a list with nulls. Make sure we don't try to add them.
         /// </summary>
         [TestMethod()]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void ReplaceDependents4()
         {
             DependencyGraph dg = new DependencyGraph();
@@ -473,6 +479,7 @@ namespace Dependencies
         /// Try to test a null list and a null string.
         /// </summary>
         [TestMethod()]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void ReplaceDependees1()
         {
             DependencyGraph dg = new DependencyGraph();
@@ -521,6 +528,7 @@ namespace Dependencies
         /// Populate a list with nulls. Make sure we don't try to add them.
         /// </summary>
         [TestMethod()]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void ReplaceDependees4()
         {
             DependencyGraph dg = new DependencyGraph();
