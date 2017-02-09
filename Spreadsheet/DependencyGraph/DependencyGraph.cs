@@ -314,7 +314,7 @@ namespace Dependencies
             if (dependees.ContainsKey(s))
             {
                 dependencyCount = dependencyCount - dependees[s].Count;//Decrement the master list.
-                foreach(string r in dependees[s])//CORRECTED FOR REGRADE: For each dependent of s, we must remove s from the list of dependees.
+                foreach(string r in dependees[s])//For each dependent of s, we must remove s from the list of dependees.
                 {
                     if(dependents[r] != null && dependents[r].Contains(s))
                     {
@@ -355,7 +355,7 @@ namespace Dependencies
             if (dependents.ContainsKey(t))
             {
                 dependencyCount = dependencyCount - dependents[t].Count;
-                foreach (string r in dependents[t])//CORRECTED FOR REGRADE: For each dependee of t, we must remove t from the list of dependents.
+                foreach (string r in dependents[t])//For each dependee of t, we must remove t from the list of dependents.
                 {
                     if (dependees[r] != null && dependees[r].Contains(t))
                     {
