@@ -73,6 +73,7 @@ namespace Formulas
 
             Stack<string> formStack = new Stack<string>();
             finalForm = formula;
+        
             //Deal with the formula, using evaluation of stacks.
             IEnumerable<string> s;
             IEnumerator<string> testToken;
@@ -88,10 +89,12 @@ namespace Formulas
                 string token = testToken.Current;
 
                 double output = -1;
-                if (Double.TryParse((token), out output) && output < 0)//Check for negative numbers
-                {
-                    throw new FormulaFormatException("Invalid token found, negative numbers not allowed.");
-                }
+
+                //Left in in case we need this check later.
+                //if (Double.TryParse((token), out output) && output < 0)//Check for negative numbers
+                //{
+                //    throw new FormulaFormatException("Invalid token found, negative numbers not allowed.");
+                //}
 
                 if (!Double.TryParse((token), out output))//Check for negative numbers
                 {
@@ -211,8 +214,8 @@ namespace Formulas
                         continue;
                     }
 
-                    formStack.Push(token);
-                    continue;
+                    //formStack.Push(token);//May need this in the future.
+                    //continue;
                 }
                 if (Char.IsLetter(token[0]) && formStack.Count > 0 && (!isOperator(formStack.Peek()) || formStack.Peek() != "("))//Have no operator or open paren.
                 {
@@ -256,11 +259,13 @@ namespace Formulas
                 throw new ArgumentNullException();
             }
 
-            finalNorm = N;
-            finalValid = V;
 
             Formula formCheck = new Formula(f); //Will perform all checks to make sure formula is syntactically correct.
-            finalForm = formCheck.finalForm;
+
+          finalNorm = N;
+          finalValid = V;
+
+          finalForm = formCheck.finalForm;
             string fixedString = ""; 
 
             //Check to make sure the Normalizer and Validator don't invalidate our formula.
@@ -328,10 +333,6 @@ namespace Formulas
                 string token = testToken.Current;
 
                 double output = -1;
-                if (Double.TryParse((token), out output) && output < 0)//Check for negative numbers
-                {
-                    throw new FormulaFormatException("Invalid token found, negative numbers not allowed.");
-                }
 
                 if (!Double.TryParse((token), out output))//Check for negative numbers
                 {
@@ -381,10 +382,7 @@ namespace Formulas
                     try
                     {
                         numVal = lookup(token);
-                        //if (numVal < 0)
-                        //{
-                        //    throw new FormulaEvaluationException("Negative numbers not allowed.");
-                        //}
+                   
                     }
                     catch
                     {
@@ -396,14 +394,13 @@ namespace Formulas
                     }
                     if (opStack.Peek() == "/")
                     {
-                        try
-                        {
-                            total = valStack.Pop() / numVal;
-                        }
-                        catch
+                                            
+                       if(numVal == 0)
                         {
                             throw new FormulaEvaluationException("Division by zero.");
                         }
+
+                        total = valStack.Pop() / numVal;
                     }
                     opStack.Pop();
                     valStack.Push(total);
@@ -416,10 +413,7 @@ namespace Formulas
                     try
                     {
                         numVal = lookup(token);
-                        if (numVal < 0)
-                        {
-                            throw new FormulaEvaluationException("Negative numbers not allowed.");
-                        }
+                  
                     }
                     catch
                     {
@@ -589,10 +583,6 @@ namespace Formulas
         /// </summary>
         public override string ToString()
         {
-            if(finalNorm == null)
-            {
-                return finalForm;
-            }
 
             return finalNorm(finalForm);
         }
@@ -603,7 +593,9 @@ namespace Formulas
         /// </summary>
         public ISet<string> GetVariables()
         {
+
             ISet<string> set = new HashSet<string>();
+
             IEnumerable<string> s = GetTokens(finalForm);//Convert valid string to tokens.
             IEnumerator<string> testToken = s.GetEnumerator();
 
@@ -633,7 +625,10 @@ namespace Formulas
             String varPattern = @"[a-zA-Z][0-9a-zA-Z]*";
             Regex regVar = new Regex(varPattern);
 
-            if (!regVar.IsMatch(s))
+            
+
+            string check = regVar.Match(s).ToString();
+            if (check != s)
             {
                 return false;
             }

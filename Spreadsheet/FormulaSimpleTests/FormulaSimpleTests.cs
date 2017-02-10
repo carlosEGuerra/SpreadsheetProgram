@@ -15,6 +15,9 @@ namespace FormulaTestCases
     [TestClass]
     public class UnitTests
     {
+
+        //****************************CONSTRUCTOR TESTS*****************************
+
         /// <summary>
         /// This tests that a syntactically incorrect parameter to Formula results
         /// in a FormulaFormatException.
@@ -108,7 +111,23 @@ namespace FormulaTestCases
 
         }
 
+        //********************* 3 PARAMETER CONSTRUCTOR TESTS **********************
 
+
+        /// <summary>
+        /// This tests that a syntactically incorrect parameter to Formula results
+        /// in a FormulaFormatException.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(FormulaFormatException))]
+        public void Construct3_1()
+        {
+            Formula f = new Formula("_", s => s, t => true);
+        }
+
+
+
+        //********************* EVALUATE SINGLE CONSTRUCTOR TESTS*******************
         /// <summary>
         /// Makes sure that "2+3" evaluates to 5.  Since the Formula
         /// contains no variables, the delegate passed in as the
