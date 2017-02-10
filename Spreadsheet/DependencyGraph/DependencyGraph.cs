@@ -89,6 +89,8 @@ namespace Dependencies
             }
             dependees = dg.dependees;
             dependents = dg.dependents;
+
+            this.dependencyCount = dg.Size;
         }
 
         /// <summary>
