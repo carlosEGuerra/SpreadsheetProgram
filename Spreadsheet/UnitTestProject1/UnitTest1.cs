@@ -17,7 +17,6 @@ namespace GradingTests
         public class DependencyGraphTest
         {
             // ************************** TESTS ON EMPTY DGs ************************* //
-
             /// <summary>
             ///Empty graph should contain nothing
             ///</summary>
@@ -27,7 +26,6 @@ namespace GradingTests
                 DependencyGraph t = new DependencyGraph();
                 Assert.AreEqual(0, t.Size);
             }
-
             /// <summary>
             ///Empty graph should contain nothing
             ///</summary>

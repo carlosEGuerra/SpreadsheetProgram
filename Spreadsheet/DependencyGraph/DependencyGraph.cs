@@ -64,8 +64,8 @@ namespace Dependencies
 
         public DependencyGraph(DependencyGraph dg)
         {
-            dependee = dg.dependee;
-            dependent = dg.dependent;
+            dependee = new Dictionary<string, HashSet<string>>(dg.dependee);
+            dependent = new Dictionary<string, HashSet<string>>(dg.dependent);
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Dependencies
         }
 
         /// <summary>
-        /// Reports whether dependents(s) is non-empty.  Requires s != null.
+        /// Reports whether dependents(s) is non-empty.  Requires s != null, will throw an ArgumentNullException otherwise.
         /// </summary>
         public bool HasDependents(string s)
         {
@@ -101,7 +101,7 @@ namespace Dependencies
         }
 
         /// <summary>
-        /// Reports whether dependees(s) is non-empty.  Requires s != null.
+        /// Reports whether dependees(s) is non-empty.  Requires s != null, will throw an ArgumentNullException otherwise.
         /// </summary>
         public bool HasDependees(string s)
         {
@@ -117,7 +117,7 @@ namespace Dependencies
         }
 
         /// <summary>
-        /// Enumerates dependents(s).  Requires s != null.
+        /// Enumerates dependents(s).  Requires s != null, will throw an ArguementNullException otherwise.
         /// </summary>
         public IEnumerable<string> GetDependents(string s)
         {
@@ -138,7 +138,7 @@ namespace Dependencies
         }
 
         /// <summary>
-        /// Enumerates dependees(s).  Requires s != null.
+        /// Enumerates dependees(s).  Requires s != null, will throw an ArguementNullException if null.
         /// </summary>
         public IEnumerable<string> GetDependees(string s)
         {
@@ -161,7 +161,7 @@ namespace Dependencies
         /// <summary>
         /// Adds the dependency (s,t) to this DependencyGraph.
         /// This has no effect if (s,t) already belongs to this DependencyGraph.
-        /// Requires s != null and t != null.
+        /// Requires s != null and t != null, throws an ArguementNullException otherwise.
         /// </summary>
         public void AddDependency(string s, string t)
         {
@@ -199,7 +199,7 @@ namespace Dependencies
         /// <summary>
         /// Removes the dependency (s,t) from this DependencyGraph.
         /// Does nothing if (s,t) doesn't belong to this DependencyGraph.
-        /// Requires s != null and t != null.
+        /// Requires s != null and t != null, throws ArguementNullException otherwise.
         /// </summary>
         public void RemoveDependency(string s, string t)
         {
@@ -221,7 +221,8 @@ namespace Dependencies
         /// <summary>
         /// Removes all existing dependencies of the form (s,r).  Then, for each
         /// t in newDependents, adds the dependency (s,t).
-        /// Requires s != null and t != null.
+        /// Requires s != null and t != null, if either is null or the newDependees are null then it
+        /// will throw an Arguement Null Exception.
         /// </summary>
         public void ReplaceDependents(string s, IEnumerable<string> newDependents)
         {
@@ -253,7 +254,8 @@ namespace Dependencies
         /// <summary>
         /// Removes all existing dependencies of the form (r,t).  Then, for each 
         /// s in newDependees, adds the dependency (s,t).
-        /// Requires s != null and t != null.
+        /// Requires s != null and t != null, if either is null or the newDependees are null then it
+        /// will throw an Arguement Null Exception
         /// </summary>
         public void ReplaceDependees(string t, IEnumerable<string> newDependees)
         {
