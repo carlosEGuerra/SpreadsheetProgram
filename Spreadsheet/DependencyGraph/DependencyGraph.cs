@@ -62,8 +62,16 @@ namespace Dependencies
             dependent = new Dictionary<string, HashSet<string>>();
         }
 
+        /// <summary>
+        /// Constructor for one input constructor
+        /// </summary>
+        /// <param name="dg"></param>
         public DependencyGraph(DependencyGraph dg)
         {
+            if (dg.Equals(null))
+            {
+                throw new ArgumentNullException("input was null");
+            }
             dependee = new Dictionary<string, HashSet<string>>(dg.dependee);
             dependent = new Dictionary<string, HashSet<string>>(dg.dependent);
         }
@@ -226,9 +234,13 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependents(string s, IEnumerable<string> newDependents)
         {
-            if(s == null || newDependents.Equals(null))
+            if(s == null)
             {
                 throw new ArgumentNullException("Sorry but that arguement is null");
+            }
+            if (newDependents.Equals(null))
+            {
+                throw new ArgumentNullException("replacements are null");
             }
             if (dependee.ContainsKey(s))
             {
@@ -259,10 +271,15 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependees(string t, IEnumerable<string> newDependees)
         {
-            if(t == null || newDependees.Equals(null))
+            if(t == null)
             {
                 throw new ArgumentNullException("Sorry but that arguement is null");
             }
+            if (newDependees.Equals(null))
+            {
+                throw new ArgumentNullException("replacements are null");
+            }
+
             if (dependent.ContainsKey(t))
             {
                 foreach (string str in dependent[t])
