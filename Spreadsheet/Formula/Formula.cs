@@ -1,8 +1,6 @@
 ﻿// Skeleton written by Joe Zachary for CS 3500, January 2017
 // Student: Carlos Guerra u0847821
 
-
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +21,10 @@ namespace Formulas
     {
         private IEnumerable<string> enumForm;
         private string[] symbolList;
+        private Normalizer normailzer;
+        private Validator validator;
+        private string stringFormula;
+        private HashSet<string> variableSet;
 
         /// <summary>
         /// Creates a Formula from a string that consists of a standard infix expression composed
@@ -46,15 +48,25 @@ namespace Formulas
         /// </summary>
         public Formula(string formula): this(formula, N => N, V => true)
         {
-
+            
         }
         public Formula(String f, Normalizer N, Validator V)
         {
             //Checks to see if there will be at least 1 token
-            if (string.IsNullOrWhiteSpace(f) || N == null)
+            if (string.IsNullOrWhiteSpace(f))
             {
                 throw new FormulaFormatException("Sorry, but you are missing some input");
             }
+
+            if(f == null || N == null || V == null)
+            {
+                throw new ArgumentNullException("Inputs are null");
+            }
+            
+            normailzer = N;
+            validator = V;
+            stringFormula = "";
+            variableSet = new HashSet<string>();
 
             //creates a list of valid symbols
             symbolList = new string[6];
@@ -96,7 +108,6 @@ namespace Formulas
                     }
                 }
             }
-
             string tokenPrior = null;
             Stack<string> parenthesisStack = new Stack<string>();
             int openeningParen = 0, closingParen = 0;
@@ -168,6 +179,23 @@ namespace Formulas
                         }
                     }
                 }
+
+                //checks the requirements for PS4a part 3
+                if (isVariable(token) && !isVariable(normailzer(token)))
+                {
+                    throw new FormulaFormatException("Sorry, but when normalized the token is not a valid variable");
+                }
+                else if (validator(normailzer(token)) == false)
+                {
+                    throw new FormulaFormatException("Sorry but when validator is run on the normailzed token it return false");
+                }
+                else if(isVariable(token) &&isVariable(normailzer(token)) && validator(normailzer(token)))
+                {
+                    variableSet.Add(normailzer(token));
+                    stringFormula += normailzer(token);
+                }
+
+                stringFormula += token;
                 tokenPrior = token;
             }
 
@@ -176,6 +204,9 @@ namespace Formulas
             {
                 throw new FormulaFormatException("Sorry but you are missing some parenthesis");
             }
+
+            //Assigns the new formula to the olds
+            f = stringFormula;
         }
 
         private bool isVariable(string token)
@@ -209,6 +240,14 @@ namespace Formulas
 
         public double Evaluate(Lookup lookup)
         {
+            //Checks for the constructor for the zero element entry
+            string temp1 = lookup.ToString();
+            if((temp1.Length == 1 && temp1.Contains("0")) || temp1.Length == 0)
+            {
+                return 0;
+            }
+            
+
             //initiallizes both the value and operator stacks
             Stack<double> valueStack = new Stack<double>();
             Stack<string> operatorStack = new Stack<string>();
@@ -217,7 +256,7 @@ namespace Formulas
             foreach (string t in enumForm)
             {
                 //ignores whitespace tokens
-                if (string.IsNullOrWhiteSpace(t) || t == "0")
+                if (string.IsNullOrWhiteSpace(t))
                 {
                     continue;
                 }
@@ -401,6 +440,15 @@ namespace Formulas
             return -1;
         }
 
+        public ISet<string> GetVariables()
+        {
+            return variableSet;
+        }
+
+        public override string ToString()
+        {
+            return stringFormula;
+        }
 
 
         /// <summary>
@@ -443,8 +491,6 @@ namespace Formulas
             }
         }
     }
-
-
 
     /// <summary>
     /// A Lookup method is one that maps some strings to double values.  Given a string,
@@ -509,7 +555,6 @@ namespace Formulas
         /// <summary>
         /// Constructs a FormulaEvaluationException containing the explanatory message.
         /// </summary>
-
         public FormulaEvaluationException(String message) : base(message)
         {
         }
