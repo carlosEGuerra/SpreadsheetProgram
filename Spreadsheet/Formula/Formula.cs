@@ -51,7 +51,7 @@ namespace Formulas
         public Formula(String f, Normalizer N, Validator V)
         {
             //Checks to see if there will be at least 1 token
-            if (string.IsNullOrWhiteSpace(f) || f.Length == 0 || N == null)
+            if (string.IsNullOrWhiteSpace(f) || N == null)
             {
                 throw new FormulaFormatException("Sorry, but you are missing some input");
             }
@@ -176,7 +176,6 @@ namespace Formulas
             {
                 throw new FormulaFormatException("Sorry but you are missing some parenthesis");
             }
-
         }
 
         private bool isVariable(string token)
@@ -209,7 +208,6 @@ namespace Formulas
         /// </summary>
 
         public double Evaluate(Lookup lookup)
-
         {
             //initiallizes both the value and operator stacks
             Stack<double> valueStack = new Stack<double>();
@@ -219,7 +217,7 @@ namespace Formulas
             foreach (string t in enumForm)
             {
                 //ignores whitespace tokens
-                if (string.IsNullOrWhiteSpace(t))
+                if (string.IsNullOrWhiteSpace(t) || t == "0")
                 {
                     continue;
                 }
