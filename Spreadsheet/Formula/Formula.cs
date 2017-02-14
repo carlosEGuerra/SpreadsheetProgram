@@ -62,6 +62,11 @@ namespace Formulas
             {
                 throw new ArgumentNullException("Inputs are null");
             }
+
+            if(f == null)
+            {
+                variableSet = new HashSet<string>();
+            }
             
             normailzer = N;
             validator = V;
@@ -237,7 +242,6 @@ namespace Formulas
         /// this Formula, its value is returned.  Otherwise, throws a FormulaEvaluationException  
         /// with an explanatory Message.
         /// </summary>
-
         public double Evaluate(Lookup lookup)
         {
             //Checks for the constructor for the zero element entry
@@ -442,6 +446,10 @@ namespace Formulas
 
         public ISet<string> GetVariables()
         {
+            if (variableSet == null)
+            {
+                return new HashSet<string>();
+            }
             return variableSet;
         }
 
