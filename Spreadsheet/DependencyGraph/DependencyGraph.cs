@@ -47,7 +47,7 @@ namespace Dependencies
     /// the test cases with which you will be graded will create massive DependencyGraphs.  If you
     /// build an inefficient DependencyGraph this week, you will be regretting it for the next month.
     /// </summary>
-    /// 
+
     public class DependencyGraph
     {
         private Dictionary<string, HashSet<string>> dependent; //a dependent with a list of dependees
