@@ -48,7 +48,7 @@ namespace Formulas
         /// </summary>
         public Formula(string formula): this(formula, N => N, V => true)
         {
-            
+
         }
         public Formula(String f, Normalizer N, Validator V)
         {
@@ -232,7 +232,6 @@ namespace Formulas
             return true;
         }
 
-
         /// <summary>
         /// Evaluates this Formula, using the Lookup delegate to determine the values of variables.  (The
         /// delegate takes a variable name as a parameter and returns its value (if it has one) or throws
@@ -251,7 +250,6 @@ namespace Formulas
                 return 0;
             }
             
-
             //initiallizes both the value and operator stacks
             Stack<double> valueStack = new Stack<double>();
             Stack<string> operatorStack = new Stack<string>();
