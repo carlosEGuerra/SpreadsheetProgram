@@ -318,6 +318,10 @@ namespace Formulas
         /// </summary>
         public double Evaluate(Lookup lookup)
         {
+            if(finalForm == null)
+            {
+                return 0;
+            }
 
             Stack<string> opStack = new Stack<string>();
             Stack<Double> valStack = new Stack<Double>();
@@ -583,6 +587,10 @@ namespace Formulas
         /// </summary>
         public override string ToString()
         {
+            if(finalForm == null)
+            {
+                return "0";
+            }
 
             return finalNorm(finalForm);
         }
@@ -595,6 +603,10 @@ namespace Formulas
         {
 
             ISet<string> set = new HashSet<string>();
+            if(finalForm == null)
+            {
+                return set;
+            }
 
             IEnumerable<string> s = GetTokens(finalForm);//Convert valid string to tokens.
             IEnumerator<string> testToken = s.GetEnumerator();
@@ -604,10 +616,6 @@ namespace Formulas
                 string cur = testToken.Current;
                 if (IsValidVariable(cur))//If we hav a valid variable
                 {
-                    if(finalNorm != null)//See if we can normalize it.
-                    {
-                        cur = finalNorm(cur);
-                    }
                     set.Add(cur);//Then add it to our list.
                 }
             }
