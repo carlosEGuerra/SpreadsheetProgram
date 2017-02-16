@@ -46,7 +46,7 @@ namespace Formulas
         /// If the formula is syntacticaly invalid, throws a FormulaFormatException with an 
         /// explanatory Message.
         /// </summary>
-        public Formula(string formula): this(formula, N => N, V => true)
+        public Formula(String formula): this(formula, N => N, V => true)
         {
 
         }
@@ -57,17 +57,10 @@ namespace Formulas
             {
                 throw new FormulaFormatException("Sorry, but you are missing some input");
             }
-
             if(f == null || N == null || V == null)
             {
                 throw new ArgumentNullException("Inputs are null");
             }
-
-            if(f == null)
-            {
-                variableSet = new HashSet<string>();
-            }
-            
             normailzer = N;
             validator = V;
             stringFormula = "";
@@ -199,8 +192,10 @@ namespace Formulas
                     variableSet.Add(normailzer(token));
                     stringFormula += normailzer(token);
                 }
-
-                stringFormula += token;
+                else
+                {
+                    stringFormula += token;
+                }
                 tokenPrior = token;
             }
 
@@ -243,9 +238,7 @@ namespace Formulas
         /// </summary>
         public double Evaluate(Lookup lookup)
         {
-            //Checks for the constructor for the zero element entry
-            string temp1 = lookup.ToString();
-            if((temp1.Length == 1 && temp1.Contains("0")) || temp1.Length == 0)
+            if (String.IsNullOrEmpty(stringFormula) || stringFormula == "0")
             {
                 return 0;
             }
@@ -306,7 +299,7 @@ namespace Formulas
                 {
                     try
                     {
-                        tryParseOut = lookup(t);
+                        tryParseOut = lookup(normailzer(t));        ///Forgot to put in normalizer
                     }
                     catch
                     {
@@ -453,6 +446,10 @@ namespace Formulas
 
         public override string ToString()
         {
+            if (string.IsNullOrEmpty(stringFormula))
+            {
+                return stringFormula = "0";
+            }
             return stringFormula;
         }
 
