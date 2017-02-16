@@ -72,8 +72,16 @@ namespace Dependencies
             {
                 throw new ArgumentNullException("input was null");
             }
-            dependee = new Dictionary<string, HashSet<string>>(dg.dependee);
-            dependent = new Dictionary<string, HashSet<string>>(dg.dependent);
+            this.dependee = new Dictionary<string, HashSet<string>>();
+            this.dependent = new Dictionary<string, HashSet<string>>();
+            foreach (string s in dg.dependee.Keys)
+            {
+                dependee.Add(s, new HashSet<string>(dg.GetDependents(s)));
+            }
+            foreach (string s in dg.dependent.Keys)
+            {
+                dependent.Add(s, new HashSet<string>(dg.GetDependees(s)));
+            }
         }
 
         /// <summary>
