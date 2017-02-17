@@ -51,8 +51,10 @@ namespace SS
     public class Spreadsheet : AbstractSpreadsheet
     {
         /// <summary>
-        /// A representation of the spreadsheet where each item
+        /// A Dictionary representation of the spreadsheet where each item
         /// in allCells contains a string Key and an object Value.
+        /// The Key represents the name of the cell and the Value represents 
+        /// the Contents of the cell.
         /// </summary>
         private Cells allCells = new Cells();
 
@@ -113,7 +115,7 @@ namespace SS
             {
                 return allCells.GetSheet()[name]; //Return the contents at the specified cell.
             }
-            
+
         }
 
         /// <summary>
@@ -162,7 +164,7 @@ namespace SS
         /// </summary>
         public override ISet<string> SetCellContents(string name, string text)
         {
-            if(text == null)
+            if (text == null)
             {
                 throw new ArgumentNullException();
             }
@@ -174,24 +176,26 @@ namespace SS
             {
                 throw new InvalidNameException();
             }
-          
-            //If the text is a valid Formula, process as a formula intead.
-            try
-            {
-                Formula f = new Formula(text);
-                set = (HashSet<string>) SetCellContents(name, f);
-            }
-            catch //At this point, the text is merely a string.
-            {
-                set.Add(name); //Add name to the set.
-                allCells.SetCell(name, text);//Add contents to the cell.
 
-                foreach (string s in (HashSet<string>)dependencies.GetDependents(name))//Report all dependents.
-                {
-                    set.Add(s);
-                }
+            ////If the text is a valid Formula, process as a formula intead.
+            //try
+            //{
+            //    Formula f = new Formula(text);
+            //    set = (HashSet<string>) SetCellContents(name, f);
+            //}
+            //catch //At this point, the text is merely a string.
+            //{
+
+            set.Add(name); //Add name to the set.
+            allCells.SetCell(name, text);//Add contents to the cell.
+
+            foreach (string s in (HashSet<string>)dependencies.GetDependents(name))//Report all dependents.
+            {
+                set.Add(s);
+        
             }
 
+            ///}
             return set;
         }
 
@@ -219,31 +223,32 @@ namespace SS
                 throw new InvalidNameException();
             }
 
-            HashSet<string> formVars = (HashSet<string>) formula.GetVariables();
- 
+            HashSet<string> formVars = (HashSet<string>)formula.GetVariables();
+
 
             //For circular dependency, check that none of the variables we're adding to the dependents are equal to the name.
-            if(formVars.Contains(name))
+            if (formVars.Contains(name))
             {
                 throw new CircularException();
             }
 
             //Check that none of the variables of the formula already depend on the current cell. 
-            foreach(string s in formVars)
+            foreach (string s in formVars)
             {
-                HashSet<string> dents = (HashSet<string>) dependencies.GetDependents(s);
+                HashSet<string> dents = (HashSet<string>)dependencies.GetDependents(s);
                 if (dents.Contains(name))
                 {
                     throw new CircularException();
-                }     
+                }
             }
 
             //No circular dependencies at this point. Add the variable names to the set.
-            foreach(string s in formVars)
+            foreach (string s in formVars)
             {
                 set.Add(s);
             }
 
+            allCells.SetCell(name, formula);//Add contents to the cell representation.
             dependencies.ReplaceDependees(name, formVars); //Replace the dependees of the current cell. 
             set.Add(name);
 
@@ -283,8 +288,22 @@ namespace SS
                 throw new InvalidNameException();
             }
 
-            
-            
+            foreach (KeyValuePair<string, object> p in allCells.GetSheet())//Look at all of the cells we have.
+            {
+                if (GetCellContents(p.Key) is Formula)
+                {
+                    Formula contents = (Formula)GetCellContents(p.Key);
+
+                    //If any of the variables of the formula we're looking at contain the name of the cell.
+                    if (contents.GetVariables().Contains(name))
+                    {
+                        set.Add(p.Key);
+                    }
+                }
+
+            }
+
+            return set;
         }
 
         /// <summary>
@@ -293,9 +312,9 @@ namespace SS
         /// <param name="s"></param>
         /// <returns></returns>
         /// 
-        private bool ValidCellCheck (string s)
+        private bool ValidCellCheck(string s)
         {
-            if(s == null)
+            if (s == null)
             {
                 return false;
             }
