@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{77C89D9B-9D50-46BB-BD3A-112C166CE16A}</ProjectGuid>
+    <ProjectGuid>{AE53CA0D-0C1E-4E5B-8495-BC3F2A260057}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PS4GradingTests</RootNamespace>
-    <AssemblyName>PS4GradingTests</AssemblyName>
+    <RootNamespace>ArrayListTest</RootNamespace>
+    <AssemblyName>ArrayListTest</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -50,13 +50,13 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="GradingTests.cs" />
+    <Compile Include="ArrayListTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Formula\Formula.csproj">
-      <Project>{d43d998c-9797-4cf4-9bb0-6de22753849a}</Project>
-      <Name>Formula</Name>
+    <ProjectReference Include="..\ArrayList\ArrayList.csproj">
+      <Project>{8996bea4-b37c-4574-a874-4d0657ddd38a}</Project>
+      <Name>ArrayList</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
