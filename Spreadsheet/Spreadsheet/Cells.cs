@@ -23,8 +23,9 @@ namespace SS
 
         /// <summary>
         /// Assign contents to a cell. Does nothing if the cell name is null.
-        /// </summary>
         /// <param name="c"></param>
+        /// <param name="s"></param>
+        /// </summary>
         public void SetCell(string s, object c)
         {
             if(s == null)

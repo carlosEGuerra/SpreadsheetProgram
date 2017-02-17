@@ -141,10 +141,15 @@ namespace SS
             allCells.SetCell(name, number);//Change the contents of the cell.
             set.Add(name);
 
-            foreach (string s in (HashSet<string>)dependencies.GetDependents(name))//Report all dependents.
-            {
-                set.Add(s);
-            }
+           // IEnumerator<string> dentsEnumer = dependencies.GetDependents(name).GetEnumerator();
+
+            set = new HashSet<string>(GetCellsToRecalculate(name));
+
+            //while (dentsEnumer.MoveNext())//Report all dependents.
+            //{
+            //    string s = dentsEnumer.Current.ToString();
+            //    set.Add(s);
+            //}
 
 
             return set;
@@ -189,13 +194,24 @@ namespace SS
             set.Add(name); //Add name to the set.
             allCells.SetCell(name, text);//Add contents to the cell.
 
-            foreach (string s in (HashSet<string>)dependencies.GetDependents(name))//Report all dependents.
-            {
-                set.Add(s);
-        
-            }
 
-            ///}
+           IEnumerator<string> dentsEnumer = dependencies.GetDependents(name).GetEnumerator();
+
+            //List<string> allDees = getAllDependeesDriver(name);
+
+            //foreach(string s in allDees)
+            //{
+            //    set.Add(s);
+            //}
+
+            //while (dentsEnumer.MoveNext())//Report all dependents.
+            //{
+            //    string s = dentsEnumer.Current.ToString();
+            //    set.Add(s);
+            //}
+
+            set = new HashSet<string>(GetCellsToRecalculate(name));
+
             return set;
         }
 
@@ -214,16 +230,22 @@ namespace SS
         /// </summary>
         public override ISet<string> SetCellContents(string name, Formula formula)
         {
+            if(name == null)
+            {
+                throw new InvalidNameException();
+            }
 
             bool valid = ValidCellCheck(name);
             HashSet<string> set = new HashSet<string>();
+
+            HashSet<string> toRecalculate = new HashSet<string>(GetCellsToRecalculate(name));
 
             if (!valid) //If the name of the cell is null or invalid
             {
                 throw new InvalidNameException();
             }
 
-            HashSet<string> formVars = (HashSet<string>)formula.GetVariables();
+           HashSet<string> formVars = (HashSet<string>)formula.GetVariables();
 
 
             //For circular dependency, check that none of the variables we're adding to the dependents are equal to the name.
@@ -235,22 +257,33 @@ namespace SS
             //Check that none of the variables of the formula already depend on the current cell. 
             foreach (string s in formVars)
             {
-                HashSet<string> dents = (HashSet<string>)dependencies.GetDependents(s);
-                if (dents.Contains(name))
+                // IEnumerator<string> dentsEnum = dependencies.GetDependents(s).GetEnumerator();
+                IEnumerator<string> deesEnum =  dependencies.GetDependees(s).GetEnumerator();
+                List<string> dees = new List<string>();
+
+                while (deesEnum.MoveNext())
+                {
+                    dees.Add(deesEnum.Current);
+                }
+
+                if (dees.Contains(name))
+                {
+                    throw new CircularException();
+                }
+
+                if (toRecalculate.Contains(s))
                 {
                     throw new CircularException();
                 }
             }
 
+
             //No circular dependencies at this point. Add the variable names to the set.
-            foreach (string s in formVars)
-            {
-                set.Add(s);
-            }
+            set = new HashSet<string>(GetCellsToRecalculate(name));
 
             allCells.SetCell(name, formula);//Add contents to the cell representation.
             dependencies.ReplaceDependees(name, formVars); //Replace the dependees of the current cell. 
-            set.Add(name);
+            //set.Add(name);
 
             return set;
         }
@@ -329,5 +362,6 @@ namespace SS
             }
             return true;
         }
+        
     }
 }

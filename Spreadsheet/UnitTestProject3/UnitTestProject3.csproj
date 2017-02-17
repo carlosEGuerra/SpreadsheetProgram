@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6D6CD661-2868-450B-B94B-61B329B49168}</ProjectGuid>
+    <ProjectGuid>{4360F79D-44AE-4076-B1A3-44633912ED76}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PS4aTests</RootNamespace>
-    <AssemblyName>PS4aTests</AssemblyName>
+    <RootNamespace>UnitTestProject3</RootNamespace>
+    <AssemblyName>UnitTestProject3</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -45,9 +45,7 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
-          <Private>False</Private>
-        </Reference>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
       </ItemGroup>
     </Otherwise>
   </Choose>
@@ -56,9 +54,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DependencyGraph\DependencyGraph.csproj">
+      <Project>{862ead85-346f-4d2b-a53c-98074ff813ba}</Project>
+      <Name>DependencyGraph</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Formula\Formula.csproj">
       <Project>{d43d998c-9797-4cf4-9bb0-6de22753849a}</Project>
       <Name>Formula</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Spreadsheet\Spreadsheet.csproj">
+      <Project>{9025a594-df2a-4e6a-b8c2-f087ecc3e203}</Project>
+      <Name>Spreadsheet</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
