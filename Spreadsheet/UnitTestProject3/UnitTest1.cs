@@ -339,12 +339,12 @@ namespace SS
             Test31();
         }
 
-/*      [TestMethod()]
+      [TestMethod()]
         public void Test35()
         {
             Spreadsheet s = new Spreadsheet();
             ISet<String> cells = new HashSet<string>();
-            for (int i = 1; i < 200; i++)
+            for (int i = 1; i < 500; i++)
             {
                 cells.Add("A" + i);
                 Assert.IsTrue(cells.SetEquals(s.SetCellContents("A" + i, new Formula("A" + (i + 1)))));
@@ -366,8 +366,7 @@ namespace SS
             Test35();
         }
 
-    */
-     /*  [TestMethod()]
+       [TestMethod()]
         public void Test39()
         {
             Spreadsheet s = new Spreadsheet();
@@ -400,9 +399,8 @@ namespace SS
             Test39();
         }
 
-*/
 
-    /*    [TestMethod()]
+        [TestMethod()]
         public void Test43()
         {
             Spreadsheet s = new Spreadsheet();
@@ -457,7 +455,7 @@ namespace SS
             RunRandomizedTest(50, 2521);
         }
 
-    */
+   
 
         public void RunRandomizedTest(int seed, int size)
         {

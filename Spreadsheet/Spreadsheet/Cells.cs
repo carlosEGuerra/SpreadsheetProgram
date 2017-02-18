@@ -51,13 +51,5 @@ namespace SS
         {
             return this.Sheet;
         }
-
-        //public object GetValue()
-        //{
-        //    if (contents.GetType() == typeof(Formula))
-        //    {
-        //        return ((Formula)contents); 
-        //    }
-        //}
     }
 }

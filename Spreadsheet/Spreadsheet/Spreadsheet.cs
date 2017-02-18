@@ -145,13 +145,6 @@ namespace SS
 
             set = new HashSet<string>(GetCellsToRecalculate(name));
 
-            //while (dentsEnumer.MoveNext())//Report all dependents.
-            //{
-            //    string s = dentsEnumer.Current.ToString();
-            //    set.Add(s);
-            //}
-
-
             return set;
         }
 
@@ -182,35 +175,10 @@ namespace SS
                 throw new InvalidNameException();
             }
 
-            ////If the text is a valid Formula, process as a formula intead.
-            //try
-            //{
-            //    Formula f = new Formula(text);
-            //    set = (HashSet<string>) SetCellContents(name, f);
-            //}
-            //catch //At this point, the text is merely a string.
-            //{
-
             set.Add(name); //Add name to the set.
             allCells.SetCell(name, text);//Add contents to the cell.
 
-
-           IEnumerator<string> dentsEnumer = dependencies.GetDependents(name).GetEnumerator();
-
-            //List<string> allDees = getAllDependeesDriver(name);
-
-            //foreach(string s in allDees)
-            //{
-            //    set.Add(s);
-            //}
-
-            //while (dentsEnumer.MoveNext())//Report all dependents.
-            //{
-            //    string s = dentsEnumer.Current.ToString();
-            //    set.Add(s);
-            //}
-
-            set = new HashSet<string>(GetCellsToRecalculate(name));
+            set = new HashSet<string>(GetCellsToRecalculate(name));//Find all cells tat depend on the current cell.
 
             return set;
         }
@@ -283,7 +251,6 @@ namespace SS
 
             allCells.SetCell(name, formula);//Add contents to the cell representation.
             dependencies.ReplaceDependees(name, formVars); //Replace the dependees of the current cell. 
-            //set.Add(name);
 
             return set;
         }
@@ -333,7 +300,7 @@ namespace SS
                         set.Add(p.Key);
                     }
                 }
-
+           
             }
 
             return set;
