@@ -1,4 +1,6 @@
-﻿using System;
+﻿//Skeleton Written by Joe Zachary for CS 3500
+//Appeneded and implementd by Ellen Brigance, February 2017
+using System;
 using System.Collections.Generic;
 using Formulas;
 using Dependencies;
@@ -75,10 +77,6 @@ namespace SS
             {
                 object val = p.Value;
 
-                if (val == null)//If the string contents are null.
-                {
-                    continue;
-                }
                 if (val is string //If the contents of the cell are Null, an empty string, or whitespace, it is empty.
                     && (String.IsNullOrEmpty((string)val) || String.IsNullOrWhiteSpace((string)val)))
                 {
@@ -141,8 +139,6 @@ namespace SS
             allCells.SetCell(name, number);//Change the contents of the cell.
             set.Add(name);
 
-           // IEnumerator<string> dentsEnumer = dependencies.GetDependents(name).GetEnumerator();
-
             set = new HashSet<string>(GetCellsToRecalculate(name));
 
             return set;
@@ -184,6 +180,8 @@ namespace SS
         }
 
         /// <summary>
+        /// Requires that all of the variables in formula are valid cell names.
+        /// 
         /// Otherwise, if name is null or invalid, throws an InvalidNameException.
         /// 
         /// Otherwise, if changing the contents of the named cell to be the formula would cause a 
@@ -215,7 +213,6 @@ namespace SS
 
            HashSet<string> formVars = (HashSet<string>)formula.GetVariables();
 
-
             //For circular dependency, check that none of the variables we're adding to the dependents are equal to the name.
             if (formVars.Contains(name))
             {
@@ -225,7 +222,11 @@ namespace SS
             //Check that none of the variables of the formula already depend on the current cell. 
             foreach (string s in formVars)
             {
-                // IEnumerator<string> dentsEnum = dependencies.GetDependents(s).GetEnumerator();
+                if(!ValidCellCheck(s))
+                {
+                    throw new InvalidNameException();
+                }
+
                 IEnumerator<string> deesEnum =  dependencies.GetDependees(s).GetEnumerator();
                 List<string> dees = new List<string>();
 
@@ -315,6 +316,16 @@ namespace SS
         private bool ValidCellCheck(string s)
         {
             if (s == null)
+            {
+                return false;
+            }
+
+            if (String.IsNullOrEmpty(s))
+            {
+                return false;
+            }
+
+            if (String.IsNullOrWhiteSpace(s))
             {
                 return false;
             }
