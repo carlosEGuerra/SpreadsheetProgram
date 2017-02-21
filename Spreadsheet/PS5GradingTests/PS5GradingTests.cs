@@ -352,7 +352,7 @@ namespace GradingTests
         {
             AbstractSpreadsheet s = new Spreadsheet();
             ISet<String> cells = new HashSet<string>();
-            for (int i = 1; i < 200; i++)
+            for (int i = 1; i < 100; i++)
             {
                 cells.Add("A" + i);
                 AssertSetEqualsIgnoreCase(cells, s.SetCellContents("A" + i, new Formula("A" + (i + 1))));
