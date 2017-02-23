@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Formulas;
-using SS;
+using System.Text.RegularExpressions;
 
-namespace Spreadsheet
+namespace SS
 {
-    class Spreadsheet : AbstractSpreadsheet
+    public class Spreadsheet : AbstractSpreadsheet
     {
         private Dictionary<string, object> cell;
 
@@ -25,14 +22,18 @@ namespace Spreadsheet
         /// </summary>
         public override object GetCellContents(string name)
         {
-            if (name.Equals(null))
+            if (name == null || !valid(name))            //changes the name check to name == null and check the validity of the name, also added a check to make sure that dictionary contains name
             {
                 throw new InvalidNameException();
             }
 
             //checks the object type of the values
-            object obj;
+            object obj = "";
             cell.TryGetValue(name, out obj);
+            if (obj.Equals(null))
+            {
+                return "";
+            }
             if (obj.GetType() == typeof(string))
             {
                 return Convert.ChangeType(obj, typeof(string));
@@ -41,9 +42,13 @@ namespace Spreadsheet
             {
                 return Convert.ChangeType(obj, typeof(double));
             }
-            else
+            else if(obj.GetType() == typeof(Formula))
             {
                 return Convert.ChangeType(obj, typeof(Formula));
+            }
+            else
+            {
+                return obj;
             }
         }
 
@@ -84,7 +89,7 @@ namespace Spreadsheet
         /// </summary>
         public override ISet<string> SetCellContents(string name, Formula formula)
         {
-            if(name.Equals(null) || !name.IsNormalized())
+            if (name == null || !valid(name) || !name.IsNormalized() || !cell.ContainsKey(name))         //checked if name is valid instead of null and checked if name == null, also added a check if the dictionary contains the name
             {
                 throw new InvalidNameException();
             }
@@ -117,11 +122,11 @@ namespace Spreadsheet
         /// </summary>
         public override ISet<string> SetCellContents(string name, string text)
         {
-            if (text.Equals(null))
+            if (text == null)                           //changed to == 
             {
                 throw new ArgumentNullException();
             }
-            if (name.Equals(null))
+            if (name == null || !valid(name) || !cell.ContainsKey(name))                            //checked validation of name, added a check to ensure that dictionary contains name
             {
                 throw new InvalidNameException();
             }
@@ -158,7 +163,7 @@ namespace Spreadsheet
         /// </summary>
         public override ISet<string> SetCellContents(string name, double number)
         {
-            if (name.Equals(null))
+            if (!valid(name))               //changes form .equals null to == null
             {
                 throw new InvalidNameException();
             }
@@ -200,7 +205,7 @@ namespace Spreadsheet
         /// </summary>
         protected override IEnumerable<string> GetDirectDependents(string name)
         {
-            if (name.Equals(null))
+            if (!valid(name))
             {
                 throw new ArgumentNullException();
             }
@@ -216,6 +221,18 @@ namespace Spreadsheet
                 }
             }
             return depCell;
+        }
+
+        public bool valid(string cell)
+        {
+            if (Regex.IsMatch(cell, "^[a-zA-Z]+[0-9][1-9]*$"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
