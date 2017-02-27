@@ -261,7 +261,7 @@ namespace SS
                     return 0; //The value of the cell is automatically 0.
                 }
 
-                return allCells.GetSheet()[name];//Otherwise, return the set value of the cell. 
+                return allCells.GetSheet()[name][1];//Otherwise, return the set value of the cell. 
             }
         }
 
@@ -311,7 +311,17 @@ namespace SS
 
             else
             {
-                return allCells.GetSheet()[name][0]; //Return the contents at the specified cell.
+                object o = allCells.GetSheet()[name][0];
+                if (o is Formula)
+                {
+                    return (Formula) o;
+                }
+                if(o is Double)
+                {
+                    return (Double)o;
+                }
+
+                return (string) o;
             }
 
         }
@@ -350,33 +360,38 @@ namespace SS
         /// </summary>
         public override ISet<string> SetContentsOfCell(string name, string content)
         {
-            if(content == null)
+            if (content == null)
             {
                 throw new ArgumentNullException();
             }
-            if(name == null || !ValidCellCheck(name))
+            if (name == null || !ValidCellCheck(name))
             {
                 throw new InvalidNameException();
             }
 
             HashSet<string> H = new HashSet<string>();
             double d;
-
+            bool setDone = false;
             //SETTING CONTENT, REEVALUATING THE VALUE FOR A DOUBLE.
             if (Double.TryParse(content, out d))
             {
                 H = new HashSet<string>(SetCellContents(name, d));
+                setDone = true;
             }
 
             //FOR FORMULA
-            else if (content[0].Equals("="))
+            if (!String.IsNullOrWhiteSpace(content) && setDone == false)
             {
-                string f = content.Substring(1);
-                Formula F = new Formula(f, s=> s.ToUpper(), t => ValidCellCheck(t));
-                H = new HashSet<string>(SetCellContents(name, F));
+                if (content[0].Equals('='))
+                {
+                    string f = content.Substring(1);
+                    Formula F = new Formula(f, s => s.ToUpper(), t => ValidCellCheck(t));
+                    H = new HashSet<string>(SetCellContents(name, F));
+                    setDone = true;
+                }
             }
 
-            else //FOR STRING
+            if (content is string && setDone == false) //FOR STRING
             {
                 H = new HashSet<string>(SetCellContents(name, content));
             }
@@ -412,7 +427,10 @@ namespace SS
             List<string> list = new List<string>(GetCellsToRecalculate(name));//Ordered version
             UpdateCellValues(list); //Update values of cells.
 
-            set = new HashSet<string>(GetCellsToRecalculate(name));//Hashset ordering
+            foreach(string s in list)
+            {
+                set.Add(s);
+            }
 
             return set;
         }
@@ -451,8 +469,11 @@ namespace SS
             List<string> list = new List<string>(GetCellsToRecalculate(name));//Ordered version
             UpdateCellValues(list); //Update values of cells.
 
-            set = new HashSet<string>(GetCellsToRecalculate(name));//Find all cells tat depend on the current cell.
-            
+            foreach (string s in list)
+            {
+                set.Add(s);
+            }
+
             return set;
         }
 
@@ -482,19 +503,16 @@ namespace SS
             bool valid = ValidCellCheck(name);
             HashSet<string> set = new HashSet<string>();
 
-            //
+          
             List<string> toRecalculate = new List<string>(GetCellsToRecalculate(name));
 
-            //
+        
             if (!valid) //If the name of the cell is null or invalid
             {
                 throw new InvalidNameException();
             }
 
-            //
             HashSet<string> formVars = (HashSet<string>)formula.GetVariables();
-
-            //
 
             //For circular dependency, check that none of the variables we're adding to the dependents are equal to the name.
             if (formVars.Contains(name))
@@ -531,7 +549,10 @@ namespace SS
 
 
             //No circular dependencies at this point. Add the variable names to the set.
-            set = new HashSet<string>(GetCellsToRecalculate(name));
+            foreach (string s in toRecalculate)
+            {
+                set.Add(s);
+            }
 
             allCells.SetCell(name, formula, null);//Add contents to the cell representation.
             dependencies.ReplaceDependees(name, formVars); //Replace the dependees of the current cell. 
@@ -631,7 +652,6 @@ namespace SS
         /// <summary>
         /// Evaluates the values of all cells needing to be updated.
         /// </summary>
-        /// <param name="cell"></param>
         /// <param name="recalcList"></param>
         /// <returns></returns>
         private void UpdateCellValues(List<string> recalcList)
@@ -671,15 +691,19 @@ namespace SS
         private double VarLookup(string var)
         {
             //Evaluate looks at one variable each time the lookup is called.
+
+            //Empty/undeclared cell.
+            if (!allCells.GetSheet().ContainsKey(var))
+            {
+                return 0;//Value of empty cell is always 0.
+            }
+
             //Look up the given cell.
             object curContents = allCells.GetSheet()[var][0];
             object curVal = allCells.GetSheet()[var][1];
 
-            //Empty/undeclared cell.
-            if (curContents == null && curVal == null)
-            {
-                return 0; //The value of the cell is always zero.
-            }
+
+   
             //Formula or double where value is already determined.
             if((curContents is double || curContents is Formula) && curVal is double)
             {

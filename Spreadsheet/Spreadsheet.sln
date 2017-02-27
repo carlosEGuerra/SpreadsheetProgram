@@ -29,9 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PS5GradingTests", "PS5GradingTests\PS5GradingTests.csproj", "{5CE891A3-87AB-409B-874D-AD3622C5F59F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PS5Tester", "PS6Tester\PS5Tester.csproj", "{F6008588-4F92-44BE-90F5-9B07AD66E869}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PS6Tests", "PS6Tests\PS6Tests.csproj", "{646FEC25-3E91-4B46-BE35-5D78DF1E348C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PS6Tester", "PS6Tester\PS6Tester.csproj", "{F6008588-4F92-44BE-90F5-9B07AD66E869}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,10 +78,6 @@ Global
 		{F6008588-4F92-44BE-90F5-9B07AD66E869}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6008588-4F92-44BE-90F5-9B07AD66E869}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6008588-4F92-44BE-90F5-9B07AD66E869}.Release|Any CPU.Build.0 = Release|Any CPU
-		{646FEC25-3E91-4B46-BE35-5D78DF1E348C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{646FEC25-3E91-4B46-BE35-5D78DF1E348C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{646FEC25-3E91-4B46-BE35-5D78DF1E348C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{646FEC25-3E91-4B46-BE35-5D78DF1E348C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

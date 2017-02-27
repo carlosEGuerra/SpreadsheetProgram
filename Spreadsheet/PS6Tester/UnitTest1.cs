@@ -3,8 +3,9 @@ using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using Formulas;
+using SS;
 
-namespace SS
+namespace PS6Tester
 {
     /// <summary>
     /// A tester class for the Spreadsheet and all of its functions.
@@ -12,7 +13,7 @@ namespace SS
     [TestClass]
     public class UnitTest1
     {
-        /***************** GetNamesOfAllNonemptyCells() Tests ************************/
+        /******************* GetNamesOfAllNonemptyCells() Tests ************************/
        
         /// <summary>
         /// Try to get names when all cells are empty.
@@ -20,7 +21,7 @@ namespace SS
         [TestMethod]
         public void GetNamesOfAllNonemptyCells1()
         {
-            Spreadsheet s = new Spreadsheet();
+            AbstractSpreadsheet s = new Spreadsheet();
             List<string> list = new List<string>(s.GetNamesOfAllNonemptyCells());
             Assert.IsTrue(list.Count == 0);
         }
@@ -31,8 +32,8 @@ namespace SS
         [TestMethod]
         public void GetNamesOfAllNonemptyCells2()
         {
-            Spreadsheet s = new Spreadsheet();
-            s.SetCellContents("A1", 4);
+            AbstractSpreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("A1", "4");
             List<string> list = new List<string>(s.GetNamesOfAllNonemptyCells());
             Assert.IsTrue(list.Count == 1);
         }
@@ -44,7 +45,7 @@ namespace SS
         [TestMethod]
         public void GetNamesOfAllNonemptyCells3()
         {
-            Spreadsheet s = new Spreadsheet();
+            AbstractSpreadsheet s = new Spreadsheet();
 
             List<string> checkList = new List<string>();
             checkList.Add("A1");
@@ -54,15 +55,15 @@ namespace SS
             checkList.Add("A5");
             checkList.Add("A6");
 
-            s.SetCellContents("A1", 4);
-            s.SetCellContents("A2", 4);
-            s.SetCellContents("A3", 4);
-            s.SetCellContents("A4", "s");
-            s.SetCellContents("A5", "s");
-            s.SetCellContents("A6", "s");
-            s.SetCellContents("A4", new Formula("s1"));
-            s.SetCellContents("A5", new Formula("s1"));
-            s.SetCellContents("A6", new Formula("s1"));
+            s.SetContentsOfCell("A1", "4");
+            s.SetContentsOfCell("A2", "4");
+            s.SetContentsOfCell("A3", "4");
+            s.SetContentsOfCell("A4", "s");
+            s.SetContentsOfCell("A5", "s");
+            s.SetContentsOfCell("A6", "s");
+            s.SetContentsOfCell("A4", "=" + new Formula("s1").ToString());
+            s.SetContentsOfCell("A5", "=" + new Formula("s1").ToString());
+            s.SetContentsOfCell("A6", "=" + new Formula("s1").ToString());
             List<string> list = new List<string>(s.GetNamesOfAllNonemptyCells());
             foreach(string t in checkList)
             {
@@ -79,29 +80,29 @@ namespace SS
         [TestMethod]
         public void GetNamesOfAllNonemptyCells4()
         {
-            Spreadsheet s = new Spreadsheet();
-            
+            AbstractSpreadsheet s = new Spreadsheet();
+
             //Add stuff.
-            s.SetCellContents("A1", 4);
-            s.SetCellContents("A2", 4);
-            s.SetCellContents("A3", 4);
-            s.SetCellContents("A4", "s");
-            s.SetCellContents("A5", "s");
-            s.SetCellContents("A6", "s");
-            s.SetCellContents("A4", new Formula("s1"));
-            s.SetCellContents("A5", new Formula("s1"));
-            s.SetCellContents("A6", new Formula("s1"));
+            s.SetContentsOfCell("A1", "4");
+            s.SetContentsOfCell("A2", "4");
+            s.SetContentsOfCell("A3", "4");
+            s.SetContentsOfCell("A4", "s");
+            s.SetContentsOfCell("A5", "s");
+            s.SetContentsOfCell("A6", "s");
+            s.SetContentsOfCell("A7", "=" + new Formula("s1").ToString());
+            s.SetContentsOfCell("A8", "=" + new Formula("s1").ToString());
+            s.SetContentsOfCell("A9", "=" + new Formula("s1").ToString());
 
             //Remove all of it.
-            s.SetCellContents("A1", "");
-            s.SetCellContents("A2", "");
-            s.SetCellContents("A3", "");
-            s.SetCellContents("A4", "");
-            s.SetCellContents("A5", "");
-            s.SetCellContents("A6", " ");
-            s.SetCellContents("A4", "    ");
-            s.SetCellContents("A5", "     ");
-            s.SetCellContents("A6", "  ");
+            s.SetContentsOfCell("A1", "");
+            s.SetContentsOfCell("A2", "");
+            s.SetContentsOfCell("A3", "");
+            s.SetContentsOfCell("A4", "");
+            s.SetContentsOfCell("A5", "");
+            s.SetContentsOfCell("A6", " ");
+            s.SetContentsOfCell("A7", "    ");
+            s.SetContentsOfCell("A8", "     ");
+            s.SetContentsOfCell("A9", "  ");
 
             List<string> list = new List<string>(s.GetNamesOfAllNonemptyCells());
 
@@ -116,9 +117,9 @@ namespace SS
         [TestMethod]
         public void GetNamesOfAllNonemptyCells5()
         {
-            Spreadsheet s = new Spreadsheet();
-            s.SetCellContents("A1", 4);
-            s.SetCellContents("A1", 5);
+            AbstractSpreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("A1", "4");
+            s.SetContentsOfCell("A1", "5");
             List<string> list = new List<string>(s.GetNamesOfAllNonemptyCells());
             Assert.IsTrue(list.Count == 1);
         }
@@ -130,26 +131,26 @@ namespace SS
         [TestMethod]
         public void GetNamesOfAllNonemptyCells6()
         {
-            Spreadsheet s = new Spreadsheet();
+            AbstractSpreadsheet s = new Spreadsheet();
 
             //Add stuff.
-            s.SetCellContents("A1", 4);
-            s.SetCellContents("A2", 4);
-            s.SetCellContents("A3", 4);
-            s.SetCellContents("A4", "s");
-            s.SetCellContents("A5", "s");
-            s.SetCellContents("A6", "s");
-            s.SetCellContents("A7", new Formula("s1"));
-            s.SetCellContents("A8", new Formula("s1"));
-            s.SetCellContents("A9", new Formula("s1"));
+            s.SetContentsOfCell("A1", "4");
+            s.SetContentsOfCell("A2", "4");
+            s.SetContentsOfCell("A3", "4");
+            s.SetContentsOfCell("A4", "s");
+            s.SetContentsOfCell("A5", "s");
+            s.SetContentsOfCell("A6", "s");
+            s.SetContentsOfCell("A7", "=" + new Formula("s1").ToString());
+            s.SetContentsOfCell("A8", "=" + new Formula("s1").ToString());
+            s.SetContentsOfCell("A9", "=" + new Formula("s1").ToString());
 
             //Remove a few.
-            s.SetCellContents("A1", "");
-            s.SetCellContents("A2", "");
-            s.SetCellContents("A3", "");
-            s.SetCellContents("A4", "");
-            s.SetCellContents("A5", "");
-            s.SetCellContents("A6", " ");
+            s.SetContentsOfCell("A1", "");
+            s.SetContentsOfCell("A2", "");
+            s.SetContentsOfCell("A3", "");
+            s.SetContentsOfCell("A4", "");
+            s.SetContentsOfCell("A5", "");
+            s.SetContentsOfCell("A6", " ");
 
             List<string> list = new List<string>(s.GetNamesOfAllNonemptyCells());
 
@@ -165,7 +166,7 @@ namespace SS
         [ExpectedException(typeof(InvalidNameException))]
         public void GetCellContent1()
         {
-            Spreadsheet s = new Spreadsheet();
+            AbstractSpreadsheet s = new Spreadsheet();
             s.GetCellContents("2INVALID");       
         }
 
@@ -177,7 +178,7 @@ namespace SS
         [ExpectedException(typeof(InvalidNameException))]
         public void GetCellContent2()
         {
-            Spreadsheet s = new Spreadsheet();
+            AbstractSpreadsheet s = new Spreadsheet();
             s.GetCellContents(null);
 
         }
@@ -188,11 +189,14 @@ namespace SS
         [TestMethod]
         public void GetCellContent3()
         {
-            Spreadsheet s = new Spreadsheet();
-            double d = 145;
-            s.SetCellContents("A1", d);
-     
-            Assert.AreEqual(d, (double) s.GetCellContents("A1"));
+            AbstractSpreadsheet s = new Spreadsheet();
+
+            s.SetContentsOfCell("A1", "145");
+
+            object o = s.GetCellContents("A1");
+
+
+            Assert.AreEqual(145, (double) o);
         }
         /// <summary>
         /// Try to get cell contents that are a string.
@@ -200,10 +204,10 @@ namespace SS
         [TestMethod]
         public void GetCellContent4()
         {
-            Spreadsheet s = new Spreadsheet();
-            s.SetCellContents("A1", "d");
+            AbstractSpreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("A1", "d");
 
-            Assert.AreEqual("d", (string)s.GetCellContents("A1"));
+            Assert.AreEqual("d", (string) (s.GetCellContents("A1")));
         }
         /// <summary>
         /// Try to get the contents of an empty cell.
@@ -211,7 +215,7 @@ namespace SS
         [TestMethod]
         public void GetCellContent5()
         {
-            Spreadsheet s = new Spreadsheet();
+            AbstractSpreadsheet s = new Spreadsheet();
 
             Assert.AreEqual("", (string)s.GetCellContents("A1"));
         }
@@ -223,9 +227,9 @@ namespace SS
         [ExpectedException(typeof(ArgumentNullException))]
         public void GetCellContent6()
         {
-            Spreadsheet s = new Spreadsheet();
+            AbstractSpreadsheet s = new Spreadsheet();
             string n = null;
-            s.SetCellContents("a1", n);
+            s.SetContentsOfCell("a1", n);
 
             Assert.AreEqual("", (string)s.GetCellContents("A1"));
         }
@@ -239,8 +243,8 @@ namespace SS
         [ExpectedException(typeof(InvalidNameException))]
         public void SetCellContents1()
         {
-            Spreadsheet s = new Spreadsheet();
-            s.SetCellContents("", 4);
+            AbstractSpreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("", "4");
         }
 
         /// <summary>
@@ -250,8 +254,8 @@ namespace SS
         [ExpectedException(typeof(InvalidNameException))]
         public void SetCellContents2()
         {
-            Spreadsheet s = new Spreadsheet();
-            s.SetCellContents(null, 4);
+            AbstractSpreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell(null, "4");
         }
 
         /// <summary>
@@ -261,8 +265,8 @@ namespace SS
         [ExpectedException(typeof(InvalidNameException))]
         public void SetCellContents3()
         {
-            Spreadsheet s = new Spreadsheet();
-            s.SetCellContents("", "4");
+            AbstractSpreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("", "4");
         }
 
         /// <summary>
@@ -272,8 +276,8 @@ namespace SS
         [ExpectedException(typeof(InvalidNameException))]
         public void SetCellContents4()
         {
-            Spreadsheet s = new Spreadsheet();
-            s.SetCellContents(null, "4");
+            AbstractSpreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell(null, "4");
         }
 
         /// <summary>
@@ -283,8 +287,8 @@ namespace SS
         [ExpectedException(typeof(InvalidNameException))]
         public void SetCellContents5()
         {
-            Spreadsheet s = new Spreadsheet();
-            s.SetCellContents(null, new Formula("4"));
+            AbstractSpreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell(null, "=" + new Formula("4").ToString());
         }
 
 
@@ -295,8 +299,8 @@ namespace SS
         [ExpectedException(typeof(InvalidNameException))]
         public void SetCellContents6()
         {
-            Spreadsheet s = new Spreadsheet();
-            s.SetCellContents("565", new Formula("4"));
+            AbstractSpreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("565", "=" + new Formula("4").ToString());
         }
 
 
@@ -306,11 +310,11 @@ namespace SS
         [TestMethod]
         public void SetCellContents7()
         {
-            Spreadsheet s = new Spreadsheet();
-            s.SetCellContents("A1", new Formula("4"));
-            s.SetCellContents("A1", "4");
+            AbstractSpreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("A1", "=" + new Formula("4").ToString());
+            s.SetContentsOfCell("A1", "4");
 
-            Assert.AreEqual("4", (string)s.GetCellContents("A1"));
+            Assert.AreEqual(4, (double) s.GetCellContents("A1"));
 
         }
 
@@ -323,8 +327,9 @@ namespace SS
         [ExpectedException(typeof(CircularException))]
         public void SetCellContents8()
         {
-            Spreadsheet s = new Spreadsheet();
-            s.SetCellContents("A1", new Formula("A1 + A2"));
+            AbstractSpreadsheet s = new Spreadsheet();
+            string t = "=" + new Formula("A1 + A2").ToString();
+            s.SetContentsOfCell("A1", t);
         }
 
 
@@ -335,9 +340,9 @@ namespace SS
         [ExpectedException(typeof(CircularException))]
         public void SetCellContents9()
         {
-            Spreadsheet s = new Spreadsheet();
-            s.SetCellContents("A1", new Formula("A2"));
-            s.SetCellContents("A2", new Formula("A1"));
+            AbstractSpreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("A1", "=" + new Formula("A2").ToString());
+            s.SetContentsOfCell("A2", "=" + new Formula("A1").ToString());
         }
 
         /// <summary>
@@ -347,13 +352,141 @@ namespace SS
         [ExpectedException(typeof(CircularException))]
         public void SetCellContents10()
         {
-            Spreadsheet s = new Spreadsheet();
-            s.SetCellContents("A1", new Formula("A2 + A3"));
-            s.SetCellContents("A3", new Formula("A4 + A5"));
-            s.SetCellContents("A5", new Formula("A6 + A7"));
-            s.SetCellContents("A7", new Formula("A1 + A1"));
+            AbstractSpreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("A1", "=" + new Formula("A2 + A3").ToString());
+            s.SetContentsOfCell("A3", "=" + new Formula("A4 + A5").ToString());
+            s.SetContentsOfCell("A5", "=" + new Formula("A6 + A7").ToString());
+            s.SetContentsOfCell("A7", "=" + new Formula("A1 + A1").ToString());
 
         }
 
+        /************************ TESTS FOR GetCellValue ************************/
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidNameException))]
+        public void GetCellValue1()
+        {
+            Spreadsheet s = new Spreadsheet();
+            s.GetCellValue("1A");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidNameException))]
+        public void GetCellValue2()
+        {
+            Spreadsheet s = new Spreadsheet();
+            s.GetCellValue("null");
+        }
+
+        /// <summary>
+        /// Cell value of a double.
+        /// </summary>
+        [TestMethod]
+        public void GetCellValue3()
+        {
+            Spreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("A1", "5");
+
+            object o = s.GetCellValue("A1");
+            double d = (double)o;
+            Assert.AreEqual(5, d);
+            
+        }
+
+        /// <summary>
+        /// Cell value of a string.
+        /// </summary>
+        [TestMethod]
+        public void GetCellValue4()
+        {
+            Spreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("A1", "5A");
+            Assert.AreEqual("5A", (string)s.GetCellValue("A1"));
+        }
+
+        /// <summary>
+        /// Cell value of a valid formula.
+        /// </summary>
+        [TestMethod]
+        public void GetCellValue5()
+        {
+            Spreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("A1", "5");
+            Formula F = new Formula("5 + A1");
+            s.SetContentsOfCell("A2", "=" + F.ToString());
+            object o = s.GetCellValue("A2");
+  
+            Assert.AreEqual(10, (double) o);
+        }
+
+        /// <summary>
+        /// Cell value of a valid formula.
+        /// </summary>
+        [TestMethod]
+        public void GetCellValue6()
+        {
+            Spreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("A1", "invalid");
+            Formula F = new Formula("5 + A1");
+            s.SetContentsOfCell("A2", "=" + F.ToString());
+            object o = s.GetCellValue("A2");
+
+            Assert.IsTrue(o is FormulaError);
+        }
+
+        /// <summary>
+        /// Cell value of a valid formula.
+        /// </summary>
+        [TestMethod]
+        public void GetCellValue7()
+        {
+            Spreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("A1", "5");
+            Formula F = new Formula("A3 + A1");
+            string p = "=" + F.ToString();
+            s.SetContentsOfCell("A2", p);
+            object o = s.GetCellValue("A2");
+
+            Assert.AreEqual(5, (double) o);
+        }
+
+        /// <summary>
+        /// Cell value of a valid formula, but values have been changed a few times.
+        /// </summary>
+        [TestMethod]
+        public void GetCellValue8()
+        {
+            Spreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("A1", "5");
+            Formula F = new Formula("A3 + A1 + A4 + A5");
+            string p = "=" + F.ToString();
+            s.SetContentsOfCell("A2", p);
+            s.SetContentsOfCell("A1", "10");
+            s.SetContentsOfCell("A3", "10");
+            object o = s.GetCellValue("A2");
+
+            Assert.AreEqual(20, (double)o);
+        }
+
+        /// <summary>
+        /// Stress test a couple of formulas whose values have changed.
+        /// </summary>
+        [TestMethod]
+        public void GetCellValue9()
+        {
+            Spreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("A1", "5");
+            s.SetContentsOfCell("A2", "3");
+            s.SetContentsOfCell("A3", "6"); //wrong calculations will produce a 17.
+            s.SetContentsOfCell("A5", "=A4+A3");//11+8 == 19
+            s.SetContentsOfCell("A4", "=A3+A2"); // = 8+3 = 11
+            s.SetContentsOfCell("A3", "=A2+A1"); // = 8
+            Formula F = new Formula("A5");
+            string p = "=" + F.ToString();
+
+            object o = s.GetCellValue("A5");
+
+            Assert.AreEqual(19, (double)o);
+        }
     }
 }

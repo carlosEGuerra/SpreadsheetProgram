@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Formulas;
 
 namespace SS
 {
     /// <summary>
     /// A cell class to represent cells of a spreadsheet.
-    /// /summary>
+    /// </summary>
     public class Cells
     {
         private Dictionary<string, object[]> Sheet; 
@@ -40,12 +41,34 @@ namespace SS
             if (!Sheet.ContainsKey(s)) //If we've not explicitly added the cell to our set.
             {
                 Sheet.Add(s, new object[2]);
-                return;
             }
+            //If the object is a double
+            if(c is double)
+            {
+                Sheet[s][0] = (double) c;//Set contents of cell.
 
-            Sheet[s][0] = c;//Set contents of cell.
-            Sheet[s][1] = v;//Set the value of the cell. 
-            return;
+            }
+            if(v is double)
+            {
+                Sheet[s][1] = (double) v;//Set the value of the cell. 
+            }
+            if(c is Formula)
+            {
+                Sheet[s][0] = (Formula) c;//Set contents of cell.
+            }
+            if (v is FormulaError)
+            {
+                Sheet[s][1] = (FormulaError) v;//Set value of cell.
+            }
+            if (c is string)
+            {
+                Sheet[s][0] = (string) c;//Set contents of cell.
+            }
+            if (c is string)
+            {
+                Sheet[s][1] = (string) v;//Set the value of the cell. 
+            }
+                return;
         }
 
         /// <summary>
