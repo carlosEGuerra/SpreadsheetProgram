@@ -30,19 +30,19 @@ namespace SS
             //checks the object type of the values
             object obj = "";
             cell.TryGetValue(name, out obj);
-            if (obj.Equals(null))
+            if (obj == null)
             {
                 return "";
             }
-            if (obj.GetType() == typeof(string))
+            if (obj.GetType() == typeof(String))
             {
-                return Convert.ChangeType(obj, typeof(string));
+                return Convert.ChangeType(obj, typeof(String));
             }
             else if (obj.GetType() == typeof(double))
             {
                 return Convert.ChangeType(obj, typeof(double));
             }
-            else if(obj.GetType() == typeof(Formula))
+            else if(obj.GetType().Equals(typeof(Formula)))
             {
                 return Convert.ChangeType(obj, typeof(Formula));
             }
@@ -60,7 +60,7 @@ namespace SS
             HashSet<string> retVal = new HashSet<string>();
             foreach(string s in cell.Keys)
             {
-                if(s == null)
+                if(String.IsNullOrWhiteSpace(cell[s].ToString()))       //changed to check if the string value at cell[s] is null or whitespace
                 {
                     continue;
                 }
@@ -89,23 +89,74 @@ namespace SS
         /// </summary>
         public override ISet<string> SetCellContents(string name, Formula formula)
         {
-            if (name == null || !valid(name) || !name.IsNormalized() || !cell.ContainsKey(name))         //checked if name is valid instead of null and checked if name == null, also added a check if the dictionary contains the name
+            if (name == null || !valid(name) || !name.IsNormalized())         //checked if name is valid instead of null and checked if name == null, also added a check if the dictionary contains the name
             {
                 throw new InvalidNameException();
             }
+            Dictionary<string, object> prevState = new Dictionary<string, object>();
+            foreach (string key in cell.Keys)
+            {
+                prevState.Add(key, cell[key]);
+            }
 
-            //adds a set that if name is contained in variables then it adds it to the return set
+            checkForCircularDependency(name, formula);          //added a check for circular dependencies
+            try
+            {
+                 if (!cell.ContainsKey(name))             //added a check if dictionary contains the key and adds it if isn't
+                 {
+                    cell.Add(name, formula);
+                    GetCellsToRecalculate(name);
+                 }
+                 else if (cell.ContainsKey(name))
+                 {
+                    cell.Remove(name);
+                    cell[name] = formula;
+                    GetCellsToRecalculate(name);
+                 }
+            }
+            catch (CircularException)
+            {
+                cell = prevState;
+                throw new CircularException();
+            }
+
             HashSet<string> retVal = new HashSet<string>();
             retVal.Add(name);
-            foreach (string s in cell.Keys)
+            IEnumerable<string> dep = GetDirectDependents(name);
+            foreach(string s in dep)
             {
-                Formula form = new Formula(cell[s].ToString());
-                if (form.GetVariables().Contains(name))
-                {
-                    retVal.Add(name);
-                }
+                retVal.Add(s);
             }
             return retVal;
+        }
+
+        //Need Help With this
+        private void checkForCircularDependency(string name, Formula formula)
+        {
+            Dictionary<string, object> cellTemp = new Dictionary<string, object>();
+            foreach(string s in cell.Keys)
+            {
+                cellTemp.Add(s, cell[s]);
+            }
+
+            if (cellTemp.ContainsKey(name))
+            {
+                cellTemp[name] = formula;
+            }
+            else
+            {
+                cellTemp.Add(name, formula);
+            }
+
+            ISet<string> formVar = formula.GetVariables();
+            if (formVar.Contains(name))
+            {
+                throw new CircularException();
+            }
+
+            HashSet<string> subset;
+            GetCellsToRecalculate(subset = new HashSet<string>(GetDirectDependents(name)));
+               
         }
 
         /// <summary>
@@ -126,7 +177,7 @@ namespace SS
             {
                 throw new ArgumentNullException();
             }
-            if (name == null || !valid(name) || !cell.ContainsKey(name))                            //checked validation of name, added a check to ensure that dictionary contains name
+            if (name == null || !valid(name))                            //checked validation of name, added a check to ensure that dictionary contains name
             {
                 throw new InvalidNameException();
             }
@@ -136,19 +187,19 @@ namespace SS
             dependentCells.Add(name);
             foreach(string s in cell.Keys)
             {
-                object str;
-                cell.TryGetValue(s, out str);
-                if (str.Equals(name))
+                IEnumerable<string> sr = GetCellsToRecalculate(s);
+                foreach(string str in sr)
                 {
-                    dependentCells.Add(name);
+                    if (str.Contains(name))
+                    {
+                        dependentCells.Add(str);
+                    }
                 }
             }
 
             //sets the contents of the name cell to the text
             cell[name] = text;
             return dependentCells;
-
-
         }
 
         /// <summary>
@@ -163,7 +214,7 @@ namespace SS
         /// </summary>
         public override ISet<string> SetCellContents(string name, double number)
         {
-            if (!valid(name))               //changes form .equals null to == null
+            if (name == null || !valid(name))               //changes form .equals null to == null, added a check to check if name == null
             {
                 throw new InvalidNameException();
             }
@@ -172,16 +223,10 @@ namespace SS
 
             HashSet<string> retVal = new HashSet<string>();
             retVal.Add(name);
-
-            //checks to see if a variable contained in values is contained
-            foreach(string s in cell.Keys)
+            IEnumerable<string> dep = GetCellsToRecalculate(name);
+            foreach(string s in dep)
             {
-                Formula form = new Formula(cell[s].ToString());
-                if (form.GetVariables().Contains(name))
-                {
-                    retVal.Add(name);
-                    continue;
-                }
+                retVal.Add(s);
             }
             return retVal;
         }
@@ -205,9 +250,13 @@ namespace SS
         /// </summary>
         protected override IEnumerable<string> GetDirectDependents(string name)
         {
-            if (!valid(name))
+            if (name == null)
             {
                 throw new ArgumentNullException();
+            }
+            else if(!valid(name))
+            {
+                throw new InvalidNameException();
             }
 
             HashSet<string> depCell = new HashSet<string>();
@@ -216,13 +265,18 @@ namespace SS
                 Formula form  = new Formula(cell[s].ToString());
                 if (form.GetVariables().Contains(name))
                 {
-                    depCell.Add(name);
+                    depCell.Add(s);
                     continue;
                 }
             }
             return depCell;
         }
 
+        /// <summary>
+        /// This returns whether or not a name of a cell is valid or not.
+        /// </summary>
+        /// <param name="cell"></param>
+        /// <returns></returns>
         public bool valid(string cell)
         {
             if (Regex.IsMatch(cell, "^[a-zA-Z]+[0-9][1-9]*$"))

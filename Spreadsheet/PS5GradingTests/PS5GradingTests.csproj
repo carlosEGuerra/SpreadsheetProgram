@@ -37,15 +37,11 @@
   <ItemGroup>
     <Reference Include="DependencyGraph, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Spreadsheet\bin\Debug\DependencyGraph.dll</HintPath>
+      <HintPath>..\DependencyGraph\bin\Debug\DependencyGraph.dll</HintPath>
     </Reference>
     <Reference Include="Formula, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Spreadsheet\bin\Debug\Formula.dll</HintPath>
-    </Reference>
-    <Reference Include="Spreadsheet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Spreadsheet\bin\Debug\Spreadsheet.dll</HintPath>
+      <HintPath>..\Formula\bin\Debug\Formula.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
@@ -64,6 +60,12 @@
   <ItemGroup>
     <Compile Include="PS5GradingTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Spreadsheet\Spreadsheet.csproj">
+      <Project>{9025a594-df2a-4e6a-b8c2-f087ecc3e203}</Project>
+      <Name>Spreadsheet</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
