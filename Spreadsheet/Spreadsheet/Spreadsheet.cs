@@ -2,12 +2,26 @@
 using System.Collections.Generic;
 using Formulas;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace SS
 {
     public class Spreadsheet : AbstractSpreadsheet
     {
         private Dictionary<string, object> cell;
+
+        public override bool Changed
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            protected set
+            {
+                throw new NotImplementedException();
+            }
+        }
 
         public Spreadsheet()
         {
@@ -122,13 +136,6 @@ namespace SS
 
             HashSet<string> retVal = new HashSet<string>();
             retVal.Add(name);
-
-            //IEnumerable<string> dep = GetDirectDependents(name);
-            //foreach(string val in dep)
-            //{
-            //    IEnumerable<string> s = GetCellsToRecalculate();
-            //   retVal.Add(val);
-            //}
 
             IEnumerable<string> s = GetCellsToRecalculate(name);
             foreach(string str in GetCellsToRecalculate(name))
@@ -288,13 +295,110 @@ namespace SS
         /// <returns></returns>
         public bool valid(string cell)
         {
-            if (Regex.IsMatch(cell, "^[a-zA-Z]+[1-9][0-9]*$"))
+            if (Regex.IsMatch(cell, "^[a-zA-Z]+[1-9]+[0-9]*$"))
             {
                 return true;
             }
             else
             {
                 return false;
+            }
+        }
+        // ADDED FOR PS6
+        /// <summary>
+        /// Writes the contents of this spreadsheet to dest using an XML format.
+        /// The XML elements should be structured as follows:
+        ///
+        /// <spreadsheet IsValid="IsValid regex goes here">
+        ///   <cell name="cell name goes here" contents="cell contents go here"></cell>
+        ///   <cell name="cell name goes here" contents="cell contents go here"></cell>
+        ///   <cell name="cell name goes here" contents="cell contents go here"></cell>
+        /// </spreadsheet>
+        ///
+        /// The value of the IsValid attribute should be IsValid.ToString()
+        /// 
+        /// There should be one cell element for each non-empty cell in the spreadsheet.
+        /// If the cell contains a string, the string (without surrounding double quotes) should be written as the contents.
+        /// If the cell contains a double d, d.ToString() should be written as the contents.
+        /// If the cell contains a Formula f, f.ToString() with "=" prepended should be written as the contents.
+        ///
+        /// If there are any problems writing to dest, the method should throw an IOException.
+        /// </summary>
+        public override void Save(TextWriter dest)
+        {
+            
+        }
+
+        // ADDED FOR PS6
+        /// <summary>
+        /// If name is null or invalid, throws an InvalidNameException.
+        ///
+        /// Otherwise, returns the value (as opposed to the contents) of the named cell.  The return
+        /// value should be either a string, a double, or a FormulaError.
+        /// </summary>
+        public override object GetCellValue(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        // ADDED FOR PS6
+        /// <summary>
+        /// If content is null, throws an ArgumentNullException.
+        ///
+        /// Otherwise, if name is null or invalid, throws an InvalidNameException.
+        ///
+        /// Otherwise, if content parses as a double, the contents of the named
+        /// cell becomes that double.
+        ///
+        /// Otherwise, if content begins with the character '=', an attempt is made
+        /// to parse the remainder of content into a Formula f using the Formula
+        /// constructor with s => s.ToUpper() as the normalizer and a validator that
+        /// checks that s is a valid cell name as defined in the AbstractSpreadsheet
+        /// class comment.  There are then three possibilities:
+        ///
+        ///   (1) If the remainder of content cannot be parsed into a Formula, a
+        ///       Formulas.FormulaFormatException is thrown.
+        ///
+        ///   (2) Otherwise, if changing the contents of the named cell to be f
+        ///       would cause a circular dependency, a CircularException is thrown.
+        ///
+        ///   (3) Otherwise, the contents of the named cell becomes f.
+        ///
+        /// Otherwise, the contents of the named cell becomes content.
+        ///
+        /// If an exception is not thrown, the method returns a set consisting of
+        /// name plus the names of all other cells whose value depends, directly
+        /// or indirectly, on the named cell.
+        ///
+        /// For example, if name is A1, B1 contains A1*2, and C1 contains B1+A1, the
+        /// set {A1, B1, C1} is returned.
+        /// </summary>
+        public override ISet<string> SetContentsOfCell(string name, string content)
+        {
+            if(content == null)
+            {
+                throw new ArgumentNullException();
+            }
+            else if(name == null || !valid(name))
+            {
+                throw new InvalidNameException();
+            }
+
+            //if content is a double then the named cells contents will be replaced with the 
+            //new contents
+            if(content.GetType() == typeof(double))
+            {
+                Double dub = 0;
+                Double.TryParse(content, out dub);
+                cell[name] = dub;
+            }
+
+            //gets the index of the = and runs it through
+            int index = content.IndexOf("=");
+            if(index == 0)
+            {
+                Formula form = new Formula(content.Substring(1, content.Length - 1), s => s.toUpper(), valid(form));
+                form.Evaluate()
             }
         }
     }
