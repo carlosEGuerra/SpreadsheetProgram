@@ -89,7 +89,7 @@ namespace SS
         /// </summary>
         public override ISet<string> SetCellContents(string name, Formula formula)
         {
-            if (name == null || !valid(name) || !name.IsNormalized())         //checked if name is valid instead of null and checked if name == null, also added a check if the dictionary contains the name
+            if (name == null || !valid(name))         //checked if name is valid instead of null and checked if name == null, also added a check if the dictionary contains the name
             {
                 throw new InvalidNameException();
             }
@@ -122,11 +122,20 @@ namespace SS
 
             HashSet<string> retVal = new HashSet<string>();
             retVal.Add(name);
-            IEnumerable<string> dep = GetDirectDependents(name);
-            foreach(string s in dep)
+
+            //IEnumerable<string> dep = GetDirectDependents(name);
+            //foreach(string val in dep)
+            //{
+            //    IEnumerable<string> s = GetCellsToRecalculate();
+            //   retVal.Add(val);
+            //}
+
+            IEnumerable<string> s = GetCellsToRecalculate(name);
+            foreach(string str in GetCellsToRecalculate(name))
             {
-                retVal.Add(s);
+                retVal.Add(str);
             }
+           
             return retVal;
         }
 
@@ -279,7 +288,7 @@ namespace SS
         /// <returns></returns>
         public bool valid(string cell)
         {
-            if (Regex.IsMatch(cell, "^[a-zA-Z]+[0-9][1-9]*$"))
+            if (Regex.IsMatch(cell, "^[a-zA-Z]+[1-9][0-9]*$"))
             {
                 return true;
             }
