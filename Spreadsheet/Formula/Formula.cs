@@ -603,7 +603,7 @@ namespace Formulas
         {
 
             ISet<string> set = new HashSet<string>();
-            if(finalForm == null)
+            if(finalForm == null)   
             {
                 return set;
             }

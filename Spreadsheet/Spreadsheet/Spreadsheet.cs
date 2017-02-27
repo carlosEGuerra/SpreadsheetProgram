@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Formulas;
 using Dependencies;
 using System.Text.RegularExpressions;
+using System.IO;
+using System.Xml;
 
 namespace SS
 {
@@ -58,12 +60,210 @@ namespace SS
         /// The Key represents the name of the cell and the Value represents 
         /// the Contents of the cell.
         /// </summary>
-        private Cells allCells = new Cells();
+        private Cells allCells;
 
         /// <summary>
         /// To keep track of all dependents and dependees in the spreadsheet.
         /// </summary>
-        private DependencyGraph dependencies = new DependencyGraph();
+        private DependencyGraph dependencies;
+
+        /// <summary>
+        /// A flag to keep the state of spreadsheet changes.
+        /// True if the spreadsheet as been modified since it was created or saved.
+        /// </summary>
+        private bool isChanged;
+
+        /// <summary>
+        /// Keeps track of te current Regex if we're employing one.
+        /// </summary>
+        private string isValidReg;
+
+        /// <summary>
+        /// Creates an empty Spreadsheet whose IsValid regular expression accepts every string.
+        /// </summary>
+        public Spreadsheet()
+        {
+            //Set all instance variables.
+            allCells = new Cells();
+            dependencies = new DependencyGraph();
+            isChanged = false;
+            isValidReg = "";
+        }
+
+        /// <summary>
+        /// Creates an empty Spreadsheet whose IsValid regular expression is provided as the parameter
+        /// </summary>
+        /// <param name="isValid"></param>
+        public Spreadsheet(Regex isValid)
+        {
+            //Set all instance variables.
+            allCells = new Cells();
+            dependencies = new DependencyGraph();
+            isChanged = false;
+            isValidReg = isValid.ToString();
+        }
+
+        /// <summary>
+        /// Creates a Spreadsheet that is a duplicate of the spreadsheet saved in source.
+        ///
+        /// See the AbstractSpreadsheet.Save method and Spreadsheet.xsd for the file format 
+        /// specification.  
+        ///
+        /// If there's a problem reading source, throws an IOException.
+        ///
+        /// Else if the contents of source are not consistent with the schema in Spreadsheet.xsd, 
+        /// throws a SpreadsheetReadException.  
+        ///
+        /// Else if the IsValid string contained in source is not a valid C# regular expression, throws
+        /// a SpreadsheetReadException.  (If the exception is not thrown, this regex is referred to
+        /// below as oldIsValid.)
+        ///
+        /// Else if there is a duplicate cell name in the source, throws a SpreadsheetReadException.
+        /// (Two cell names are duplicates if they are identical after being converted to upper case.)
+        ///
+        /// Else if there is an invalid cell name or an invalid formula in the source, throws a 
+        /// SpreadsheetReadException.  (Use oldIsValid in place of IsValid in the definition of 
+        /// cell name validity.)
+        ///
+        /// Else if there is an invalid cell name or an invalid formula in the source, throws a
+        /// SpreadsheetVersionException.  (Use newIsValid in place of IsValid in the definition of
+        /// cell name validity.)
+        ///
+        /// Else if there's a formula that causes a circular dependency, throws a SpreadsheetReadException. 
+        ///
+        /// Else, create a Spreadsheet that is a duplicate of the one encoded in source except that
+        /// the new Spreadsheet's IsValid regular expression should be newIsValid.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="newIsValid"></param>
+        public Spreadsheet(TextReader source, Regex newIsValid)
+        {
+            //Set all instance variables.
+            allCells = new Cells();
+            dependencies = new DependencyGraph();
+            isChanged = false;
+            isValidReg = newIsValid.ToString();
+        }
+
+        // ADDED FOR PS6
+        /// <summary>
+        /// True if this spreadsheet has been modified since it was created or saved
+        /// (whichever happened most recently); false otherwise.
+        /// </summary>
+        public override bool Changed
+        {
+            get
+            {
+                return isChanged;
+            }
+
+            protected set
+            {
+                Changed = isChanged;
+            }
+
+        }
+
+        // ADDED FOR PS6
+        /// <summary>
+        /// Writes the contents of this spreadsheet to dest using an XML format.
+        /// The XML elements should be structured as follows:
+        ///
+        /// <spreadsheet IsValid="IsValid regex goes here">
+        ///   <cell name="cell name goes here" contents="cell contents go here"></cell>
+        ///   <cell name="cell name goes here" contents="cell contents go here"></cell>
+        ///   <cell name="cell name goes here" contents="cell contents go here"></cell>
+        /// </spreadsheet>
+        ///
+        /// The value of the IsValid attribute should be IsValid.ToString()
+        /// 
+        /// There should be one cell element for each non-empty cell in the spreadsheet.
+        /// If the cell contains a string, the string (without surrounding double quotes) should be written as the contents.
+        /// If the cell contains a double d, d.ToString() should be written as the contents.
+        /// If the cell contains a Formula f, f.ToString() with "=" prepended should be written as the contents.
+        ///
+        /// If there are any problems writing to dest, the method should throw an IOException.
+        /// </summary>
+        public override void Save(TextWriter dest)
+        {
+            //XmlWriterSettings settings = new XmlWriterSettings(); //Must use for proper spacing/newlines.
+
+            try
+            {
+
+                List<string> cells = new List<string>(GetNamesOfAllNonemptyCells()); //Get all of our cells.
+
+                using (XmlWriter xWrite = XmlWriter.Create(dest))
+                {
+
+                    xWrite.WriteStartDocument();
+                    xWrite.WriteStartElement("spreadsheet"); // Generates "<spreadsheet>" 
+                    xWrite.WriteAttributeString("IsValid", isValidReg); //IsValid="IsValid regex goes here" 
+                    xWrite.WriteEndAttribute();// >
+
+
+                    foreach (string c in cells)
+                    {
+                       // xWrite.WriteWhitespace("\n\t");//Make sure to enter and indent each time.
+                        xWrite.WriteStartElement("cell");// <cell
+                        xWrite.WriteAttributeString("name", c); // name="cell name goes here"
+
+                        if (allCells.GetSheet()[c][0] is string || allCells.GetSheet()[c][0] is double)
+                        {
+                            xWrite.WriteAttributeString("contents", allCells.GetSheet()[c][0].ToString()); //contents = "cell contents go here"
+                        }
+
+                        if (allCells.GetSheet()[c][0] is Formula)
+                        {
+                            string cForm = "=" + allCells.GetSheet()[c][0].ToString();
+                            xWrite.WriteAttributeString("contents", cForm); //contents="cell contents go here"
+                        }
+
+                        xWrite.WriteAttributeString("contents", allCells.GetSheet()[c][0].ToString()); //contents="cell contents go here"
+                        xWrite.WriteEndAttribute();//>
+                        xWrite.WriteEndElement();//</cell>
+                    }
+
+                    //Done with cells. Close out the document.
+                    xWrite.WriteEndElement(); //</spreadsheet>
+                    xWrite.WriteEndDocument();
+
+                }
+                //MAKE SURE TO CHANGE THE CURRENT STATE OF THE SPREADSHEET.
+                isChanged = false;
+            }
+
+            catch
+            {
+                throw new IOException();
+            }
+
+        }
+
+        // ADDED FOR PS6
+        /// <summary>
+        /// If name is null or invalid, throws an InvalidNameException.
+        ///
+        /// Otherwise, returns the value (as opposed to the contents) of the named cell.  The return
+        /// value should be either a string, a double, or a FormulaError.
+        /// </summary>
+        public override object GetCellValue(string name)
+        {
+            if(name == null || !ValidCellCheck(name))
+            {
+                throw new InvalidNameException();
+            }
+
+            else
+            {
+                if (!allCells.GetSheet().ContainsKey(name))//If we haven't declared the cell yet
+                {
+                    return 0; //The value of the cell is automatically 0.
+                }
+
+                return allCells.GetSheet()[name];//Otherwise, return the set value of the cell. 
+            }
+        }
 
         /// <summary>
         /// Enumerates the names of all the non-empty cells in the spreadsheet.
@@ -71,11 +271,11 @@ namespace SS
         public override IEnumerable<string> GetNamesOfAllNonemptyCells()
         {
             HashSet<string> list = new HashSet<string>();
-            Dictionary<string, object> map = allCells.GetSheet();
+            Dictionary<string, object[]> map = allCells.GetSheet();
 
-            foreach (KeyValuePair<string, object> p in allCells.GetSheet())
+            foreach (KeyValuePair<string, object[]> p in allCells.GetSheet())
             {
-                object val = p.Value;
+                object val = p.Value[0];
 
                 if (val is string //If the contents of the cell are Null, an empty string, or whitespace, it is empty.
                     && (String.IsNullOrEmpty((string)val) || String.IsNullOrWhiteSpace((string)val)))
@@ -111,11 +311,81 @@ namespace SS
 
             else
             {
-                return allCells.GetSheet()[name]; //Return the contents at the specified cell.
+                return allCells.GetSheet()[name][0]; //Return the contents at the specified cell.
             }
 
         }
 
+        // ADDED FOR PS6
+        /// <summary>
+        /// If content is null, throws an ArgumentNullException.
+        ///
+        /// Otherwise, if name is null or invalid, throws an InvalidNameException.
+        ///
+        /// Otherwise, if content parses as a double, the contents of the named
+        /// cell becomes that double.
+        ///
+        /// Otherwise, if content begins with the character '=', an attempt is made
+        /// to parse the remainder of content into a Formula f using the Formula
+        /// constructor with s => s.ToUpper() as the normalizer and a validator that
+        /// checks that s is a valid cell name as defined in the AbstractSpreadsheet
+        /// class comment.  There are then three possibilities:
+        ///
+        ///   (1) If the remainder of content cannot be parsed into a Formula, a
+        ///       Formulas.FormulaFormatException is thrown.
+        ///
+        ///   (2) Otherwise, if changing the contents of the named cell to be f
+        ///       would cause a circular dependency, a CircularException is thrown.
+        ///
+        ///   (3) Otherwise, the contents of the named cell becomes f.
+        ///
+        /// Otherwise, the contents of the named cell becomes content.
+        ///
+        /// If an exception is not thrown, the method returns a set consisting of
+        /// name plus the names of all other cells whose value depends, directly
+        /// or indirectly, on the named cell.
+        ///
+        /// For example, if name is A1, B1 contains A1*2, and C1 contains B1+A1, the
+        /// set {A1, B1, C1} is returned.
+        /// </summary>
+        public override ISet<string> SetContentsOfCell(string name, string content)
+        {
+            if(content == null)
+            {
+                throw new ArgumentNullException();
+            }
+            if(name == null || !ValidCellCheck(name))
+            {
+                throw new InvalidNameException();
+            }
+
+            HashSet<string> H = new HashSet<string>();
+            double d;
+
+            //SETTING CONTENT, REEVALUATING THE VALUE FOR A DOUBLE.
+            if (Double.TryParse(content, out d))
+            {
+                H = new HashSet<string>(SetCellContents(name, d));
+            }
+
+            //FOR FORMULA
+            else if (content[0].Equals("="))
+            {
+                string f = content.Substring(1);
+                Formula F = new Formula(f, s=> s.ToUpper(), t => ValidCellCheck(t));
+                H = new HashSet<string>(SetCellContents(name, F));
+            }
+
+            else //FOR STRING
+            {
+                H = new HashSet<string>(SetCellContents(name, content));
+            }
+
+            isChanged = true; //WE'VE MADE A CHANGE TO THE SPREADSHEET.
+            return H;
+        }
+
+        // MODIFIED PROTECTION FOR PS6
         /// <summary>
         /// If name is null or invalid, throws an InvalidNameException.
         /// 
@@ -126,7 +396,7 @@ namespace SS
         /// For example, if name is A1, B1 contains A1*2, and C1 contains B1+A1, the
         /// set {A1, B1, C1} is returned.
         /// </summary>
-        public override ISet<string> SetCellContents(string name, double number)
+        protected override ISet<string> SetCellContents(string name, double number)
         {
             bool valid = ValidCellCheck(name);
             HashSet<string> set = new HashSet<string>();
@@ -136,14 +406,18 @@ namespace SS
                 throw new InvalidNameException();
             }
 
-            allCells.SetCell(name, number);//Change the contents of the cell.
+            allCells.SetCell(name, number, number);//Add the contents to the cell. 
             set.Add(name);
 
-            set = new HashSet<string>(GetCellsToRecalculate(name));
+            List<string> list = new List<string>(GetCellsToRecalculate(name));//Ordered version
+            UpdateCellValues(list); //Update values of cells.
+
+            set = new HashSet<string>(GetCellsToRecalculate(name));//Hashset ordering
 
             return set;
         }
 
+        // MODIFIED PROTECTION FOR PS6
         /// <summary>
         /// If text is null, throws an ArgumentNullException.
         /// 
@@ -156,7 +430,7 @@ namespace SS
         /// For example, if name is A1, B1 contains A1*2, and C1 contains B1+A1, the
         /// set {A1, B1, C1} is returned.
         /// </summary>
-        public override ISet<string> SetCellContents(string name, string text)
+        protected override ISet<string> SetCellContents(string name, string text)
         {
             if (text == null)
             {
@@ -172,13 +446,17 @@ namespace SS
             }
 
             set.Add(name); //Add name to the set.
-            allCells.SetCell(name, text);//Add contents to the cell.
+            allCells.SetCell(name, text, text);//Add contents and value to the cell.
+
+            List<string> list = new List<string>(GetCellsToRecalculate(name));//Ordered version
+            UpdateCellValues(list); //Update values of cells.
 
             set = new HashSet<string>(GetCellsToRecalculate(name));//Find all cells tat depend on the current cell.
-
+            
             return set;
         }
 
+        // MODIFIED PROTECTION FOR PS6
         /// <summary>
         /// Requires that all of the variables in formula are valid cell names.
         /// 
@@ -194,9 +472,9 @@ namespace SS
         /// For example, if name is A1, B1 contains A1*2, and C1 contains B1+A1, the
         /// set {A1, B1, C1} is returned.
         /// </summary>
-        public override ISet<string> SetCellContents(string name, Formula formula)
+        protected override ISet<string> SetCellContents(string name, Formula formula)
         {
-            if(name == null)
+            if (name == null)
             {
                 throw new InvalidNameException();
             }
@@ -204,30 +482,35 @@ namespace SS
             bool valid = ValidCellCheck(name);
             HashSet<string> set = new HashSet<string>();
 
-            HashSet<string> toRecalculate = new HashSet<string>(GetCellsToRecalculate(name));
+            //
+            List<string> toRecalculate = new List<string>(GetCellsToRecalculate(name));
 
+            //
             if (!valid) //If the name of the cell is null or invalid
             {
                 throw new InvalidNameException();
             }
 
-           HashSet<string> formVars = (HashSet<string>)formula.GetVariables();
+            //
+            HashSet<string> formVars = (HashSet<string>)formula.GetVariables();
+
+            //
 
             //For circular dependency, check that none of the variables we're adding to the dependents are equal to the name.
             if (formVars.Contains(name))
-            {
+            { 
                 throw new CircularException();
             }
 
             //Check that none of the variables of the formula already depend on the current cell. 
             foreach (string s in formVars)
             {
-                if(!ValidCellCheck(s))
+                if (!ValidCellCheck(s))
                 {
                     throw new InvalidNameException();
                 }
 
-                IEnumerator<string> deesEnum =  dependencies.GetDependees(s).GetEnumerator();
+                IEnumerator<string> deesEnum = dependencies.GetDependees(s).GetEnumerator();
                 List<string> dees = new List<string>();
 
                 while (deesEnum.MoveNext())
@@ -250,8 +533,12 @@ namespace SS
             //No circular dependencies at this point. Add the variable names to the set.
             set = new HashSet<string>(GetCellsToRecalculate(name));
 
-            allCells.SetCell(name, formula);//Add contents to the cell representation.
+            allCells.SetCell(name, formula, null);//Add contents to the cell representation.
             dependencies.ReplaceDependees(name, formVars); //Replace the dependees of the current cell. 
+
+
+         //   List<string> list = new List<string>(GetCellsToRecalculate(name));//Ordered version
+            UpdateCellValues(toRecalculate); //Update values of cells.
 
             return set;
         }
@@ -289,7 +576,7 @@ namespace SS
                 throw new InvalidNameException();
             }
 
-            foreach (KeyValuePair<string, object> p in allCells.GetSheet())//Look at all of the cells we have.
+            foreach (KeyValuePair<string, object[]> p in allCells.GetSheet())//Look at all of the cells we have.
             {
                 if (GetCellContents(p.Key) is Formula)
                 {
@@ -301,7 +588,7 @@ namespace SS
                         set.Add(p.Key);
                     }
                 }
-           
+
             }
 
             return set;
@@ -340,6 +627,72 @@ namespace SS
             }
             return true;
         }
-        
+
+        /// <summary>
+        /// Evaluates the values of all cells needing to be updated.
+        /// </summary>
+        /// <param name="cell"></param>
+        /// <param name="recalcList"></param>
+        /// <returns></returns>
+        private void UpdateCellValues(List<string> recalcList)
+        {
+            foreach(string s in recalcList)
+            {
+                object content = allCells.GetSheet()[s][0];
+                object val = allCells.GetSheet()[s][1];
+ 
+                if(content is double || content is string ) //If the current content is simply a double or string
+                {
+                    continue; //No update needed. Move to next cell.
+                }
+                if(content is Formula)//Formulas must be reevaluated.
+                {
+                    try
+                    {
+                        Formula f = (Formula)content;
+                        double newVal = f.Evaluate(VarLookup);
+                        allCells.GetSheet()[s][1] = newVal; //Update the value of the current cell.
+                    }
+                    catch (FormulaEvaluationException) //If our formula could not be properly evaluated
+                    {
+                        allCells.GetSheet()[s][1] = new FormulaError();//The value of the cel is an error.
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// For use with the Evaluate function of Formula:
+        /// var is the current variable of the formula.
+        /// Throws a FormulaEvaluationException if the lookup value was not a valid double. 
+        /// </summary>
+        /// <param name="var"></param>
+        /// <returns></returns>
+        private double VarLookup(string var)
+        {
+            //Evaluate looks at one variable each time the lookup is called.
+            //Look up the given cell.
+            object curContents = allCells.GetSheet()[var][0];
+            object curVal = allCells.GetSheet()[var][1];
+
+            //Empty/undeclared cell.
+            if (curContents == null && curVal == null)
+            {
+                return 0; //The value of the cell is always zero.
+            }
+            //Formula or double where value is already determined.
+            if((curContents is double || curContents is Formula) && curVal is double)
+            {
+                return (double) curVal;
+            }
+            //If the value at a variable is a string
+            if((curContents is string || curContents is Formula) && (curVal is string || curVal is FormulaError))
+            {
+                allCells.GetSheet()[var][1] = new FormulaError();//Can't operate with a string.
+                throw new FormulaEvaluationException("One or more cell values in formula was not a double.");
+            }
+
+            return 0;
+        }
     }
 }

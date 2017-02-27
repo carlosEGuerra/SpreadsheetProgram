@@ -63,7 +63,7 @@ namespace GradingTests
         public void Test4()
         {
             AbstractSpreadsheet s = new Spreadsheet();
-            s.SetCellContents(null, 1.5);
+            s.SetCellContents(null, "1.5");
         }
 
         [TestMethod()]
@@ -71,7 +71,7 @@ namespace GradingTests
         public void Test5()
         {
             AbstractSpreadsheet s = new Spreadsheet();
-            s.SetCellContents("A1A", 1.5);
+            s.SetCellContents("A1A", "1.5");
         }
 
         [TestMethod()]

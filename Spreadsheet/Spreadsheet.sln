@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PS5GradingTests", "PS5Gradi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PS5Tester", "PS6Tester\PS5Tester.csproj", "{F6008588-4F92-44BE-90F5-9B07AD66E869}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PS6Tests", "PS6Tests\PS6Tests.csproj", "{646FEC25-3E91-4B46-BE35-5D78DF1E348C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +80,10 @@ Global
 		{F6008588-4F92-44BE-90F5-9B07AD66E869}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6008588-4F92-44BE-90F5-9B07AD66E869}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6008588-4F92-44BE-90F5-9B07AD66E869}.Release|Any CPU.Build.0 = Release|Any CPU
+		{646FEC25-3E91-4B46-BE35-5D78DF1E348C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{646FEC25-3E91-4B46-BE35-5D78DF1E348C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{646FEC25-3E91-4B46-BE35-5D78DF1E348C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{646FEC25-3E91-4B46-BE35-5D78DF1E348C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
