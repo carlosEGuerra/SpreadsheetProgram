@@ -98,11 +98,10 @@ namespace SS
             isValidReg = isValid.ToString();
         }
 
-        /// <summary>
         /// Creates a Spreadsheet that is a duplicate of the spreadsheet saved in source.
         ///
         /// See the AbstractSpreadsheet.Save method and Spreadsheet.xsd for the file format 
-        /// specification.   
+        /// specification.  
         ///
         /// If there's a problem reading source, throws an IOException.
         ///
@@ -121,13 +120,13 @@ namespace SS
         /// cell name validity.)
         ///
         /// Else if there is an invalid cell name or an invalid formula in the source, throws a
+        /// SpreadsheetVersionException.  (Use newIsValid in place of IsValid in the definition of
         /// cell name validity.)
         ///
-        /// Else if there's a formula that causes a circular dependency,  throws a SpreadsheetReadException. 
+        /// Else if there's a formula that causes a circular dependency, throws a SpreadsheetReadException. 
         ///
         /// Else, create a Spreadsheet that is a duplicate of the one encoded in source except that
         /// the new Spreadsheet's IsValid regular expression should be newIsValid.
-        /// </summary>
         /// <param name="source"></param>
         /// <param name="newIsValid"></param>
         public Spreadsheet(TextReader source, Regex newIsValid)
@@ -141,10 +140,109 @@ namespace SS
             //Create schema
             XmlSchemaSet sc = new XmlSchemaSet();
 
+
             sc.Add(null, "Spreadsheet.xsd");//Add schema to be validated against.
 
+            //Configure validaton. 
+            XmlReaderSettings settings = new XmlReaderSettings();
+            settings.ValidationType = ValidationType.Schema;
+            settings.Schemas = sc;
+            settings.ValidationEventHandler += ValidationCallback;
 
+
+            //Add the cells and the validator Regex.
+            using (XmlReader xReader = XmlReader.Create(source, settings))
+            {
+                while (xReader.Read())
+                {
+                    if (xReader.IsStartElement())
+                    {
+                        switch (xReader.Name)
+                        {
+                            case "spreadsheet":
+                                string fileValidator = xReader["spreadsheet"];
+                                Regex oldIsValid;
+                                try //If the IsValid is not a c# regex, throw spreadsheet read expression.
+                                {
+                                    oldIsValid = new Regex(fileValidator);
+                                }
+                                catch
+                                {
+                                    throw new SpreadsheetReadException("Invalid Validator found in XML file");
+                                }
+
+                                isValidReg = oldIsValid.ToString(); //We have a valid Regex, use this one as our Spreadsheet Validator.
+                                break;
+
+                            case "cell": //If we have a cell, add it to the Spreadsheet.
+                                string cellName = xReader["cell"].ToUpper();
+                                string cellContents = xReader["contents"];
+
+                                if (allCells.GetSheet().ContainsKey(cellName)) //We already added the cell.
+                                {
+                                    throw new SpreadsheetReadException("Duplicate cell names found in XML file.");
+                                }
+
+                                else
+                                {
+                                    //Check validity with oldIsValid
+                                    try
+                                    {
+                                        SetCellContents(cellName, cellContents);
+                                    }
+                                    catch (InvalidNameException)
+                                    {
+                                        throw new SpreadsheetReadException("Invalid cell name found.");
+                                    }
+                                    catch (FormulaFormatException)
+                                    {
+                                        throw new SpreadsheetReadException("Invalid formula found.");
+                                    }
+                                    catch (CircularException)
+                                    {
+                                        throw new SpreadsheetReadException("Circular dependency found.");
+                                    }
+
+                                    //Check validity with newIsValid
+                                    isValidReg = newIsValid.ToString();
+
+                                    try
+                                    {
+                                        SetCellContents(cellName, cellContents);
+                                    }
+                                    catch (InvalidNameException)
+                                    {
+                                        throw new SpreadsheetVersionException("Invalid cell name found.");
+                                    }
+                                    catch (FormulaFormatException)
+                                    {
+                                        throw new SpreadsheetVersionException("Invalid formula found.");
+                                    }
+                                    catch (CircularException)
+                                    {
+                                        throw new SpreadsheetReadException("Circular dependency found.");
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
         }
+
+        /// <summary>
+        /// Display any validation errors.
+        /// **Citation: Author: Joe Zachary (https://github.com/UofU-CS3500-S17/examples/blob/master/RegexAndXML/XML/XML.cs)
+        /// </summary>
+        /// <author name ="Joe Zachary">
+        /// </author>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void ValidationCallback(object sender, ValidationEventArgs e)
+        {
+            throw new SpreadsheetReadException("File not consistent with Spreadsheet schema.");
+        }
+
 
         // ADDED FOR PS6
         /// <summary>
