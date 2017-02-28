@@ -56,7 +56,7 @@ namespace SS
             {
                 return Convert.ChangeType(obj, typeof(double));
             }
-            else if(obj.GetType().Equals(typeof(Formula)))
+            else if(obj.GetType() == (typeof(Formula)))
             {
                 return Convert.ChangeType(obj, typeof(Formula));
             }
@@ -101,7 +101,7 @@ namespace SS
         /// For example, if name is A1, B1 contains A1*2, and C1 contains B1+A1, the
         /// set {A1, B1, C1} is returned.
         /// </summary>
-        public override ISet<string> SetCellContents(string name, Formula formula)
+        protected override ISet<string> SetCellContents(string name, Formula formula)
         {
             if (name == null || !valid(name))         //checked if name is valid instead of null and checked if name == null, also added a check if the dictionary contains the name
             {
@@ -187,7 +187,7 @@ namespace SS
         /// For example, if name is A1, B1 contains A1*2, and C1 contains B1+A1, the
         /// set {A1, B1, C1} is returned.
         /// </summary>
-        public override ISet<string> SetCellContents(string name, string text)
+        protected override ISet<string> SetCellContents(string name, string text)
         {
             if (text == null)                           //changed to == 
             {
@@ -228,7 +228,7 @@ namespace SS
         /// For example, if name is A1, B1 contains A1*2, and C1 contains B1+A1, the
         /// set {A1, B1, C1} is returned.
         /// </summary>
-        public override ISet<string> SetCellContents(string name, double number)
+        protected override ISet<string> SetCellContents(string name, double number)
         {
             if (name == null || !valid(name))               //changes form .equals null to == null, added a check to check if name == null
             {
@@ -326,7 +326,12 @@ namespace SS
         /// </summary>
         public override void Save(TextWriter dest)
         {
-            
+            dest.WriteLine("<spreadsheet IsValid=[a-zA-Z]+[1-9]+[0-9]*>");
+            foreach(string key in cell.Keys)
+            {
+                dest.WriteLine("\t<cell name=" + key + " contents=" + cell[key].ToString() + "></cell>");
+            }
+            dest.WriteLine("</spreadsheet>");
         }
 
         // ADDED FOR PS6
@@ -338,7 +343,29 @@ namespace SS
         /// </summary>
         public override object GetCellValue(string name)
         {
-            throw new NotImplementedException();
+            if(name == null || !valid(name))
+            {
+                throw new InvalidNameException();
+            }
+
+            object obj = cell[name];
+            Type objType = obj.GetType();
+            if(objType == typeof(double))
+            {
+                return Convert.ChangeType(obj, typeof(double));
+            }
+            else if(objType == typeof(string))
+            {
+                return Convert.ChangeType(obj, typeof(string));
+            }
+            else if(objType == typeof(Formula))
+            {
+                return Convert.ChangeType(obj, typeof(Formula));
+            }
+            else
+            {
+                return new FormulaError();
+            }
         }
 
         // ADDED FOR PS6
@@ -397,9 +424,37 @@ namespace SS
             int index = content.IndexOf("=");
             if(index == 0)
             {
-                Formula form = new Formula(content.Substring(1, content.Length - 1), s => s.toUpper(), valid(form));
-                form.Evaluate()
+                Formula form;
+                try
+                {
+                    form = new Formula(content.Substring(1, content.Length - 1), s => s.ToUpper(), s => true);  //need to change s=> true
+                }
+                catch (InvalidCastException)
+                {
+                    throw new FormulaFormatException("Sorry but that isn't a formula");
+                }
+               checkForCircularDependency(name, form);
+                cell[name] = form;
             }
+            else
+            {
+                cell[name] = content;
+            }
+
+            HashSet<string> dependentCells = new HashSet<string>();
+            dependentCells.Add(name);
+            foreach (string s in cell.Keys)
+            {
+                IEnumerable<string> sr = GetCellsToRecalculate(s);
+                foreach (string str in sr)
+                {
+                    if (str.Contains(name))
+                    {
+                        dependentCells.Add(str);
+                    }
+                }
+            }
+            return dependentCells;
         }
     }
 }
