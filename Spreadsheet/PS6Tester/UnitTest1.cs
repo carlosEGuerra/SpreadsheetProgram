@@ -4,6 +4,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using Formulas;
 using SS;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace PS6Tester
 {
@@ -14,7 +16,7 @@ namespace PS6Tester
     public class UnitTest1
     {
         /******************* GetNamesOfAllNonemptyCells() Tests ************************/
-       
+
         /// <summary>
         /// Try to get names when all cells are empty.
         /// </summary>
@@ -65,7 +67,7 @@ namespace PS6Tester
             s.SetContentsOfCell("A5", "=" + new Formula("s1").ToString());
             s.SetContentsOfCell("A6", "=" + new Formula("s1").ToString());
             List<string> list = new List<string>(s.GetNamesOfAllNonemptyCells());
-            foreach(string t in checkList)
+            foreach (string t in checkList)
             {
                 Assert.IsTrue(list.Contains(t));
             }
@@ -107,7 +109,7 @@ namespace PS6Tester
             List<string> list = new List<string>(s.GetNamesOfAllNonemptyCells());
 
             Assert.IsTrue(list.Count == 0);
-            
+
         }
 
         /// <summary>
@@ -167,7 +169,7 @@ namespace PS6Tester
         public void GetCellContent1()
         {
             AbstractSpreadsheet s = new Spreadsheet();
-            s.GetCellContents("2INVALID");       
+            s.GetCellContents("2INVALID");
         }
 
 
@@ -196,7 +198,7 @@ namespace PS6Tester
             object o = s.GetCellContents("A1");
 
 
-            Assert.AreEqual(145, (double) o);
+            Assert.AreEqual(145, (double)o);
         }
         /// <summary>
         /// Try to get cell contents that are a string.
@@ -207,7 +209,7 @@ namespace PS6Tester
             AbstractSpreadsheet s = new Spreadsheet();
             s.SetContentsOfCell("A1", "d");
 
-            Assert.AreEqual("d", (string) (s.GetCellContents("A1")));
+            Assert.AreEqual("d", (string)(s.GetCellContents("A1")));
         }
         /// <summary>
         /// Try to get the contents of an empty cell.
@@ -314,7 +316,7 @@ namespace PS6Tester
             s.SetContentsOfCell("A1", "=" + new Formula("4").ToString());
             s.SetContentsOfCell("A1", "4");
 
-            Assert.AreEqual(4, (double) s.GetCellContents("A1"));
+            Assert.AreEqual(4, (double)s.GetCellContents("A1"));
 
         }
 
@@ -390,7 +392,7 @@ namespace PS6Tester
             object o = s.GetCellValue("A1");
             double d = (double)o;
             Assert.AreEqual(5, d);
-            
+
         }
 
         /// <summary>
@@ -415,8 +417,8 @@ namespace PS6Tester
             Formula F = new Formula("5 + A1");
             s.SetContentsOfCell("A2", "=" + F.ToString());
             object o = s.GetCellValue("A2");
-  
-            Assert.AreEqual(10, (double) o);
+
+            Assert.AreEqual(10, (double)o);
         }
 
         /// <summary>
@@ -447,7 +449,7 @@ namespace PS6Tester
             s.SetContentsOfCell("A2", p);
             object o = s.GetCellValue("A2");
 
-            Assert.AreEqual(5, (double) o);
+            Assert.AreEqual(5, (double)o);
         }
 
         /// <summary>
@@ -487,6 +489,67 @@ namespace PS6Tester
             object o = s.GetCellValue("A5");
 
             Assert.AreEqual(19, (double)o);
+        }
+
+        /************************* TESTS FOR Save **********************************/
+
+        /// <summary>
+        /// Try to write a spreadsheet with no cells.
+        /// </summary>
+        [TestMethod]
+        public void Save1()
+        {
+            TextWriter tw = File.CreateText("C:\\Users/ebrig/Documents/College/Save1.xml");
+            Spreadsheet s = new Spreadsheet();
+            s.Save(tw);
+        }
+
+        /// <summary>
+        /// Try to write a spreadsheet with 1 cell.
+        /// </summary>
+        [TestMethod]
+        public void Save2()
+        {
+            TextWriter tw = File.CreateText("C:\\Users/ebrig/Documents/College/Save2.xml");
+            Spreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("A1", "234");
+            s.Save(tw);
+        }
+
+        /// <summary>
+        /// Multiple cells.
+        /// </summary>
+        [TestMethod]
+        public void Save3()
+        {
+            TextWriter tw = File.CreateText("C:\\Users/ebrig/Documents/College/Save3.xml");
+            Spreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("A1", "234");
+            s.SetContentsOfCell("A2", "5");
+            s.SetContentsOfCell("A3", "=A1 + 2");
+            s.SetContentsOfCell("A4", "string");
+            s.Save(tw);
+
+        }
+
+        /***************************** Tests for Spreadsheet constructor **************************/
+
+        /// <summary>
+        /// Multiple cells.
+        /// </summary>
+        [TestMethod]
+        public void SSConstruct1()
+        {
+            TextReader tr = new StreamReader("C:\\Users/ebrig/Documents/College/Save3.xml");
+
+            //File.ReadAllText("C:\\Users/ebrig/Documents/College/Save3.xml").ToString();
+           string cellPattern = @"[a-zA-Z][a-zA-Z]*[1-9][0-9]*";
+            Regex r = new Regex(cellPattern);
+            Spreadsheet s = new Spreadsheet(tr, r);
+
+            TextWriter tw = File.CreateText("C:\\Users/ebrig/Documents/College/Save3Check.xml");
+            s.Save(tw);      
+
         }
     }
 }

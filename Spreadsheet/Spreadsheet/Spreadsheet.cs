@@ -82,7 +82,7 @@ namespace SS
             allCells = new Cells();
             dependencies = new DependencyGraph();
             Changed = false;
-            isValidReg = "";
+            isValidReg = @"[a-zA-Z][a-zA-Z]*[1-9][0-9]*";
         }
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace SS
                         switch (xReader.Name)
                         {
                             case "spreadsheet":
-                                string fileValidator = xReader["spreadsheet"];
+                                string fileValidator = xReader["IsValid"];
                                 Regex oldIsValid;
                                 try //If the IsValid is not a c# regex, throw spreadsheet read expression.
                                 {
@@ -285,34 +285,37 @@ namespace SS
             {
 
                 xWrite.WriteStartDocument();
-                xWrite.WriteStartElement("spreadsheet"); // Generates "<spreadsheet>" 
+                xWrite.WriteStartElement("","spreadsheet",""); // Generates "<spreadsheet>" 
                 xWrite.WriteAttributeString("IsValid", isValidReg); //IsValid="IsValid regex goes here" 
-                xWrite.WriteEndAttribute();// >
 
 
                 foreach (string c in cells)
                 {
+                    string contents;
                     // xWrite.WriteWhitespace("\n\t");//Make sure to enter and indent each time.
                     xWrite.WriteStartElement("cell");// <cell
-                    xWrite.WriteAttributeString("name", c); // name="cell name goes here"
+ 
 
                     if (allCells.GetSheet()[c][0] is string || allCells.GetSheet()[c][0] is double)
                     {
-                        xWrite.WriteAttributeString("contents", allCells.GetSheet()[c][0].ToString()); //contents = "cell contents go here"
+                        contents = allCells.GetSheet()[c][0].ToString(); //contents = "cell contents go here"
                     }
 
-                    if (allCells.GetSheet()[c][0] is Formula)
+                    else if (allCells.GetSheet()[c][0] is Formula)
                     {
-                        string cForm = "=" + allCells.GetSheet()[c][0].ToString();
-                        xWrite.WriteAttributeString("contents", cForm); //contents="cell contents go here"
+                        contents = "=" + allCells.GetSheet()[c][0].ToString();
+                    }
+                    else
+                    {
+                        contents = allCells.GetSheet()[c][0].ToString(); //contents="cell contents go here"
                     }
 
-                    xWrite.WriteAttributeString("contents", allCells.GetSheet()[c][0].ToString()); //contents="cell contents go here"
-                    xWrite.WriteEndAttribute();//>
-                    xWrite.WriteEndElement();//</cell>
+                    xWrite.WriteAttributeString("name", c); // name="cell name goes here"
+                    xWrite.WriteAttributeString("content", contents);
+                    xWrite.WriteFullEndElement();//</cell>
                 }
                 //Done with cells. Close out the document.
-                xWrite.WriteEndElement(); //</spreadsheet>
+                xWrite.WriteFullEndElement();
                 xWrite.WriteEndDocument();
             }
             //MAKE SURE TO CHANGE THE CURRENT STATE OF THE SPREADSHEET.
