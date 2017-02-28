@@ -88,7 +88,6 @@ namespace Dependencies
                 throw new ArgumentNullException();
             }
 
-
             //CORRECTED FOR REGRADE: Needed to copy dependents and dependees over instead of referencing them.
             this.dependees = new Dictionary<string, HashSet<string>>();
             this.dependents = new Dictionary<string, HashSet<string>>();
@@ -99,12 +98,13 @@ namespace Dependencies
                 this.ReplaceDependents(p.Key, p.Value);
             }
 
-            //Add each Dependent of dg
+  /*          //Add each Dependent of dg
             foreach (KeyValuePair<string, HashSet<string>> p in dg.dependents)
             {
                 this.ReplaceDependees(p.Key, p.Value);
             }
 
+    */
         }
 
         /// <summary>

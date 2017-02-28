@@ -90,12 +90,6 @@ namespace Formulas
 
                 double output = -1;
 
-                //Left in in case we need this check later.
-                //if (Double.TryParse((token), out output) && output < 0)//Check for negative numbers
-                //{
-                //    throw new FormulaFormatException("Invalid token found, negative numbers not allowed.");
-                //}
-
                 if (!Double.TryParse((token), out output))//Check for negative numbers
                 {
                     output = -1;

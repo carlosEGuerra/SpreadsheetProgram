@@ -136,7 +136,8 @@ namespace GradingTests
         public void Test13()
         {
             AbstractSpreadsheet s = new Spreadsheet();
-            s.SetContentsOfCell("Z7", "=" + new Formula("3").ToString());
+            string t = "=" + new Formula("3").ToString();
+            s.SetContentsOfCell("Z7", t);
             Formula f = (Formula)s.GetCellContents("Z7");
             Assert.AreEqual(3, f.Evaluate(x => 0), 1e-6);
         }
@@ -347,16 +348,18 @@ namespace GradingTests
         {
             Test31();
         }
-/*
+
         [TestMethod()]
         public void Test35()
         {
             AbstractSpreadsheet s = new Spreadsheet();
             ISet<String> cells = new HashSet<string>();
-            for (int i = 1; i < 100; i++)
+            for (int i = 1; i < 200; i++)
             {
                 cells.Add("A" + i);
-                AssertSetEqualsIgnoreCase(cells, s.SetContentsOfCell("A" + i, "=" + new Formula("A" + (i + 1)).ToString()));
+                Formula F = new Formula("A" + (i + 1));//SPLIT UP FOR DEBUG
+                string S = "=" + F.ToString(); //SPLIT UP FOR DEBUG
+                AssertSetEqualsIgnoreCase(cells, s.SetContentsOfCell("A" + i, S));
             }
         }
         [TestMethod()]
@@ -536,7 +539,7 @@ namespace GradingTests
             }
             return f;
         }
-        */
+       
 
     }
 }
