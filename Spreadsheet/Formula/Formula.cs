@@ -18,7 +18,7 @@ namespace Formulas
     /// </summary>
 
     public struct Formula
-    {
+    { 
         private IEnumerable<string> enumForm;
         private string[] symbolList;
         private Normalizer normailzer;
