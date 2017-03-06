@@ -21,9 +21,11 @@ namespace PS6GradingTests
         {
             for (int i = 0; i < constraints.Length; i += 2)
             {
+               object constraint = constraints[i + 1];
+                object sheetVal = sheet.GetCellValue((string)constraints[i]);
                 if (constraints[i + 1] is double)
                 {
-                    Assert.AreEqual((double)constraints[i + 1], (double)sheet.GetCellValue((string)constraints[i]), 1e-9);
+                    Assert.AreEqual((double)constraint, (double)sheet.GetCellValue((string)constraints[i]), 1e-9);
                 }
                 else
                 {
@@ -262,7 +264,8 @@ namespace PS6GradingTests
         {
             Set(ss, "A1", "4.1");
             Set(ss, "C1", "= A1 + B1");
-            Assert.IsInstanceOfType(ss.GetCellValue("C1"), typeof(FormulaError));
+            object cellVal = ss.GetCellValue("C1");
+            Assert.IsInstanceOfType(cellVal, typeof(FormulaError));
         }
 
         [TestMethod()]
@@ -427,7 +430,8 @@ namespace PS6GradingTests
             Set(s1, "A1", "hello");
             StringWriter sw = new StringWriter();
             s1.Save(sw);
-            s1 = new Spreadsheet(new StringReader(sw.ToString()), new Regex(""));
+            string result = sw.ToString();
+            s1 = new Spreadsheet(new StringReader(result), new Regex(""));
             Assert.AreEqual("hello", s1.GetCellContents("A1"));
         }
 
@@ -773,8 +777,10 @@ namespace PS6GradingTests
         {
             Set(ss, "a1", "= a2 + a3");
             Set(ss, "a2", "= b1 + b2");
-            Assert.IsInstanceOfType(ss.GetCellValue("a1"), typeof(FormulaError));
-            Assert.IsInstanceOfType(ss.GetCellValue("a2"), typeof(FormulaError));
+            object A1 = ss.GetCellValue("a1");
+            object A2 = ss.GetCellValue("a1");
+            Assert.IsInstanceOfType(A1, typeof(FormulaError));
+            Assert.IsInstanceOfType(A2, typeof(FormulaError));
             Set(ss, "a3", "5.0");
             Set(ss, "b1", "2.0");
             Set(ss, "b2", "3.0");
