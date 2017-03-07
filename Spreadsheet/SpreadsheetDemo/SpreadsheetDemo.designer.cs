@@ -28,21 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.spreadsheetPanel1 = new SpreadsheetPanel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // spreadsheetPanel1
-            // 
-            this.spreadsheetPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.spreadsheetPanel1.Location = new System.Drawing.Point(0, 28);
-            this.spreadsheetPanel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.spreadsheetPanel1.Name = "spreadsheetPanel1";
-            this.spreadsheetPanel1.Size = new System.Drawing.Size(535, 408);
-            this.spreadsheetPanel1.TabIndex = 0;
             // 
             // menuStrip1
             // 
@@ -71,16 +61,15 @@
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
-            // Form1
+            // SpreadsheetDemo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(535, 436);
-            this.Controls.Add(this.spreadsheetPanel1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.Name = "Form1";
+            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Name = "SpreadsheetDemo";
             this.Text = "SpreadsheetDemo";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
