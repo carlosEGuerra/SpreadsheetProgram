@@ -75,11 +75,13 @@ namespace MaxFactorGUI
             try
             {
                 int count = counter.FindMaxFactors(limit, nTasks, token);
-                factorCount.Invoke((Action) (() => ResetAfterCancel(count.ToString())));
+                //ResetAfterCancel(count.ToString());
+                factorCount.Invoke((Action)(() => ResetAfterCancel(count.ToString())));
             }
             catch (OperationCanceledException)
             {
                 factorCount.Invoke((Action) (() => ResetAfterCancel("Canceled")));
+                //ResetAfterCancel("Canceled");
             }
         }
 

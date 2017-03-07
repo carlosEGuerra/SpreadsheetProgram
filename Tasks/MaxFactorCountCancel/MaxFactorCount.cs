@@ -8,7 +8,7 @@ namespace Factors
         /// <summary>
         /// When set to true, the computation threads terminate
         /// </summary>
-        private bool stop = false;
+        private bool cancel = false;
 
         /// <summary>
         /// Returns the integer between 1 and limit that has the most factors,
@@ -49,7 +49,7 @@ namespace Factors
         private void WaitForStopRequest ()
         {
             Console.ReadLine();
-            stop = true;
+            cancel = true;
         }
 
 
@@ -65,7 +65,7 @@ namespace Factors
             int maxCount = 0;
             for (int number = lo; number <= hi; number += delta)
             {
-                if (stop) return 0;
+                if (cancel) return 0;
                 int count = CountFactors(number);
                 if (count > maxCount)
                 {
