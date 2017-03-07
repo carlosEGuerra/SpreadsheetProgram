@@ -65,10 +65,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(736, 654);
+            this.ClientSize = new System.Drawing.Size(535, 436);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "SpreadsheetDemo";
             this.Text = "SpreadsheetDemo";
             this.Load += new System.EventHandler(this.SpreadsheetDemo_Load);
