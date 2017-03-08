@@ -111,7 +111,7 @@
             // howToUseToolStripMenuItem
             // 
             this.howToUseToolStripMenuItem.Name = "howToUseToolStripMenuItem";
-            this.howToUseToolStripMenuItem.Size = new System.Drawing.Size(240, 34);
+            this.howToUseToolStripMenuItem.Size = new System.Drawing.Size(210, 34);
             this.howToUseToolStripMenuItem.Text = "How to use";
             // 
             // cellName
@@ -122,7 +122,7 @@
             this.cellName.Location = new System.Drawing.Point(0, 43);
             this.cellName.Name = "cellName";
             this.cellName.ReadOnly = true;
-            this.cellName.Size = new System.Drawing.Size(45, 29);
+            this.cellName.Size = new System.Drawing.Size(84, 29);
             this.cellName.TabIndex = 2;
             this.cellName.TextChanged += new System.EventHandler(this.cellName_TextChanged);
             // 
@@ -144,6 +144,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.spreadsheetPanel1.AutoScroll = true;
+            this.spreadsheetPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.spreadsheetPanel1.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.spreadsheetPanel1.ForeColor = System.Drawing.SystemColors.ControlText;
             this.spreadsheetPanel1.Location = new System.Drawing.Point(0, 88);
@@ -163,11 +164,10 @@
             this.Controls.Add(this.cellName);
             this.Controls.Add(this.spreadsheetPanel1);
             this.Controls.Add(this.menuStrip1);
-            this.HelpButton = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4);
-            this.MinimumSize = new System.Drawing.Size(1200, 1200);
+            this.MinimumSize = new System.Drawing.Size(1200, 1205);
             this.Name = "Form1";
             this.Text = "Ghetto Excel";
             this.Load += new System.EventHandler(this.Form1_Load);
