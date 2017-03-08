@@ -24,10 +24,20 @@ namespace SpreadsheetGUI
         {
 
         }
-
-        private void spreadsheetPanel1_Click(object sender, EventArgs e)
+        //Need To Identify which arrow key is pressed and change the view accordingly
+        private void spreadsheetPanel1_KeyPress(object sender, KeyPressEventArgs e)
         {
-            //Fire event that we've been clicked
+
+        }
+        //Should Display the currently selected Cell Name
+        private void cellName_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cellContent_TextChanged(object sender, EventArgs e)
+        {
+            
         }
     }
 }
