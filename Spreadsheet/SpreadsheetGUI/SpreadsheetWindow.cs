@@ -13,9 +13,9 @@ namespace SpreadsheetGUI
     /// <summary>
     /// The View Interface where events are fired. 
     /// </summary>
-    public partial class Form1 : Form
+    public partial class SpreadsheetWindow : Form, ISpreadsheet
     {
-        public Form1()
+        public SpreadsheetWindow()
         {
             InitializeComponent();
         }
