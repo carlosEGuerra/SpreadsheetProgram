@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{178049B7-9976-4C90-ACE7-0B30904A2A56}</ProjectGuid>
+    <ProjectGuid>{E167F9FF-CEE5-41DF-8C56-7B33A47956F7}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SpreadsheetGUI</RootNamespace>
@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controller.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -87,6 +88,10 @@
     <ProjectReference Include="..\Formula\Formula.csproj">
       <Project>{d43d998c-9797-4cf4-9bb0-6de22753849a}</Project>
       <Name>Formula</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SpreadsheetDemo\SpreadsheetDemo.csproj">
+      <Project>{7069d83a-3933-4135-922b-76f754740a00}</Project>
+      <Name>SpreadsheetDemo</Name>
     </ProjectReference>
     <ProjectReference Include="..\SpreadsheetPanel\SpreadsheetPanel.csproj">
       <Project>{f31299dc-288f-4e46-a3af-6bf461b21c79}</Project>
