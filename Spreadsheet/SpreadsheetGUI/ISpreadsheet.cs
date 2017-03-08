@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace SpreadsheetGUI
 {
     /// <summary>
-    /// 
+    /// Controllable interface of the SpreadsheetGUI.
     /// </summary>
-    class Controller
+    public interface ISpreadsheet
     {
     }
 }
