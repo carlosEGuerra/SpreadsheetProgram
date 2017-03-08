@@ -10,6 +10,9 @@ using System.Windows.Forms;
 
 namespace SpreadsheetGUI
 {
+    /// <summary>
+    /// The View Interface where events are fired. 
+    /// </summary>
     public partial class Form1 : Form
     {
         public Form1()
