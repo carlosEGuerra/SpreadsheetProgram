@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using SSGui;
 
 namespace SpreadsheetGUI
 {
@@ -22,13 +23,30 @@ namespace SpreadsheetGUI
         /// <summary>
         /// Begins controlling window.
         /// </summary>
-        public Controller(ISpreadsheetView window) //Used to be ISpreadsheetView window.......stuff was breaking.
+        public Controller(ISpreadsheetView window)
         {
             this.window = window;
             this.model = new Spreadsheet();
             window.FileChosenEvent += HandleFileChosen;
             window.CloseEvent += HandleClose;
             window.NewEvent += HandleNew;
+            window.UpdateCell += HandleCell;
+        }
+
+        /// <summary>
+        /// The primary method that updates the cell if the value is clicked.
+        /// </summary>
+        private void HandleCell(SpreadsheetPanel ss)
+        {
+            int row, col;
+            String value;
+            ss.GetSelection(out col, out row);
+            ss.GetValue(col, row, out value);
+            string cellName;//Panel coordinates
+
+            string content = window.Content; //Pull the current cell contents from the interface.
+            model.SetContentsOfCell(cellName, content);//Modify the model cell contents.
+
         }
 
         /// <summary>

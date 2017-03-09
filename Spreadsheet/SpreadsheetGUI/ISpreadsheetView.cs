@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SSGui;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,9 +20,13 @@ namespace SpreadsheetGUI
 
         event Action NewEvent;
 
+        event Action<SpreadsheetPanel> UpdateCell;
+
         string Title { set; }
 
         string Message { set; }
+
+        string Content { get; set; }
 
         void DoClose();
 
