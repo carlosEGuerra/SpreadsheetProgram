@@ -22,7 +22,7 @@ namespace SpreadsheetGUI
         /// <summary>
         /// Begins controlling window.
         /// </summary>
-        public Controller(ISpreadsheetView window)
+        public Controller(ISpreadsheetView window) //Used to be ISpreadsheetView window.......stuff was breaking.
         {
             this.window = window;
             this.model = new Spreadsheet();
