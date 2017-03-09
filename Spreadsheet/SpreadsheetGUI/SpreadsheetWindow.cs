@@ -25,7 +25,7 @@ namespace SpreadsheetGUI
         public event Action<string> CountEvent;
         public event Action<string> FileChosenEvent;
         public event Action NewEvent;
-        public event Action UpdateCell;
+        public event Action<SpreadsheetPanel> UpdateCell;
 
         /// <summary>
         /// When we edit the contents of the cell.
@@ -92,7 +92,7 @@ namespace SpreadsheetGUI
         //When we double click on the spreadsheet panel, it should fire the UpdateCell event.
         private void spreadsheetPanel1_MouseClick(object sender, MouseEventArgs e)
         {
-            UpdateCell();
+            //UpdateCell();
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -106,7 +106,7 @@ namespace SpreadsheetGUI
             if (e.KeyChar == (char)Keys.Return || e.KeyChar == (char)Keys.Enter)
             {
                 Content = ContentBox.Text;
-                UpdateCell();
+               // UpdateCell();
             }
         }
 
