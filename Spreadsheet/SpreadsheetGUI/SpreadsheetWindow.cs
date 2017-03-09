@@ -11,38 +11,81 @@ using System.Windows.Forms;
 namespace SpreadsheetGUI
 {
     /// <summary>
-    /// The View Interface where events are fired. 
+    /// The View where events are fired.
     /// </summary>
     public partial class SpreadsheetWindow : Form, ISpreadsheet
     {
+
+        public event Action CloseEvent;
+        public event Action HelpEvent;
+        public event Action NewFileEvent;
+        public event Action<string> OpenFileEvent;
+        public event Action SaveEvent;  
+        public event Action WarningEvent;
+        public event Action<string> SaveFile;
+
         public SpreadsheetWindow()
         {
             InitializeComponent();
         }
 
-        private void spreadsheetPanel1_Load(object sender, EventArgs e)
+        public object cellContents
         {
+            get
+            {
+                throw new NotImplementedException();
+            }
 
-        }
-        //Need To Identify which arrow key is pressed and change the view accordingly
-        private void spreadsheetPanel1_KeyPress(object sender, KeyPressEventArgs e)
-        {
-
-        }
-        //Should Display the currently selected Cell Name
-        private void cellName_TextChanged(object sender, EventArgs e)
-        {
-
+            set
+            {
+                throw new NotImplementedException();
+            }
         }
 
-        private void cellContent_TextChanged(object sender, EventArgs e)
+        public object cellVal
         {
-            
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        string ISpreadsheet.cellName
         {
-
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
+
+        public string Message
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public void DoClose()
+        {
+            Close();
+        }
+
+        public void OpenNew()
+        {
+           SpreadsheetApplicationContext.GetContext().RunNew();
+        }
+
+        
     }
 }

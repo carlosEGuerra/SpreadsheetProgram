@@ -119,7 +119,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cellName.Location = new System.Drawing.Point(0, 29);
-            this.cellName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cellName.Margin = new System.Windows.Forms.Padding(2);
             this.cellName.Name = "cellName";
             this.cellName.ReadOnly = true;
             this.cellName.Size = new System.Drawing.Size(34, 22);
@@ -132,7 +132,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cellContent.Location = new System.Drawing.Point(59, 29);
-            this.cellContent.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cellContent.Margin = new System.Windows.Forms.Padding(2);
             this.cellContent.Name = "cellContent";
             this.cellContent.Size = new System.Drawing.Size(797, 22);
             this.cellContent.TabIndex = 3;
@@ -155,8 +155,9 @@
             this.spreadsheetPanel1.TabIndex = 0;
             this.spreadsheetPanel1.Load += new System.EventHandler(this.spreadsheetPanel1_Load);
             this.spreadsheetPanel1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.spreadsheetPanel1_KeyPress);
+            this.spreadsheetPanel1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.spreadsheetPanel1_MouseClick);
             // 
-            // Form1
+            // SpreadsheetWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -169,7 +170,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(878, 701);
-            this.Name = "Form1";
+            this.Name = "SpreadsheetWindow";
             this.Text = "Ghetto Excel";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip1.ResumeLayout(false);

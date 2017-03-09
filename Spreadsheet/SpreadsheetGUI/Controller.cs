@@ -1,8 +1,11 @@
 ﻿using System;
+using SS;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using System.IO;
 
 namespace SpreadsheetGUI
 {
@@ -11,43 +14,45 @@ namespace SpreadsheetGUI
     /// </summary>
     class Controller
     { // The window being controlled
-        private I  window;
+        private ISpreadsheet window;
 
         // The model being used
-        private Model model;
+        private Spreadsheet SSModel;
 
         /// <summary>
         /// Begins controlling window.
         /// </summary>
-        public Controller(IAnalysisView window)
+      public Controller(ISpreadsheet window)
         {
             this.window = window;
-            this.model = new Model();
-            window.FileChosenEvent += HandleFileChosen;
+            this.SSModel = new Spreadsheet();
+            window.OpenFileEvent += OpenFile;
             window.CloseEvent += HandleClose;
-            window.NewEvent += HandleNew;
-            window.CountEvent += HandleCount;
+            window.NewFileEvent += NewFile ;
         }
 
         /// <summary>
         /// Handles a request to open a file.
         /// </summary>
-        private void HandleFileChosen(String filename)
+        private void OpenFile(String filename)
         {
             try
             {
-                model.ReadFile(filename);
-                window.CharCount = model.CountChars();
-                window.WordCount = model.CountWords();
-                window.LineCount = model.CountLines();
-                window.SubstringCount = 0;
-                window.SearchString = "";
-                window.Title = filename;
+                TextReader file = new StreamReader(filename);
+                SSModel = new Spreadsheet(file, new Regex(""));
             }
             catch (Exception ex)
             {
                 window.Message = "Unable to open file\n" + ex.Message;
             }
+        }
+
+        /// <summary>
+        /// Handles request to make a new spreadsheet.
+        /// </summary>
+        private void NewFile()
+        {
+            window.OpenNew();
         }
 
         /// <summary>
