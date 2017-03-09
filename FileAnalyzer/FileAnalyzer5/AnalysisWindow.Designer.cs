@@ -54,7 +54,8 @@
             this.fileMenu});
             this.menuBar.Location = new System.Drawing.Point(0, 0);
             this.menuBar.Name = "menuBar";
-            this.menuBar.Size = new System.Drawing.Size(383, 28);
+            this.menuBar.Padding = new System.Windows.Forms.Padding(8, 3, 0, 3);
+            this.menuBar.Size = new System.Drawing.Size(527, 40);
             this.menuBar.TabIndex = 0;
             this.menuBar.Text = "menuStrip1";
             // 
@@ -65,100 +66,110 @@
             this.openItem,
             this.closeItem});
             this.fileMenu.Name = "fileMenu";
-            this.fileMenu.Size = new System.Drawing.Size(44, 24);
+            this.fileMenu.Size = new System.Drawing.Size(56, 34);
             this.fileMenu.Text = "File";
             // 
             // newItem
             // 
             this.newItem.Name = "newItem";
-            this.newItem.Size = new System.Drawing.Size(133, 26);
+            this.newItem.Size = new System.Drawing.Size(177, 34);
             this.newItem.Text = "New";
             this.newItem.Click += new System.EventHandler(this.NewItem_Click);
             // 
             // openItem
             // 
             this.openItem.Name = "openItem";
-            this.openItem.Size = new System.Drawing.Size(133, 26);
+            this.openItem.Size = new System.Drawing.Size(177, 34);
             this.openItem.Text = "Open ...";
             this.openItem.Click += new System.EventHandler(this.OpenItem_Click);
             // 
             // closeItem
             // 
             this.closeItem.Name = "closeItem";
-            this.closeItem.Size = new System.Drawing.Size(133, 26);
+            this.closeItem.Size = new System.Drawing.Size(177, 34);
             this.closeItem.Text = "Close";
             this.closeItem.Click += new System.EventHandler(this.CloseItem_Click);
             // 
             // lineLabel
             // 
             this.lineLabel.AutoSize = true;
-            this.lineLabel.Location = new System.Drawing.Point(63, 68);
+            this.lineLabel.Location = new System.Drawing.Point(87, 102);
+            this.lineLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lineLabel.Name = "lineLabel";
-            this.lineLabel.Size = new System.Drawing.Size(42, 17);
+            this.lineLabel.Size = new System.Drawing.Size(59, 25);
             this.lineLabel.TabIndex = 1;
             this.lineLabel.Text = "Lines";
             // 
             // wordLabel
             // 
             this.wordLabel.AutoSize = true;
-            this.wordLabel.Location = new System.Drawing.Point(63, 108);
+            this.wordLabel.Location = new System.Drawing.Point(87, 162);
+            this.wordLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.wordLabel.Name = "wordLabel";
-            this.wordLabel.Size = new System.Drawing.Size(49, 17);
+            this.wordLabel.Size = new System.Drawing.Size(70, 25);
             this.wordLabel.TabIndex = 2;
             this.wordLabel.Text = "Words";
             // 
             // charLabel
             // 
             this.charLabel.AutoSize = true;
-            this.charLabel.Location = new System.Drawing.Point(63, 152);
+            this.charLabel.Location = new System.Drawing.Point(87, 228);
+            this.charLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.charLabel.Name = "charLabel";
-            this.charLabel.Size = new System.Drawing.Size(45, 17);
+            this.charLabel.Size = new System.Drawing.Size(65, 25);
             this.charLabel.TabIndex = 3;
             this.charLabel.Text = "Chars";
             // 
             // lineCount
             // 
-            this.lineCount.Location = new System.Drawing.Point(122, 62);
+            this.lineCount.Location = new System.Drawing.Point(168, 93);
+            this.lineCount.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.lineCount.Name = "lineCount";
-            this.lineCount.Size = new System.Drawing.Size(79, 22);
+            this.lineCount.Size = new System.Drawing.Size(107, 29);
             this.lineCount.TabIndex = 4;
             // 
             // wordCount
             // 
-            this.wordCount.Location = new System.Drawing.Point(122, 103);
+            this.wordCount.Location = new System.Drawing.Point(168, 154);
+            this.wordCount.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.wordCount.Name = "wordCount";
-            this.wordCount.Size = new System.Drawing.Size(79, 22);
+            this.wordCount.Size = new System.Drawing.Size(107, 29);
             this.wordCount.TabIndex = 5;
             // 
             // charCount
             // 
-            this.charCount.Location = new System.Drawing.Point(122, 147);
+            this.charCount.Location = new System.Drawing.Point(168, 220);
+            this.charCount.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.charCount.Name = "charCount";
-            this.charCount.Size = new System.Drawing.Size(79, 22);
+            this.charCount.Size = new System.Drawing.Size(107, 29);
             this.charCount.TabIndex = 6;
             // 
             // substringLabel
             // 
             this.substringLabel.AutoSize = true;
-            this.substringLabel.Location = new System.Drawing.Point(38, 235);
+            this.substringLabel.Location = new System.Drawing.Point(52, 352);
+            this.substringLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.substringLabel.Name = "substringLabel";
-            this.substringLabel.Size = new System.Drawing.Size(75, 17);
+            this.substringLabel.Size = new System.Drawing.Size(105, 25);
             this.substringLabel.TabIndex = 7;
             this.substringLabel.Text = "Substrings";
             // 
             // substringCount
             // 
-            this.substringCount.Location = new System.Drawing.Point(122, 235);
+            this.substringCount.Location = new System.Drawing.Point(168, 352);
+            this.substringCount.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.substringCount.Name = "substringCount";
-            this.substringCount.Size = new System.Drawing.Size(79, 22);
+            this.substringCount.Size = new System.Drawing.Size(107, 29);
             this.substringCount.TabIndex = 8;
             // 
             // substringBox
             // 
-            this.substringBox.Location = new System.Drawing.Point(38, 201);
+            this.substringBox.Location = new System.Drawing.Point(52, 302);
+            this.substringBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.substringBox.Name = "substringBox";
-            this.substringBox.Size = new System.Drawing.Size(163, 22);
+            this.substringBox.Size = new System.Drawing.Size(223, 29);
             this.substringBox.TabIndex = 9;
+            this.substringBox.TextChanged += new System.EventHandler(this.substringBox_TextChanged);
             // 
             // fileDialog
             // 
@@ -166,9 +177,10 @@
             // 
             // countButton
             // 
-            this.countButton.Location = new System.Drawing.Point(219, 200);
+            this.countButton.Location = new System.Drawing.Point(301, 300);
+            this.countButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.countButton.Name = "countButton";
-            this.countButton.Size = new System.Drawing.Size(75, 23);
+            this.countButton.Size = new System.Drawing.Size(103, 34);
             this.countButton.TabIndex = 10;
             this.countButton.Text = "Count";
             this.countButton.UseVisualStyleBackColor = true;
@@ -176,9 +188,9 @@
             // 
             // AnalysisWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(383, 438);
+            this.ClientSize = new System.Drawing.Size(527, 657);
             this.Controls.Add(this.countButton);
             this.Controls.Add(this.substringBox);
             this.Controls.Add(this.substringCount);
@@ -191,6 +203,7 @@
             this.Controls.Add(this.lineLabel);
             this.Controls.Add(this.menuBar);
             this.MainMenuStrip = this.menuBar;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "AnalysisWindow";
             this.Text = "File Analyzer";
             this.menuBar.ResumeLayout(false);

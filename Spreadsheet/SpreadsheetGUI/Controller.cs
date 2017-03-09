@@ -42,10 +42,10 @@ namespace SpreadsheetGUI
             String value;
             ss.GetSelection(out col, out row);
             ss.GetValue(col, row, out value);
-            string cellName;//Panel coordinates
+            //string cellName;//Panel coordinates
 
             string content = window.Content; //Pull the current cell contents from the interface.
-            model.SetContentsOfCell(cellName, content);//Modify the model cell contents.
+            //model.SetContentsOfCell(cellName, content);//Modify the model cell contents.
 
         }
 
