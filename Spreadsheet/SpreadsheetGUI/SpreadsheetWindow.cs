@@ -42,6 +42,8 @@ namespace SpreadsheetGUI
                 ss.GetValue(col, row, out value);
             }
 
+            cellNameReadOnly.Text = (col+65).ToString() + row.ToString();
+            CellLabel.Text = 
         }
 
         public string Message
@@ -69,18 +71,22 @@ namespace SpreadsheetGUI
 
             set
             {
-                throw new NotImplementedException();
+                ;
             }
         }
 
         public void DoClose()
         {
-            Close();
+            if(CloseEvent!= null)
+            {
+                Close();
+            }
         }
 
         public void OpenNew()
         {
-            throw new NotImplementedException();
+            //runs a new and empty spreadsheet
+            SpreadsheetApplicationContext.GetContext().RunNew();
         }
 
 
@@ -110,5 +116,32 @@ namespace SpreadsheetGUI
             }
         }
 
+        private void SpreadsheetWindow_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cellNameReadOnly_TextChanged(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        event Action<SpreadsheetPanel> ISpreadsheetView.UpdateCell
+        {
+            add
+            {
+                throw new NotImplementedException();
+            }
+
+            remove
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private void spreadsheetPanel1_Load(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

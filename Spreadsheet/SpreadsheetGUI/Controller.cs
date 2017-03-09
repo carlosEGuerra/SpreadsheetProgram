@@ -42,10 +42,10 @@ namespace SpreadsheetGUI
             String value;
             ss.GetSelection(out col, out row);
             ss.GetValue(col, row, out value);
-            string cellName;//Panel coordinates
+            //string cellName;//Panel coordinates
 
             string content = window.Content; //Pull the current cell contents from the interface.
-            model.SetContentsOfCell(cellName, content);//Modify the model cell contents.
+            //model.SetContentsOfCell(cellName, content);//Modify the model cell contents.
 
         }
 
@@ -80,5 +80,28 @@ namespace SpreadsheetGUI
             window.OpenNew();
         }
 
+        /// <summary>
+        /// Take in the row and column of the value to convert it to a cell name
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <returns></returns>
+        private string LocationToCellName(int row, int col)
+        {
+            char colName = (char)(col + 65);
+            return colName + row.ToString();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cellName"></param>
+        /// <returns></returns>
+        private int CellNameToLocation(string cellName)
+        {
+            int colLocation = cellName[0] - 65;
+            return colLocation;
+
+        }
     }
 }
