@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Controller.cs" />
     <Compile Include="ISpreadsheetView.cs" />
+    <Compile Include="SpreadsheetApplicationContext.cs" />
     <Compile Include="SpreadsheetWindow.cs">
       <SubType>Form</SubType>
     </Compile>
