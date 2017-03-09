@@ -42,7 +42,8 @@ namespace SpreadsheetGUI
                 ss.GetValue(col, row, out value);
             }
 
-            cellNameReadOnly.Text = col.ToString() + row.ToString();
+            cellNameReadOnly.Text = (col+65).ToString() + row.ToString();
+            CellLabel.Text = 
         }
 
         public string Message
@@ -70,7 +71,7 @@ namespace SpreadsheetGUI
 
             set
             {
-                throw new NotImplementedException();
+                ;
             }
         }
 
