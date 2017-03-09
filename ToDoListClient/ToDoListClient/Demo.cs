@@ -22,7 +22,7 @@ namespace Restful
         // You'll need to put one of your public REPOs here
         private const string PUBLIC_REPO = "repo1";
 
-        public static void Main(string[] args)
+        public static void Mainx(string[] args)
         {
             GetDemo();
             Console.ReadLine();
