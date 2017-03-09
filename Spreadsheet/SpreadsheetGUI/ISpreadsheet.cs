@@ -25,6 +25,8 @@ namespace SpreadsheetGUI
 
         event Action WarningEvent;
 
+        event Action IdentifyCell;
+
         //To get and set the cell contents.
         object cellContents { get; set; }
 

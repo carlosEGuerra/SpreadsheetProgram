@@ -23,10 +23,25 @@ namespace SpreadsheetGUI
         public event Action SaveEvent;  
         public event Action WarningEvent;
         public event Action<string> SaveFile;
+        public event Action<string> IdentifyCell;
+
 
         public SpreadsheetWindow()
         {
             InitializeComponent();
+        }
+
+        event Action ISpreadsheet.IdentifyCell
+        {
+            add
+            {
+                throw new NotImplementedException();
+            }
+
+            remove
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public object cellContents
@@ -86,6 +101,10 @@ namespace SpreadsheetGUI
            SpreadsheetApplicationContext.GetContext().RunNew();
         }
 
-        
+        private void spreadsheetPanel1_Click(object sender, EventArgs e)
+        {
+            //On click, update the cell identifier.
+            
+        }
     }
 }

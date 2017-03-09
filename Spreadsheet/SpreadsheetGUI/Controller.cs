@@ -18,7 +18,7 @@ namespace SpreadsheetGUI
 
         // The model being used
         private Spreadsheet SSModel;
-
+        
         /// <summary>
         /// Begins controlling window.
         /// </summary>
@@ -36,6 +36,7 @@ namespace SpreadsheetGUI
         /// </summary>
         private void OpenFile(String filename)
         {
+            //Try to read in the contents of a premade spreadsheet.
             try
             {
                 TextReader file = new StreamReader(filename);
@@ -45,6 +46,8 @@ namespace SpreadsheetGUI
             {
                 window.Message = "Unable to open file\n" + ex.Message;
             }
+
+            //Now to update 
         }
 
         /// <summary>

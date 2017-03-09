@@ -124,7 +124,6 @@
             this.cellName.ReadOnly = true;
             this.cellName.Size = new System.Drawing.Size(34, 22);
             this.cellName.TabIndex = 2;
-            this.cellName.TextChanged += new System.EventHandler(this.cellName_TextChanged);
             // 
             // cellContent
             // 
@@ -136,7 +135,6 @@
             this.cellContent.Name = "cellContent";
             this.cellContent.Size = new System.Drawing.Size(797, 22);
             this.cellContent.TabIndex = 3;
-            this.cellContent.TextChanged += new System.EventHandler(this.cellContent_TextChanged);
             // 
             // spreadsheetPanel1
             // 
@@ -153,9 +151,7 @@
             this.spreadsheetPanel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.spreadsheetPanel1.Size = new System.Drawing.Size(855, 702);
             this.spreadsheetPanel1.TabIndex = 0;
-            this.spreadsheetPanel1.Load += new System.EventHandler(this.spreadsheetPanel1_Load);
-            this.spreadsheetPanel1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.spreadsheetPanel1_KeyPress);
-            this.spreadsheetPanel1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.spreadsheetPanel1_MouseClick);
+            this.spreadsheetPanel1.Click += new System.EventHandler(this.spreadsheetPanel1_Click);
             // 
             // SpreadsheetWindow
             // 
@@ -172,7 +168,6 @@
             this.MinimumSize = new System.Drawing.Size(878, 701);
             this.Name = "SpreadsheetWindow";
             this.Text = "Ghetto Excel";
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
