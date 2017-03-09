@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace SpreadsheetGUI
 {
-    static class SpreadsheetLaunch
+    static class Program
     {
         /// <summary>
         /// The main entry point for the application.
@@ -14,14 +14,9 @@ namespace SpreadsheetGUI
         [STAThread]
         static void Main()
         {
-            //Citation: FileAnalyzers5 by Joe Zachary from CS 3500 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-            //Get the application context and run one form inside it.
-            var context = SpreadsheetApplicationContext.GetContext();
-            SpreadsheetApplicationContext.GetContext().RunNew();
-            Application.Run(context);
+            Application.Run(new Form1());
         }
     }
 }
