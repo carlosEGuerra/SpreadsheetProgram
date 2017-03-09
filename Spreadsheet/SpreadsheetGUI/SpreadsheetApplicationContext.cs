@@ -7,6 +7,7 @@ using System.Windows.Forms;
 
 namespace SpreadsheetGUI
 {
+
     /// <summary>
     /// Keeps track of how many top-level forms are running, shuts down
     /// the application when there are no more.
@@ -17,23 +18,23 @@ namespace SpreadsheetGUI
         private int windowCount = 0;
 
         // Singleton ApplicationContext
-        private static FileAnalysisApplicationContext context;
+        private static SpreadsheetApplicationContext context;
 
         /// <summary>
         /// Private constructor for singleton pattern
         /// </summary>
-        private FileAnalysisApplicationContext()
+        private SpreadsheetApplicationContext()
         {
         }
 
         /// <summary>
         /// Returns the one DemoApplicationContext.
         /// </summary>
-        public static FileAnalysisApplicationContext GetContext()
+        public static SpreadsheetApplicationContext GetContext()
         {
             if (context == null)
             {
-                context = new FileAnalysisApplicationContext();
+                context = new SpreadsheetApplicationContext();
             }
             return context;
         }
@@ -44,7 +45,7 @@ namespace SpreadsheetGUI
         public void RunNew()
         {
             // Create the window and the controller
-            AnalysisWindow window = new AnalysisWindow();
+            SpreadsheetWindow window = new SpreadsheetWindow();
             new Controller(window);
 
             // One more form is running

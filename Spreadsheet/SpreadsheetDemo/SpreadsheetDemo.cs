@@ -37,6 +37,7 @@ namespace SSGui
             String value;
             ss.GetSelection(out col, out row);
             ss.GetValue(col, row, out value);
+  
             if (value == "") 
             {
                 ss.SetValue(col, row, DateTime.Now.ToLocalTime().ToString("T"));
@@ -53,9 +54,5 @@ namespace SSGui
             Close();
         }
 
-        private void SpreadsheetDemo_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }
