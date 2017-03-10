@@ -80,10 +80,8 @@ namespace SpreadsheetGUI
         {
             get
             {
-                int col, row;
-                spreadsheetPanel1.GetSelection(out col, out row);
-                spreadsheetPanel1.SetValue(col, row, _value);
-                return _value;
+                
+                return "work";
             }
 
             set
@@ -93,6 +91,19 @@ namespace SpreadsheetGUI
                 cellValReadOnly.Text = value;
                 spreadsheetPanel1.GetSelection(out col, out row);
                 spreadsheetPanel1.SetValue(col, row, value);
+            }
+        }
+
+        public SpreadsheetPanel SP
+        {
+            get
+            {
+                return spreadsheetPanel1;
+            }
+
+            set
+            {
+                
             }
         }
 
@@ -151,19 +162,6 @@ namespace SpreadsheetGUI
         private void cellNameReadOnly_TextChanged(object sender, EventArgs e)
         {
             cellNameReadOnly.Text = "fucking work";
-        }
-
-        event Action<SpreadsheetPanel> ISpreadsheetView.UpdateCell
-        {
-            add
-            {
-               // throw new NotImplementedException();
-            }
-
-            remove
-            {
-               // throw new NotImplementedException();
-            }
         }
 
         private void spreadsheetPanel1_Load(object sender, EventArgs e)
