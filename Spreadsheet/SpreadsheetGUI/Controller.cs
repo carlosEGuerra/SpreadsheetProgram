@@ -90,6 +90,7 @@ namespace SpreadsheetGUI
                 else
                 {
                     window.Value = val.ToString();
+                    window.Content = model.GetCellContents(cellName).ToString();
                 }
             }
         }

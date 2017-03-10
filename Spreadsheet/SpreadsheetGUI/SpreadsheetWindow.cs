@@ -72,12 +72,12 @@ namespace SpreadsheetGUI
         {
             get
             {
-                return ""; //cellNameReadOnly.Text;
+                return "Something";
             }
 
             set
             {
-                //cellNameReadOnly.Text = value;
+                cellValReadOnly.Text = value;
             }
         }
 
