@@ -22,6 +22,8 @@ namespace SpreadsheetGUI
 
         event Action<SpreadsheetPanel> UpdateCell;
 
+        SpreadsheetPanel SP { get; set; }
+
         string Title { set; }
 
         string Message { set; }
