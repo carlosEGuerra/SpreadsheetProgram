@@ -14,6 +14,7 @@ namespace SpreadsheetGUI
     public partial class SpreadsheetWindow : Form, ISpreadsheetView
     {
 
+
         //Constructs the window. 
         public SpreadsheetWindow()
         {
@@ -26,6 +27,7 @@ namespace SpreadsheetGUI
         public event Action<string> FileChosenEvent;
         public event Action NewEvent;
         public event Action<SpreadsheetPanel> UpdateCell;
+        private string _value;
 
         /// <summary>
         /// When we edit the contents of the cell.
@@ -78,12 +80,19 @@ namespace SpreadsheetGUI
         {
             get
             {
-                return "Something";
+                int col, row;
+                spreadsheetPanel1.GetSelection(out col, out row);
+                spreadsheetPanel1.SetValue(col, row, _value);
+                return _value;
             }
 
             set
             {
+                int row;
+                int col;
                 cellValReadOnly.Text = value;
+                spreadsheetPanel1.GetSelection(out col, out row);
+                spreadsheetPanel1.SetValue(col, row, value);
             }
         }
 
