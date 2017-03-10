@@ -37,6 +37,12 @@ namespace SpreadsheetGUI
             ss.GetSelection(out col, out row);
             ss.GetValue(col, row, out value);
             cellNameReadOnly.Text = this.LocationToCellName(row, col);
+            string s;
+            ss.GetValue(col, row, out s);
+            if(s == null)
+            {
+                cellValReadOnly.Text = "";
+            }
         }
 
         public string Message
@@ -184,7 +190,7 @@ namespace SpreadsheetGUI
         private string LocationToCellName(int row, int col)
         {
             char colName = (char)(col + 65); //CELLS START INDEXING AT 0,0.
-            return colName + row.ToString();
+            return colName + (row + 1).ToString();
         }
 
         /// <summary>
