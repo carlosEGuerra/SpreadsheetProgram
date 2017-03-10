@@ -54,37 +54,36 @@ namespace SpreadsheetGUI
                 //Modify the model cell contents.
                 HashSet<string> list = new HashSet<string>(model.SetContentsOfCell(cellName, content));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 //CircularExecption
-                if(e is CircularException)
+                if (e is CircularException)
                 {
                     window.Message = "Circular Exception detected";
-                    window.Value = "0";
+                    window.Value = "1";
                 }
                 //FormulaFormatError
                 else if (e is FormulaFormatException)
                 {
-                    window.Message = "Sorry, but that formula is in the correct format!";
-                    window.Value = "0";
+                    window.Message = "Sorry, but that formula is in the incorrect format!";
+                    window.Value = "00";
 
                 }
                 //FormulaEvaluationException
-                else if(e is FormulaEvaluationException)
+                else if (e is FormulaEvaluationException)
                 {
                     window.Message = "Formula Evaluation Exception Error Detected with new formula";
-                    window.Value = "0";
+                    window.Value = "000";
                 }
-                //window.Message = "Contents created a circular dependency.";    
             }
-     
+
             finally
             {
                 object o = model.GetCellContents(cellName);
                 window.Content = o.ToString();
 
                 object val = model.GetCellValue(cellName);
-                if(val is FormulaError)
+                if (val is FormulaError)
                 {
                     window.Value = "FORMULAERROR";
                 }
@@ -93,8 +92,6 @@ namespace SpreadsheetGUI
                     window.Value = val.ToString();
                 }
             }
-  
-
         }
 
         /// <summary>
@@ -127,7 +124,6 @@ namespace SpreadsheetGUI
         {
             window.OpenNew();
         }
-
         /// <summary>
         /// Take in the row and column of the value to convert it to a cell name
         /// </summary>
@@ -149,7 +145,6 @@ namespace SpreadsheetGUI
         {
             int colLocation = cellName[0] - 64;//CELLS START INDEXING AT ZERO.
             return colLocation;
-
         }
     }
 }

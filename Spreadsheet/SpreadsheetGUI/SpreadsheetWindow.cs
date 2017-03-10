@@ -19,7 +19,6 @@ namespace SpreadsheetGUI
         {
             InitializeComponent();
             spreadsheetPanel1.SelectionChanged += displaySelection;
-          
         }
 
         public event Action CloseEvent;
@@ -37,13 +36,14 @@ namespace SpreadsheetGUI
             String value;
             ss.GetSelection(out col, out row);
             ss.GetValue(col, row, out value);
+            cellNameReadOnly.Text = this.LocationToCellName(row, col);
         }
 
         public string Message
         {
             set
             {
-                throw new NotImplementedException();
+                MessageBox.Show(value.ToString(), "ERROR", MessageBoxButtons.OK ,MessageBoxIcon.Error);
             }
         }
 
@@ -51,7 +51,7 @@ namespace SpreadsheetGUI
         {
             set
             {
-                throw new NotImplementedException();
+                cellNameReadOnly.Text = value.ToString();
             }
         }
 
@@ -59,12 +59,12 @@ namespace SpreadsheetGUI
         {
             get
             {
-                return this.Content;
+                return cellValReadOnly.Text;
             }
 
             set
             {
-                
+                cellValReadOnly.Text = value;
             }
         }
 
@@ -72,23 +72,30 @@ namespace SpreadsheetGUI
         {
             get
             {
-                return "0";
+                return ""; //cellNameReadOnly.Text;
             }
 
             set
             {
-                
+                //cellNameReadOnly.Text = value;
             }
         }
 
+        /// <summary>
+        /// Method that closes the current open window
+        /// </summary>
         public void DoClose()
         {
+            //closes the window
             if(CloseEvent!= null)
             {
                 Close();
             }
         }
 
+        /// <summary>
+        /// Opens a new blank spreadsheet
+        /// </summary>
         public void OpenNew()
         {
             //runs a new and empty spreadsheet
@@ -107,11 +114,6 @@ namespace SpreadsheetGUI
             //UpdateCell();
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         //If user presses "enter" in the editable contents box, fires the event to update all cell fields.
         private void ContentBox_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -121,21 +123,19 @@ namespace SpreadsheetGUI
                 int row;
                 spreadsheetPanel1.GetSelection(out col, out row);
                 Content = ContentBox.Text;
-                //UpdateCell();
                 spreadsheetPanel1.GetSelection(out col, out row);
                 spreadsheetPanel1.SetValue(col, row, this.Value);
             }
-      
         }
 
         private void SpreadsheetWindow_Load(object sender, EventArgs e)
         {
-
+            
         }
 
         private void cellNameReadOnly_TextChanged(object sender, EventArgs e)
         {
-          //  throw new NotImplementedException();
+            cellNameReadOnly.Text = "fucking work";
         }
 
         event Action<SpreadsheetPanel> ISpreadsheetView.UpdateCell
@@ -154,6 +154,48 @@ namespace SpreadsheetGUI
         private void spreadsheetPanel1_Load(object sender, EventArgs e)
         {
             //throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// When the file-close is chosen, it will close the current spreadsheet
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.DoClose();
+        }
+
+        /// <summary>
+        /// When the file-open new is chosen then a new blank spreadsheet is opened
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.OpenNew();
+        }
+        /// <summary>
+        /// Take in the row and column of the value to convert it to a cell name
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <returns></returns>
+        private string LocationToCellName(int row, int col)
+        {
+            char colName = (char)(col + 65); //CELLS START INDEXING AT 0,0.
+            return colName + row.ToString();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cellName"></param>
+        /// <returns></returns>
+        private int CellNameToLocation(string cellName)
+        {
+            int colLocation = (cellName[0] - 65);//CELLS START INDEXING AT ZERO.
+            return colLocation;
         }
     }
 }
