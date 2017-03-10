@@ -55,7 +55,7 @@ namespace SpreadsheetGUI
             window.FormClosed += (o, e) => { if (--windowCount <= 0) ExitThread(); };
 
             // Run the form
-            window.Show();
+            window.Show();  
         }
     }
 }
