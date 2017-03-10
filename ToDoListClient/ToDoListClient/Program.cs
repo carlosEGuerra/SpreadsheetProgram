@@ -18,8 +18,8 @@ namespace ToDoListClient
             Application.SetCompatibleTextRenderingDefault(false);
             ToDoListView view = new ToDoListView();
             //new Controller1(view);
-            new Controller2(view);
-            //new Controller3(view);
+            //new Controller2(view);
+            new Controller3(view);
             Application.Run(view);
         }
     }
