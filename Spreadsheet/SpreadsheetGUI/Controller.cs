@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using SSGui;
+using Formulas;
 
 namespace SpreadsheetGUI
 {
@@ -31,10 +32,11 @@ namespace SpreadsheetGUI
             window.CloseEvent += HandleClose;
             window.NewEvent += HandleNew;
             window.UpdateCell += HandleCell;
+
         }
 
         /// <summary>
-        /// The primary method that updates the cell if the value is clicked.
+        /// The primary method that updates the cell if the value in the text box is updated.
         /// </summary>
         private void HandleCell(SpreadsheetPanel ss)
         {
@@ -42,10 +44,56 @@ namespace SpreadsheetGUI
             String value;
             ss.GetSelection(out col, out row);
             ss.GetValue(col, row, out value);
-            //string cellName;//Panel coordinates
-
+           
+            //Convert row value to a cell name.
+            string cellName = this.LocationToCellName(row, col);
             string content = window.Content; //Pull the current cell contents from the interface.
-            //model.SetContentsOfCell(cellName, content);//Modify the model cell contents.
+
+            try
+            {
+                //Modify the model cell contents.
+                HashSet<string> list = new HashSet<string>(model.SetContentsOfCell(cellName, content));
+            }
+            catch(Exception e)
+            {
+                //CircularExecption
+                if(e is CircularException)
+                {
+                    window.Message = "Circular Exception detected";
+                    window.Value = "0";
+                }
+                //FormulaFormatError
+                else if (e is FormulaFormatException)
+                {
+                    window.Message = "Sorry, but that formula is in the correct format!";
+                    window.Value = "0";
+
+                }
+                //FormulaEvaluationException
+                else if(e is FormulaEvaluationException)
+                {
+                    window.Message = "Formula Evaluation Exception Error Detected with new formula";
+                    window.Value = "0";
+                }
+                //window.Message = "Contents created a circular dependency.";    
+            }
+     
+            finally
+            {
+                object o = model.GetCellContents(cellName);
+                window.Content = o.ToString();
+
+                object val = model.GetCellValue(cellName);
+                if(val is FormulaError)
+                {
+                    window.Value = "FORMULAERROR";
+                }
+                else
+                {
+                    window.Value = val.ToString();
+                }
+            }
+  
 
         }
 
@@ -88,7 +136,7 @@ namespace SpreadsheetGUI
         /// <returns></returns>
         private string LocationToCellName(int row, int col)
         {
-            char colName = (char)(col + 65);
+            char colName = (char)(col + 64); //CELLS START INDEXING AT 0,0.
             return colName + row.ToString();
         }
 
@@ -99,7 +147,7 @@ namespace SpreadsheetGUI
         /// <returns></returns>
         private int CellNameToLocation(string cellName)
         {
-            int colLocation = cellName[0] - 65;
+            int colLocation = cellName[0] - 64;//CELLS START INDEXING AT ZERO.
             return colLocation;
 
         }

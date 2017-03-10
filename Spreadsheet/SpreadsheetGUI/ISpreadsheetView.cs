@@ -28,6 +28,8 @@ namespace SpreadsheetGUI
 
         string Content { get; set; }
 
+        string Value { get; set; }
+
         void DoClose();
 
         void OpenNew();

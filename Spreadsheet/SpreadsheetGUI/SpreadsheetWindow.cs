@@ -19,6 +19,7 @@ namespace SpreadsheetGUI
         {
             InitializeComponent();
             spreadsheetPanel1.SelectionChanged += displaySelection;
+          
         }
 
         public event Action CloseEvent;
@@ -36,14 +37,6 @@ namespace SpreadsheetGUI
             String value;
             ss.GetSelection(out col, out row);
             ss.GetValue(col, row, out value);
-            if (value == "")
-            {
-                ss.SetValue(col, row, DateTime.Now.ToLocalTime().ToString("T"));
-                ss.GetValue(col, row, out value);
-            }
-
-            cellNameReadOnly.Text = (col+65).ToString() + row.ToString();
-            CellLabel.Text = 
         }
 
         public string Message
@@ -66,12 +59,25 @@ namespace SpreadsheetGUI
         {
             get
             {
-                throw new NotImplementedException();
+                return this.Content;
             }
 
             set
             {
-                ;
+                
+            }
+        }
+
+        public string Value
+        {
+            get
+            {
+                return "0";
+            }
+
+            set
+            {
+                
             }
         }
 
@@ -111,9 +117,15 @@ namespace SpreadsheetGUI
         {
             if (e.KeyChar == (char)Keys.Return || e.KeyChar == (char)Keys.Enter)
             {
+                int col;
+                int row;
+                spreadsheetPanel1.GetSelection(out col, out row);
                 Content = ContentBox.Text;
-               // UpdateCell();
+                //UpdateCell();
+                spreadsheetPanel1.GetSelection(out col, out row);
+                spreadsheetPanel1.SetValue(col, row, this.Value);
             }
+      
         }
 
         private void SpreadsheetWindow_Load(object sender, EventArgs e)
@@ -123,25 +135,25 @@ namespace SpreadsheetGUI
 
         private void cellNameReadOnly_TextChanged(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+          //  throw new NotImplementedException();
         }
 
         event Action<SpreadsheetPanel> ISpreadsheetView.UpdateCell
         {
             add
             {
-                throw new NotImplementedException();
+               // throw new NotImplementedException();
             }
 
             remove
             {
-                throw new NotImplementedException();
+               // throw new NotImplementedException();
             }
         }
 
         private void spreadsheetPanel1_Load(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }
