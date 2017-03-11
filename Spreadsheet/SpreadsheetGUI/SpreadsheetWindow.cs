@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,14 +41,39 @@ namespace SpreadsheetGUI
         public event Action UpdateCell;
         public event Action CellClicked;
         public event Action HelpEvent;
+        public event Action CheckChanged;
+        public event Action<TextWriter> SaveEvent;
+
         private string _value;
+        private bool _changed;
+
+        public bool Changed
+        {
+            get
+            {
+                return _changed;
+            }
+            set
+            {
+                _changed = value;
+            }
+        }
+
 
 
         public string Message
         {
             set
             {
-                MessageBox.Show(value.ToString(), "ERROR", MessageBoxButtons.OK ,MessageBoxIcon.Error);
+                MessageBox.Show(value.ToString(), "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public string HelpMessage
+        {
+            set
+            {
+                MessageBox.Show(value.ToString(), "Welcome!", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -76,7 +102,7 @@ namespace SpreadsheetGUI
         {
             get
             {
-                
+
                 return _value;
             }
 
@@ -100,7 +126,7 @@ namespace SpreadsheetGUI
 
             set
             {
-                
+
             }
         }
         /*
@@ -123,7 +149,7 @@ namespace SpreadsheetGUI
         public void DoClose()
         {
             //closes the window
-            if(CloseEvent!= null)
+            if (CloseEvent != null)
             {
                 Close();
             }
@@ -158,11 +184,11 @@ namespace SpreadsheetGUI
             {
                 //Grab the contents the user typed.
                 string OriginalContent = ContentBox.Text;
-                if(OriginalContent[0] == '=')
+                if (OriginalContent[0] == '=')
                 {
                     OriginalContent = OriginalContent.ToUpper();
                 }
-               
+
                 Content = ContentBox.Text;
                 ContentBox.Text = OriginalContent;
 
@@ -171,14 +197,14 @@ namespace SpreadsheetGUI
                 spreadsheetPanel1.GetSelection(out col, out row);
                 spreadsheetPanel1.SetValue(col, row, Value);
                 cellValReadOnly.Text = Value;
-      
-                
+
+
             }
         }
 
         private void SpreadsheetWindow_Load(object sender, EventArgs e)
         {
-            
+
         }
 
         private void spreadsheetPanel1_Load(object sender, EventArgs e)
@@ -193,6 +219,16 @@ namespace SpreadsheetGUI
         /// <param name="e"></param>
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            CheckChanged();
+            if(Changed)
+            {
+                DialogResult RESULT = MessageBox.Show("Would you like to save your file?", "Unsaved Changes", MessageBoxButtons.YesNo);
+                if(RESULT == DialogResult.Yes)
+                {
+                    saveToolStripMenuItem_Click(sender, e);
+                }
+                
+            }
             this.DoClose();
         }
 
@@ -211,7 +247,7 @@ namespace SpreadsheetGUI
         /// <param name="row"></param>
         /// <param name="col"></param>
         /// <returns></returns>
-        private string LocationToCellName(int row, int col)
+        private string LocationTolCellName(int row, int col)
         {
             char colName = (char)(col + 65); //CELLS START INDEXING AT 0,0.
             return colName + (row + 1).ToString();
@@ -236,12 +272,40 @@ namespace SpreadsheetGUI
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog result = new OpenFileDialog();
-            if(result.ShowDialog() == DialogResult.OK)
+            if (result.ShowDialog() == DialogResult.OK)
             {
                 //Read in file.
                 FileChosenEvent(result.FileName);
-               
+
             }
+        }
+
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            HelpEvent();
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog save = new SaveFileDialog();
+
+            if (save.ShowDialog() == DialogResult.OK)
+            {
+                /* if (!save.CheckFileExists)
+                 {
+                     SaveAsEvent();
+                     return;
+                 }
+                 */
+                string sfn = save.FileName;
+                TextWriter writer = File.CreateText(sfn);
+                SaveEvent(writer);
+            }
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveToolStripMenuItem_Click(sender, e);
         }
     }
 }
