@@ -26,6 +26,8 @@ namespace SpreadsheetGUI
         public event Action NewEvent;
         public event Action UpdateCell;
         public event Action CellClicked;
+        public event Action HelpEvent;
+        public event Action OpenEvent;
         private string _value;
 
 

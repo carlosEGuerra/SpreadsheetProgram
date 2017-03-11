@@ -36,8 +36,9 @@ namespace SpreadsheetGUI
             window.CellClicked += HandleCellChanged;
             window.SP.SelectionChanged += HandleCellChanged;
             window.HelpEvent += DisplayHelp;
+            window.OpenEvent += HandleOpen;
 
-        }
+    }
 
         /// <summary>
         /// When we edit the contents of the cell.
@@ -235,6 +236,19 @@ namespace SpreadsheetGUI
             
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        private void HandleOpen()
+        {
+            //LoadFile will need a file to create a spreadsheet out of.
+            LoadFile();
+        }
+
+        /// <summary>
+        /// Helper method from adding items from the spreadsheet to the GUI.
+        /// </summary>
+        /// <param name="list"></param>
         private void AddAll(IEnumerable<string> list)
         {
             list = new List<string>(list);
