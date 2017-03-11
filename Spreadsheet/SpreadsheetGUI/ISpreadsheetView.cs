@@ -1,6 +1,7 @@
 ﻿using SSGui;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,9 +25,17 @@ namespace SpreadsheetGUI
 
         event Action HelpEvent;
 
+        event Action CheckChanged;
+
+        event Action<TextWriter> SaveEvent;
+
         SpreadsheetPanel SP { get; set; }
 
+        bool Changed { get; set; }
+
         string Title { set; }
+
+        string HelpMessage { set; }
 
         string CellName { get; set; }
 
