@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using SSGui;
 using Formulas;
+using System.Text.RegularExpressions;
 
 namespace SpreadsheetGUI
 {
@@ -241,6 +242,20 @@ namespace SpreadsheetGUI
                 window.SP.SetValue(c, r - 1, model.GetCellValue(cell).ToString()); //WATCH THIS. MIGHT CAUSE ISSUES.
             }
 
+        }
+
+        /// <summary>
+        ///  A method that converts the contents of an xml file to the spreadsheet.
+        /// </summary>
+        /// <param name="filename"></param>
+        private void LoadFile(string filepath)
+        {
+            TextReader reader = new StreamReader(filepath);
+            model = new Spreadsheet(reader, new Regex(""));
+            List<string> list = new List<string>(model.GetNamesOfAllNonemptyCells());
+
+            //Convert each non-empty cell of the spreadsheet to the SpreadsheetGUI
+            AddAll(list);
         }
 
     }

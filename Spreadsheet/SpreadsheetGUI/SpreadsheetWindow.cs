@@ -159,11 +159,6 @@ namespace SpreadsheetGUI
             
         }
 
-        private void cellNameReadOnly_TextChanged(object sender, EventArgs e)
-        {
-            cellNameReadOnly.Text = "fucking work";
-        }
-
         private void spreadsheetPanel1_Load(object sender, EventArgs e)
         {
             //throw new NotImplementedException();
