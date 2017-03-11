@@ -21,6 +21,19 @@ namespace SpreadsheetGUI
             InitializeComponent();
         }
 
+        event Action ISpreadsheetView.UpdateCell
+        {
+            add
+            {
+                //throw new NotImplementedException();
+            }
+
+            remove
+            {
+                //throw new NotImplementedException();
+            }
+        }
+
         public event Action CloseEvent;
         public event Action<string> FileChosenEvent;
         public event Action NewEvent;
@@ -90,7 +103,7 @@ namespace SpreadsheetGUI
                 
             }
         }
-
+        /*
         public string CellName
         {
             get
@@ -103,7 +116,7 @@ namespace SpreadsheetGUI
                 cellNameReadOnly.Text = value;
             }
         }
-
+        */
         /// <summary>
         /// Method that closes the current open window
         /// </summary>
