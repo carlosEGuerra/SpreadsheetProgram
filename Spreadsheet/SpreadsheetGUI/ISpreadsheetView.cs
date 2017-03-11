@@ -18,8 +18,6 @@ namespace SpreadsheetGUI
 
         event Action NewEvent;
 
-        event Action OpenEvent;
-
         event Action UpdateCell;
 
         event Action CellClicked;
