@@ -26,6 +26,7 @@ namespace SpreadsheetGUI
         public event Action NewEvent;
         public event Action UpdateCell;
         public event Action CellClicked;
+        public event Action HelpEvent;
         private string _value;
 
 
@@ -70,7 +71,7 @@ namespace SpreadsheetGUI
             {
                 int row;
                 int col;
-                _value = value;//COULD START SHIT.
+                _value = value;
                 cellValReadOnly.Text = value;
                 spreadsheetPanel1.GetSelection(out col, out row);
                 spreadsheetPanel1.SetValue(col, row, value);
@@ -143,13 +144,21 @@ namespace SpreadsheetGUI
             if (e.KeyChar == (char)Keys.Return || e.KeyChar == (char)Keys.Enter)
             {
                 //Grab the contents the user typed.
+                string OriginalContent = ContentBox.Text;
+                if(OriginalContent[0] == '=')
+                {
+                    OriginalContent = OriginalContent.ToUpper();
+                }
+               
                 Content = ContentBox.Text;
-                
+                ContentBox.Text = OriginalContent;
+
                 UpdateCell();
                 int col, row;
                 spreadsheetPanel1.GetSelection(out col, out row);
                 spreadsheetPanel1.SetValue(col, row, Value);
                 cellValReadOnly.Text = Value;
+      
                 
             }
         }
