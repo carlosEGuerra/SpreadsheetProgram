@@ -22,7 +22,7 @@ namespace SpreadsheetGUI
             InitializeComponent();
             spreadsheetPanel1.SelectionChanged += displaySelection;
         }
-
+        /*
         event Action ISpreadsheetView.UpdateCell
         {
             add
@@ -35,7 +35,7 @@ namespace SpreadsheetGUI
                 //throw new NotImplementedException();
             }
         }
-
+        */
         public event Action CloseEvent;
         public event Action<string> CountEvent;
         public event Action<string> FileChosenEvent;
@@ -124,7 +124,7 @@ namespace SpreadsheetGUI
                 
             }
         }
-
+        /*
         public string CellName
         {
             get
@@ -137,7 +137,7 @@ namespace SpreadsheetGUI
                 //throw new NotImplementedException();
             }
         }
-
+        */
         /// <summary>
         /// Method that closes the current open window
         /// </summary>
