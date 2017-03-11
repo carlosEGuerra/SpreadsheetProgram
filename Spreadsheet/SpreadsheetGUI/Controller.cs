@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using SSGui;
 using Formulas;
+using System.Text.RegularExpressions;
 
 namespace SpreadsheetGUI
 {
@@ -38,12 +39,12 @@ namespace SpreadsheetGUI
         /// <summary>
         /// The primary method that updates the cell if the value in the text box is updated.
         /// </summary>
-        private void HandleCell(SpreadsheetPanel ss)
+        private void HandleCell()
         {
             int row, col;
             String value;
-            ss.GetSelection(out col, out row);
-            ss.GetValue(col, row, out value);
+            window.SP.GetSelection(out col, out row);
+            window.SP.GetValue(col, row, out value);
            
             //Convert row value to a cell name.
             string cellName = this.LocationToCellName(row, col);
