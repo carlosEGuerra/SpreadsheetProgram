@@ -23,11 +23,27 @@ namespace SpreadsheetGUI
             spreadsheetPanel1.SelectionChanged += displaySelection;
         }
 
+        event Action ISpreadsheetView.UpdateCell
+        {
+            add
+            {
+                //throw new NotImplementedException();
+            }
+
+            remove
+            {
+                //throw new NotImplementedException();
+            }
+        }
+
         public event Action CloseEvent;
         public event Action<string> CountEvent;
         public event Action<string> FileChosenEvent;
         public event Action NewEvent;
         public event Action<SpreadsheetPanel> UpdateCell;
+        public event Action OpenEvent;
+        public event Action CellClicked;
+
         private string _value;
 
         /// <summary>
@@ -106,6 +122,19 @@ namespace SpreadsheetGUI
             set
             {
                 
+            }
+        }
+
+        public string CellName
+        {
+            get
+            {
+                //throw new NotImplementedException();
+            }
+
+            set
+            {
+                //throw new NotImplementedException();
             }
         }
 
@@ -215,7 +244,6 @@ namespace SpreadsheetGUI
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DialogResult diag = OpenFileDialog.show();
         }
     }
 }

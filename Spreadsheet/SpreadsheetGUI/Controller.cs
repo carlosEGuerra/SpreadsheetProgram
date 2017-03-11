@@ -202,14 +202,15 @@ namespace SpreadsheetGUI
         }
 
         /// <summary>
-        /// 
+        /// Gives back a column location
         /// </summary>
         /// <param name="cellName"></param>
         /// <returns></returns>
-        private int CellNameToLocation(string cellName)
+        private void CellNameToLocation(string cellName, out int row, out int column)
         {
-            int colLocation = cellName[0] - 65;//CELLS START INDEXING AT ZERO.
-            return colLocation;
+            column = cellName[0] - 65;//CELLS START INDEXING AT ZERO.
+            string stringrow = cellName.Substring(1);
+            int.TryParse(stringrow, out row);
         }
 
         private void HandleCellChanged()
