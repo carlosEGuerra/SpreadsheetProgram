@@ -35,6 +35,7 @@ namespace SpreadsheetGUI
             window.UpdateCell += HandleCell;
             window.CellClicked += HandleCellChanged;
             window.SP.SelectionChanged += HandleCellChanged;
+            window.HelpEvent += DisplayHelp;
 
         }
 
@@ -214,6 +215,9 @@ namespace SpreadsheetGUI
             int.TryParse(stringrow, out row);
         }
 
+        /// <summary>
+        /// Whenever the contents of a cell are changed, the values are stored to be updated to the GUI.
+        /// </summary>
         private void HandleCellChanged()
         {
             int col;
@@ -256,6 +260,46 @@ namespace SpreadsheetGUI
 
             //Convert each non-empty cell of the spreadsheet to the SpreadsheetGUI
             AddAll(list);
+        }
+
+        /// <summary>
+        /// Saves file to a destination
+        /// </summary>
+        /// <param name="T"></param>
+        private void SaveFile(TextWriter T)
+        {
+            if (model.Changed)
+            {
+                try
+                {
+                    model.Save(T);
+                }
+                catch
+                {
+                    window.Message = "Unable to save file.";
+                }
+            }
+        }
+
+        /// <summary>
+        /// A help message to explain how to use the SpreadsheetGUI.
+        /// </summary>
+        private void DisplayHelp()
+        {
+            window.Message =
+            "Welcome the the Ghetto Spreadsheet! \n " +
+            "Sorry in advance. \n" +
+            "\n\n" +
+            "To Edit Cell Contents: \n" +
+            "Click on the cell you would like to change." +
+            "Edit its contents in the \"Contents\" box at the top of the page." +
+            "\n\n" +
+            "To close the program: File > Close \n" +
+            "To open an existing spreadsheet: File > Open \n" +
+            "To create a new Spreadsheet: File > New \n"
+
+            ;
+
         }
 
     }
