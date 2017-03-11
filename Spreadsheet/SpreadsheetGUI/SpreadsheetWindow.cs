@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
 namespace SpreadsheetGUI
 {
     public partial class SpreadsheetWindow : Form, ISpreadsheetView
@@ -21,14 +22,23 @@ namespace SpreadsheetGUI
             InitializeComponent();
         }
 
+        event Action ISpreadsheetView.UpdateCell
+        {
+            add
+            {
+                //throw new NotImplementedException();
+            }
+
+            remove
+            {
+                //throw new NotImplementedException();
+            }
+        }
+
         public event Action CloseEvent;
         public event Action<string> FileChosenEvent;
         public event Action NewEvent;
-        public event Action UpdateCell;
-        public event Action CellClicked;
-        public event Action OpenEvent; //TODO
-        public event Action HelpEvent; //TODO
-
+        public event Action<SpreadsheetPanel> UpdateCell;
         private string _value;
 
 
@@ -38,6 +48,7 @@ namespace SpreadsheetGUI
             {
                 MessageBox.Show(value.ToString(), "ERROR", MessageBoxButtons.OK ,MessageBoxIcon.Error);
             }
+            
         }
 
         public string Title
@@ -90,19 +101,6 @@ namespace SpreadsheetGUI
             set
             {
                 
-            }
-        }
-
-        public string CellName
-        {
-            get
-            {
-                return cellNameReadOnly.Text;
-            }
-
-            set
-            {
-                cellNameReadOnly.Text = value;
             }
         }
 
@@ -207,6 +205,10 @@ namespace SpreadsheetGUI
         {
             int colLocation = (cellName[0] - 65);//CELLS START INDEXING AT ZERO.
             return colLocation;
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
         }
     }
 }
