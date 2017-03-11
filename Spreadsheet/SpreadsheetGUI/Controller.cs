@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using SSGui;
 using Formulas;
+using System.Text.RegularExpressions;
 
 namespace SpreadsheetGUI
 {
@@ -32,35 +33,82 @@ namespace SpreadsheetGUI
             window.CloseEvent += HandleClose;
             window.NewEvent += HandleNew;
             window.UpdateCell += HandleCell;
-            window.FileChosenEvent += new System.EventHandler(this.)
+            window.CellClicked += HandleCellChanged;
+            window.SP.SelectionChanged += HandleCellChanged;
+
         }
 
         /// <summary>
-        /// The primary method that updates the cell if the value in the text box is updated.
+        /// When we edit the contents of the cell.
         /// </summary>
-        private void HandleCell(SpreadsheetPanel ss)
+        private void HandleCellChanged(SpreadsheetPanel ss)
         {
             int row, col;
             String value;
+            string val2;
             ss.GetSelection(out col, out row);
             ss.GetValue(col, row, out value);
-           
+            window.CellName = this.LocationToCellName(row, col);
+            //cellNameReadOnly.Text = this.LocationToCellName(row, col);
+            ss.GetValue(col, row, out val2);
+            window.Value = val2;
+            string val;
+            ss.GetValue(col, row, out val);
+            if (val == null)
+            {
+                window.Value = "";
+            }
+
+            if (ss.GetValue(col, row, out value))
+            {
+                try
+                {
+                    object ssContents = model.GetCellContents(LocationToCellName(row, col));
+                    string stringCont = ssContents.ToString(); 
+                    if(ssContents is Formula)
+                    {
+                        stringCont = "=" + stringCont;
+                    }
+                    window.Content = stringCont;
+                }
+                catch
+                {
+                    window.Content = "";//If tbe cell is empty, the content box should also be empty.
+                                        
+                }
+            }
+        }
+        /// <summary>
+        /// The primary method that updates the cell if the value in the text box is updated.
+        /// </summary>
+        private void HandleCell()
+        {
+            int row, col;
+            string value = window.Value;
+            window.SP.GetSelection(out col, out row);
+            window.SP.GetValue(col, row, out value);
+
+                      
             //Convert row value to a cell name.
             string cellName = this.LocationToCellName(row, col);
             string content = window.Content; //Pull the current cell contents from the interface.
 
+            HashSet<string> list = new HashSet<string>();
             try
             {
+                
                 //Modify the model cell contents.
-                HashSet<string> list = new HashSet<string>(model.SetContentsOfCell(cellName, content));
+                list = (HashSet<string>)(model.SetContentsOfCell(cellName, content)); //WATCH THIS. MIGHT CAUSE PROBLEMS.
+            
             }
             catch (Exception e)
             {
                 //CircularExecption
                 if (e is CircularException)
                 {
-                    window.Message = "Circular Exception detected";
                     window.Value = "1";
+                    window.Message = "Circular Exception detected";
+               
                 }
                 //FormulaFormatError
                 else if (e is FormulaFormatException)
@@ -79,19 +127,36 @@ namespace SpreadsheetGUI
 
             finally
             {
+                string contents;
                 object o = model.GetCellContents(cellName);
-                window.Content = o.ToString();
+                contents = o.ToString();
+                
+                if (o is Formula)
+                {
+                    contents = "=" + contents;
+
+                }
+                window.Content = contents;
 
                 object val = model.GetCellValue(cellName);
                 if (val is FormulaError)
                 {
                     window.Value = "FORMULAERROR";
                 }
+             
                 else
                 {
+                    window.Value = "";
                     window.Value = val.ToString();
                     window.Content = model.GetCellContents(cellName).ToString();
                 }
+
+                if(list.Count > 1)//If we need to update other cells in the table...
+                {
+                    AddAll(list);
+                }
+                    
+
             }
         }
 
@@ -134,23 +199,21 @@ namespace SpreadsheetGUI
         private string LocationToCellName(int row, int col)
         {
             char colName = (char)(col + 65); //CELLS START INDEXING AT 0,0.
-            return colName + (row + 1).ToString();
+            return colName + (row+1).ToString();
         }
 
         /// <summary>
-        /// 
+        /// Gives back a column location
         /// </summary>
         /// <param name="cellName"></param>
         /// <returns></returns>
-        private int CellNameToLocation(string cellName)
+        private void CellNameToLocation(string cellName, out int row, out int column)
         {
-            int colLocation = cellName[0] - 65;//CELLS START INDEXING AT ZERO.
-            return colLocation;
+            column = cellName[0] - 65;//CELLS START INDEXING AT ZERO.
+            string stringrow = cellName.Substring(1);
+            int.TryParse(stringrow, out row);
         }
 
-        /// <summary>
-        /// Whenever the contents of a cell are changed, the values are stored to be updated to the GUI.
-        /// </summary>
         private void HandleCellChanged()
         {
             int col;
@@ -168,19 +231,6 @@ namespace SpreadsheetGUI
             
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private void HandleOpen()
-        {
-            //LoadFile will need a file to create a spreadsheet out of.
-          //  LoadFile();
-        }
-
-        /// <summary>
-        /// Helper method from adding items from the spreadsheet to the GUI.
-        /// </summary>
-        /// <param name="list"></param>
         private void AddAll(IEnumerable<string> list)
         {
             list = new List<string>(list);
@@ -206,46 +256,6 @@ namespace SpreadsheetGUI
 
             //Convert each non-empty cell of the spreadsheet to the SpreadsheetGUI
             AddAll(list);
-        }
-
-        /// <summary>
-        /// Saves file to a destination
-        /// </summary>
-        /// <param name="T"></param>
-        private void SaveFile(TextWriter T)
-        {
-            if (model.Changed)
-            {
-                try
-                {
-                    model.Save(T);
-                }
-                catch
-                {
-                    window.Message = "Unable to save file.";
-                }
-            }
-        }
-
-        /// <summary>
-        /// A help message to explain how to use the SpreadsheetGUI.
-        /// </summary>
-        private void DisplayHelp()
-        {
-            window.Message =
-            "Welcome the the Ghetto Spreadsheet! \n " +
-            "Sorry in advance. \n" +
-            "\n\n" +
-            "To Edit Cell Contents: \n" +
-            "Click on the cell you would like to change." +
-            "Edit its contents in the \"Contents\" box at the top of the page." +
-            "\n\n" +
-            "To close the program: File > Close \n" +
-            "To open an existing spreadsheet: File > Open \n" +
-            "To create a new Spreadsheet: File > New \n"
-
-            ;
-
         }
 
     }

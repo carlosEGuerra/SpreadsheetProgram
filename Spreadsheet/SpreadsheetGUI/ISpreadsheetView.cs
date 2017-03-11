@@ -24,8 +24,6 @@ namespace SpreadsheetGUI
 
         event Action CellClicked;
 
-        event Action HelpEvent;
-
         string CellName { get; set; }
 
         SpreadsheetPanel SP { get; set; }
