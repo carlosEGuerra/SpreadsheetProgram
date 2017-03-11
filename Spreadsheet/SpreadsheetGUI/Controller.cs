@@ -106,9 +106,8 @@ namespace SpreadsheetGUI
                 //CircularExecption
                 if (e is CircularException)
                 {
-                    window.Value = "1";
                     window.Message = "Circular Exception detected";
-               
+                    window.Value = "1";
                 }
                 //FormulaFormatError
                 else if (e is FormulaFormatException)
@@ -199,19 +198,18 @@ namespace SpreadsheetGUI
         private string LocationToCellName(int row, int col)
         {
             char colName = (char)(col + 65); //CELLS START INDEXING AT 0,0.
-            return colName + (row+1).ToString();
+            return colName + (row + 1).ToString();
         }
 
         /// <summary>
-        /// Gives back a column location
+        /// 
         /// </summary>
         /// <param name="cellName"></param>
         /// <returns></returns>
-        private void CellNameToLocation(string cellName, out int row, out int column)
+        private int CellNameToLocation(string cellName)
         {
-            column = cellName[0] - 65;//CELLS START INDEXING AT ZERO.
-            string stringrow = cellName.Substring(1);
-            int.TryParse(stringrow, out row);
+            int colLocation = cellName[0] - 65;//CELLS START INDEXING AT ZERO.
+            return colLocation;
         }
 
         private void HandleCellChanged()
@@ -231,6 +229,19 @@ namespace SpreadsheetGUI
             
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        private void HandleOpen()
+        {
+            //LoadFile will need a file to create a spreadsheet out of.
+          //  LoadFile();
+        }
+
+        /// <summary>
+        /// Helper method from adding items from the spreadsheet to the GUI.
+        /// </summary>
+        /// <param name="list"></param>
         private void AddAll(IEnumerable<string> list)
         {
             list = new List<string>(list);
