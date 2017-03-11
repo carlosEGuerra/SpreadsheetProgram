@@ -143,7 +143,7 @@ namespace SpreadsheetGUI
         /// </summary>
         /// <param name="cellName"></param>
         /// <returns></returns>
-        private int CellNameToLocation(string cellName)
+        private void CellNameToLocation(string cellName, out row, out column)
         {
             int colLocation = cellName[0] - 65;//CELLS START INDEXING AT ZERO.
             return colLocation;
