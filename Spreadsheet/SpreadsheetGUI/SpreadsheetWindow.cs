@@ -19,33 +19,15 @@ namespace SpreadsheetGUI
         public SpreadsheetWindow()
         {
             InitializeComponent();
-            spreadsheetPanel1.SelectionChanged += displaySelection;
         }
 
         public event Action CloseEvent;
-        public event Action<string> CountEvent;
         public event Action<string> FileChosenEvent;
         public event Action NewEvent;
-        public event Action<SpreadsheetPanel> UpdateCell;
+        public event Action UpdateCell;
+        public event Action CellClicked;
         private string _value;
 
-        /// <summary>
-        /// When we edit the contents of the cell.
-        /// </summary>
-        private void displaySelection(SpreadsheetPanel ss)
-        {
-            int row, col;
-            String value;
-            ss.GetSelection(out col, out row);
-            ss.GetValue(col, row, out value);
-            cellNameReadOnly.Text = this.LocationToCellName(row, col);
-            string s;
-            ss.GetValue(col, row, out s);
-            if(s == null)
-            {
-                cellValReadOnly.Text = "";
-            }
-        }
 
         public string Message
         {
@@ -67,12 +49,12 @@ namespace SpreadsheetGUI
         {
             get
             {
-                return cellValReadOnly.Text;
+                return ContentBox.Text;
             }
 
             set
             {
-                cellValReadOnly.Text = value;
+                ContentBox.Text = value;
             }
         }
 
@@ -81,13 +63,14 @@ namespace SpreadsheetGUI
             get
             {
                 
-                return "work";
+                return _value;
             }
 
             set
             {
                 int row;
                 int col;
+                _value = value;//COULD START SHIT.
                 cellValReadOnly.Text = value;
                 spreadsheetPanel1.GetSelection(out col, out row);
                 spreadsheetPanel1.SetValue(col, row, value);
@@ -104,6 +87,19 @@ namespace SpreadsheetGUI
             set
             {
                 
+            }
+        }
+
+        public string CellName
+        {
+            get
+            {
+                return cellNameReadOnly.Text;
+            }
+
+            set
+            {
+                cellNameReadOnly.Text = value;
             }
         }
 
@@ -134,10 +130,11 @@ namespace SpreadsheetGUI
 
         }
 
-        //When we double click on the spreadsheet panel, it should fire the UpdateCell event.
+        //When we click a spreadsheet panel, it should show the cell, value, and content
         private void spreadsheetPanel1_MouseClick(object sender, MouseEventArgs e)
         {
-            //UpdateCell();
+            CellClicked();
+            ContentBox.Text = this.Content;
         }
 
         //If user presses "enter" in the editable contents box, fires the event to update all cell fields.
@@ -145,23 +142,21 @@ namespace SpreadsheetGUI
         {
             if (e.KeyChar == (char)Keys.Return || e.KeyChar == (char)Keys.Enter)
             {
-                int col;
-                int row;
-                spreadsheetPanel1.GetSelection(out col, out row);
+                //Grab the contents the user typed.
                 Content = ContentBox.Text;
+                
+                UpdateCell();
+                int col, row;
                 spreadsheetPanel1.GetSelection(out col, out row);
-                spreadsheetPanel1.SetValue(col, row, this.Value);
+                spreadsheetPanel1.SetValue(col, row, Value);
+                cellValReadOnly.Text = Value;
+                
             }
         }
 
         private void SpreadsheetWindow_Load(object sender, EventArgs e)
         {
             
-        }
-
-        private void cellNameReadOnly_TextChanged(object sender, EventArgs e)
-        {
-            cellNameReadOnly.Text = "fucking work";
         }
 
         private void spreadsheetPanel1_Load(object sender, EventArgs e)
