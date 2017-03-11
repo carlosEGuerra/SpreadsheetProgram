@@ -242,7 +242,7 @@ namespace SpreadsheetGUI
         private void HandleOpen()
         {
             //LoadFile will need a file to create a spreadsheet out of.
-            LoadFile();
+          //  LoadFile();
         }
 
         /// <summary>
