@@ -169,6 +169,7 @@ namespace SpreadsheetGUI
             try
             {
                 TextReader file = new StringReader(filename);
+                LoadFile(file);
             }
             catch (Exception ex)
             {
@@ -265,9 +266,9 @@ namespace SpreadsheetGUI
         ///  A method that converts the contents of an xml file to the spreadsheet.
         /// </summary>
         /// <param name="filename"></param>
-        private void LoadFile(string filepath)
+        private void LoadFile(TextReader reader)
         {
-            TextReader reader = new StreamReader(filepath);
+            
             model = new Spreadsheet(reader, new Regex(""));
             List<string> list = new List<string>(model.GetNamesOfAllNonemptyCells());
 

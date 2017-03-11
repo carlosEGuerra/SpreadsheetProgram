@@ -214,5 +214,21 @@ namespace SpreadsheetGUI
             int colLocation = (cellName[0] - 65);//CELLS START INDEXING AT ZERO.
             return colLocation;
         }
+
+        /// <summary>
+        /// When open is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog result = new OpenFileDialog();
+            if(result.ShowDialog() == DialogResult.OK)
+            {
+                //Read in file.
+                FileChosenEvent(result.FileName);
+               
+            }
+        }
     }
 }
