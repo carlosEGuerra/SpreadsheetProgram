@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
 namespace SpreadsheetGUI
 {
     public partial class SpreadsheetWindow : Form, ISpreadsheetView
@@ -53,6 +54,7 @@ namespace SpreadsheetGUI
             {
                 MessageBox.Show(value.ToString(), "ERROR", MessageBoxButtons.OK ,MessageBoxIcon.Error);
             }
+            
         }
 
         public string Title
@@ -209,6 +211,11 @@ namespace SpreadsheetGUI
         {
             int colLocation = (cellName[0] - 65);//CELLS START INDEXING AT ZERO.
             return colLocation;
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult diag = OpenFileDialog.show();
         }
     }
 }

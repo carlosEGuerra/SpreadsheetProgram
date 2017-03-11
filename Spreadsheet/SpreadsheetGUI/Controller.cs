@@ -32,7 +32,7 @@ namespace SpreadsheetGUI
             window.CloseEvent += HandleClose;
             window.NewEvent += HandleNew;
             window.UpdateCell += HandleCell;
-
+            window.FileChosenEvent += new System.EventHandler(this.)
         }
 
         /// <summary>
